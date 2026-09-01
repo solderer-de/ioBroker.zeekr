@@ -5,7 +5,7 @@ const path = require('node:path');
 
 const { createDeviceBaseId, ZeekrAdapter } = require('../lib/adapter');
 
-function createMainAdapterInstance() {
+function createMainAdapterFactory() {
   return require('../main');
 }
 
@@ -50,43 +50,9 @@ test('ensureBaseObjects creates the root info and vehicles channels', async () =
   assert.ok(adapter._objects.has('vehicles'));
 });
 
-test('main entrypoint exports an adapter instance', () => {
-  const adapter = createMainAdapterInstance();
+test('main entrypoint exports an adapter factory', () => {
+  const factory = createMainAdapterFactory();
+  const adapter = factory({ name: 'zeekr' });
   assert.equal(typeof adapter.on, 'function');
   assert.equal(typeof adapter.emit, 'function');
-});
-
-test('main entrypoint stays inert during npm install lifecycle', () => {
-  const previousLifecycle = process.env.npm_lifecycle_event;
-  const previousNodeEnv = process.env.NODE_ENV;
-  const previousIoBrokerDataDir = process.env.IOBROKER_DATA_DIR;
-  const previousIoBrokerHost = process.env.IOBROKER_HOST;
-  process.env.npm_lifecycle_event = 'install';
-  delete process.env.IOBROKER_DATA_DIR;
-  delete process.env.IOBROKER_HOST;
-  delete process.env.NODE_ENV;
-  delete require.cache[require.resolve('../main')];
-  const adapter = require('../main');
-  assert.equal(typeof adapter.on, 'function');
-  assert.equal(typeof adapter.emit, 'function');
-  if (previousLifecycle === undefined) {
-    delete process.env.npm_lifecycle_event;
-  } else {
-    process.env.npm_lifecycle_event = previousLifecycle;
-  }
-  if (previousNodeEnv === undefined) {
-    delete process.env.NODE_ENV;
-  } else {
-    process.env.NODE_ENV = previousNodeEnv;
-  }
-  if (previousIoBrokerDataDir === undefined) {
-    delete process.env.IOBROKER_DATA_DIR;
-  } else {
-    process.env.IOBROKER_DATA_DIR = previousIoBrokerDataDir;
-  }
-  if (previousIoBrokerHost === undefined) {
-    delete process.env.IOBROKER_HOST;
-  } else {
-    process.env.IOBROKER_HOST = previousIoBrokerHost;
-  }
 });
