@@ -106,6 +106,26 @@ test('adapter falls back to the stub when no ioBroker runtime is present', () =>
   }
 });
 
+test('adapter ignores a missing ioBroker config file even if the env var is set', () => {
+  const originalIoBrokerDataDir = process.env.IOBROKER_DATA_DIR;
+  process.env.IOBROKER_DATA_DIR = '/tmp/definitely-missing-iobroker-config';
+  delete require.cache[require.resolve('../lib/adapter')];
+
+  try {
+    const { createAdapter } = require('../lib/adapter');
+    const adapter = createAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const grandParent = Object.getPrototypeOf(Object.getPrototypeOf(adapter));
+    assert.equal(grandParent.constructor.name, 'AdapterStub');
+  } finally {
+    if (originalIoBrokerDataDir === undefined) {
+      delete process.env.IOBROKER_DATA_DIR;
+    } else {
+      process.env.IOBROKER_DATA_DIR = originalIoBrokerDataDir;
+    }
+    delete require.cache[require.resolve('../lib/adapter')];
+  }
+});
+
 test('main entrypoint avoids auto-start during npm lifecycle installs', () => {
   const originalLifecycleEvent = process.env.npm_lifecycle_event;
   process.env.npm_lifecycle_event = 'install';

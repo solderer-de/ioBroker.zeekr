@@ -26,6 +26,8 @@ jobs:
         run: |
           mkdir -p dist
           TAG_NAME="${{ github.event.release.tag_name || github.ref_name }}"
+          npm pack --pack-destination dist
+          mv "dist/iobroker.zeekr-${TAG_NAME#v}.tgz" "dist/iobroker-adapter-zeekr-${TAG_NAME}.tgz"
           tar -czf "dist/iobroker-adapter-zeekr-${TAG_NAME}.tar.gz" \
             --exclude=.git \
             --exclude=node_modules \
@@ -38,4 +40,6 @@ jobs:
           tag_name: ${{ github.event.release.tag_name || github.ref_name }}
           name: ${{ github.event.release.tag_name || github.ref_name }}
           generate_release_notes: true
-          files: dist/iobroker-adapter-zeekr-${{ github.event.release.tag_name || github.ref_name }}.tar.gz
+          files: |
+            dist/iobroker-adapter-zeekr-${{ github.event.release.tag_name || github.ref_name }}.tgz
+            dist/iobroker-adapter-zeekr-${{ github.event.release.tag_name || github.ref_name }}.tar.gz
