@@ -17,14 +17,14 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install
-        working-directory: .
       - name: Run tests
         run: npm test
-        working-directory: .
       - name: Create release archive
-        run: tar -czf zeekr-adapter-${GITHUB_REF_NAME}.tar.gz .
+        run: |
+          mkdir -p dist
+          tar -czf dist/zeekr-adapter-${GITHUB_REF_NAME}.tar.gz --exclude=.git --exclude=node_modules --exclude=.venv .
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: zeekr-adapter-${{ github.ref_name }}.tar.gz
+          files: dist/zeekr-adapter-${{ github.ref_name }}.tar.gz
