@@ -27,7 +27,7 @@ jobs:
           mkdir -p dist
           TAG_NAME="${{ github.event.release.tag_name || github.ref_name }}"
           npm pack --pack-destination dist
-          mv "dist/iobroker.zeekr-${TAG_NAME#v}.tgz" "dist/iobroker-adapter-zeekr-${TAG_NAME}.tgz"
+          mv "dist/iobroker-adapter-zeekr-${TAG_NAME#v}.tgz" "dist/iobroker-adapter-zeekr-${TAG_NAME}.tgz"
           tar -czf "dist/iobroker-adapter-zeekr-${TAG_NAME}.tar.gz" \
             --exclude=.git \
             --exclude=node_modules \
