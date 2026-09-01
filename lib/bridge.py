@@ -68,7 +68,7 @@ def main() -> int:
     password = payload.get('password') or os.getenv('ZEEKR_PASSWORD') or ''
 
     if not username or not password:
-        print(json.dumps({"error": "Missing Zeekr credentials", "vehicles": []}))
+        print(json.dumps({"error": "Missing Zeekr credentials", "vehicles": [], "connection": False}))
         return 0
 
     try:
@@ -114,10 +114,10 @@ def main() -> int:
         print(json.dumps({"vehicles": normalized}))
         return 0
     except ZeekrException as exc:
-        print(json.dumps({"error": str(exc), "vehicles": []}))
+        print(json.dumps({"error": str(exc), "vehicles": [], "connection": False}))
         return 0
     except Exception as exc:  # pragma: no cover - bridge should not crash the adapter
-        print(json.dumps({"error": str(exc), "vehicles": []}))
+        print(json.dumps({"error": str(exc), "vehicles": [], "connection": False}))
         return 0
 
 
