@@ -2,7 +2,7 @@
 
 const { createAdapter } = require('./lib/adapter');
 
-function main() {
+function startAdapter() {
   const adapter = createAdapter();
   adapter.on('ready', () => {
     if (adapter.log && typeof adapter.log.info === 'function') {
@@ -12,4 +12,8 @@ function main() {
   return adapter;
 }
 
-main();
+if (require.main === module) {
+  startAdapter();
+}
+
+module.exports = startAdapter;

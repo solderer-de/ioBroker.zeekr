@@ -1,6 +1,6 @@
 {
   "name": "iobroker.zekr",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "ioBroker adapter for Zeekr electric vehicles",
   "private": false,
   "main": "main.js",
