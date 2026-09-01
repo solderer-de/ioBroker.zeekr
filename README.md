@@ -30,7 +30,7 @@ npm test
 
 The adapter is designed to be installed directly into an ioBroker host.
 
-Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`, and the installable release asset is attached there.
+Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`. For `iobroker url` installs, use the GitHub source archive URL for the tag; GitHub release-asset URLs are not accepted by the ioBroker installer.
 
 ### Option A: Install from file or URL in the ioBroker Admin UI
 
@@ -46,13 +46,13 @@ This is the preferred method for a real installation.
 For example, use the GitHub archive URL:
 
 ```text
-https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.5/iobroker-adapter-zeekr-v0.1.5.tar.gz
+https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.5.tar.gz
 ```
 
 The equivalent CLI command is:
 
 ```bash
-iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.5/iobroker-adapter-zeekr-v0.1.5.tar.gz --host iobroker --debug
+iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.5.tar.gz --host iobroker --debug
 ```
 
 Use the command exactly once; the install target is the URL, not an additional `iobroker` argument.
@@ -62,7 +62,7 @@ Use the command exactly once; the install target is the URL, not an additional `
 If you want to test the adapter from a local repository checkout, run:
 
 ```bash
-cd /path/to/iobroker.zeekr
+cd /path/to/iobroker-adapter-zeekr
 npm ci
 ```
 
@@ -70,7 +70,7 @@ Then make the adapter visible to ioBroker on a typical Linux host:
 
 ```bash
 mkdir -p /opt/iobroker/node_modules
-ln -s /path/to/iobroker.zeekr /opt/iobroker/node_modules/iobroker.zeekr
+ln -s /path/to/iobroker-adapter-zeekr /opt/iobroker/node_modules/iobroker.zeekr
 ```
 
 If you run ioBroker in Docker or a different base path, adapt the target directory accordingly.
