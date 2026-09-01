@@ -15,11 +15,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/solderer-de/iobroker.zeekr.git"
+    "url": "git+https://github.com/solderer-de/iobroker-adapter-zeekr.git"
   },
-  "homepage": "https://github.com/solderer-de/iobroker.zeekr",
+  "homepage": "https://github.com/solderer-de/iobroker-adapter-zeekr",
   "bugs": {
-    "url": "https://github.com/solderer-de/iobroker.zeekr/issues"
+    "url": "https://github.com/solderer-de/iobroker-adapter-zeekr/issues"
   },
   "scripts": {
     "test": "NODE_ENV=test node --test",
