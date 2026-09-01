@@ -10,7 +10,7 @@ fi
 if [ -n "$VERSION" ]; then
   INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.35}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.39}"
 fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
@@ -42,6 +42,9 @@ fi
 
 echo "Running ioBroker repair"
 $SUDO iobroker fix
-
+ 
+echo "Restarting ioBroker to refresh adapter metadata"
+$SUDO iobroker restart || true
+ 
 echo "Installing adapter ${ADAPTER_NAME} from $INSTALL_URL"
 $SUDO iobroker url "$INSTALL_URL" "$ADAPTER_NAME" --host iobroker --debug

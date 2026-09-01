@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.38",
+    "version": "0.1.39",
     "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
@@ -18,9 +18,9 @@
     "platform": "Javascript/Node.js",
     "main": "main.js",
     "mode": "daemon",
-    "icon": "admin/zeekr.svg",
+    "icon": "admin/zeekr.png",
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker.zeekr/main/admin/zeekr.svg",
+    "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker.zeekr/main/admin/zeekr.png",
     "readme": "https://github.com/solderer-de/iobroker.zeekr/blob/main/README.md",
     "licenseInformation": {
       "license": "MIT",
