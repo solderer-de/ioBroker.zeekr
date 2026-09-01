@@ -30,7 +30,7 @@ npm test
 
 The adapter is designed to be installed directly into an ioBroker host.
 
-Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`. For `iobroker url` installs, use a direct tarball URL from `codeload.github.com` rather than a GitHub repository URL or a GitHub release asset URL. The ioBroker CLI treats GitHub repository URLs as Git dependencies and can fall back to SSH-based installs; that is what triggers the `Permission denied (publickey)` failures on this host. A `codeload` tarball URL installs the package as a normal tarball and avoids that Git fallback.
+Important: the adapter repository is published at `solderer-de/iobroker.zekr`. For `iobroker url` installs, use a direct tarball URL from `codeload.github.com` rather than a GitHub repository URL or a GitHub release asset URL. The ioBroker CLI treats GitHub repository URLs as Git dependencies and can fall back to SSH-based installs; that is what triggers the `Permission denied (publickey)` failures on this host. A `codeload` tarball URL installs the package as a normal tarball and avoids that Git fallback.
 
 For tarball-based installs, pass the adapter name explicitly as the second argument. `iobroker url <url> zeekr ...` is the reliable form for this adapter. Without the explicit adapter name, the CLI can treat the full URL as the adapter identifier and fail later in the install/upload step even though the npm tarball install itself succeeded.
 
@@ -39,7 +39,7 @@ For tarball-based installs, pass the adapter name explicitly as the second argum
 Use this exact install form:
 
 ```bash
-iobroker url https://codeload.github.com/solderer-de/iobroker-adapter-zeekr/tar.gz/refs/tags/v0.1.26 zeekr --host iobroker --debug
+iobroker url https://codeload.github.com/solderer-de/iobroker.zekr/tar.gz/refs/tags/v0.1.27 zeekr --host iobroker --debug
 ```
 
 The second argument (`zeekr`) is required for this adapter. This is the concrete install command for the current release.
@@ -63,7 +63,7 @@ In that case, remove the stale module directory from the ioBroker host and reins
 ```bash
 sudo rm -rf /opt/iobroker/node_modules/iobroker.zeekr
 sudo iobroker fix
-sudo iobroker url https://codeload.github.com/solderer-de/iobroker-adapter-zeekr/tar.gz/refs/tags/v0.1.26 zeekr --host iobroker --debug
+sudo iobroker url https://codeload.github.com/solderer-de/iobroker.zekr/tar.gz/refs/tags/v0.1.27 zeekr --host iobroker --debug
 ```
 
 The repository also ships helper scripts for this case:
