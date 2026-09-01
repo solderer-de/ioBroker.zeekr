@@ -15,7 +15,7 @@ fi
 if [ -n "$VERSION" ]; then
   INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.33}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.34}"
 fi
 
 echo "Installing adapter ${ADAPTER_NAME} from ${INSTALL_URL}"
