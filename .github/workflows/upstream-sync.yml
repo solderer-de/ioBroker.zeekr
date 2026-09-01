@@ -17,4 +17,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/sync-upstream.mjs
-        working-directory: iobroker-adapter-zeekr
+        working-directory: .

@@ -47,6 +47,12 @@ The adapter accepts a lightweight `sendCommand` message with:
 
 The command is routed through the Python bridge and forwarded to the underlying `zeekr_ev_api` client.
 
+## Release and Maintenance
+
+- The repository includes GitHub Actions for CI, release creation and upstream-repo monitoring.
+- Create a new release by pushing a tag like `v0.1.0`.
+- The upstream sync workflow checks the current releases of the underlying Zeekr projects and stores the result in `upstream-releases.json`.
+
 ## Roadmap
 
 - expose additional datapoints from the Zeekr API
