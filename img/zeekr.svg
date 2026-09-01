@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Zeekr icon">
-  <rect width="128" height="128" rx="24" fill="#0b5fff"/>
-  <path d="M33 31h62c14 0 24 10 24 24v10c0 14-10 24-24 24H49v18H33V31Zm16 16v28h39c6 0 10-4 10-10V57c0-6-4-10-10-10H49Z" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Zeekr logo">
+  <rect width="256" height="256" rx="48" fill="#0F172A"/>
+  <path d="M72 72h112c27 0 48 21 48 48s-21 48-48 48H72V72Z" fill="#FFFFFF"/>
+  <path d="M72 72h98c20 0 35 15 35 35s-15 35-35 35H72V72Z" fill="#00A3E0"/>
+  <path d="M84 92h74c12 0 21 9 21 21s-9 21-21 21H84V92Z" fill="#0F172A"/>
+  <path d="M100 116h40v24h-40z" fill="#FFFFFF"/>
+  <path d="M104 56h20v64h-20z" fill="#FFFFFF"/>
 </svg>
