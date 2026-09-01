@@ -13,9 +13,9 @@ if [ -z "$VERSION" ]; then
 fi
 
 if [ -n "$VERSION" ]; then
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
+  INSTALL_URL="${1:-https://github.com/${REPO}/releases/download/v${VERSION}/iobroker-adapter-zeekr-v${VERSION}.tgz}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.25}"
+  INSTALL_URL="${1:-https://github.com/${REPO}/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz}"
 fi
 
 echo "Installing adapter ${ADAPTER_NAME} from ${INSTALL_URL}"

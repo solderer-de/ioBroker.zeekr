@@ -34,19 +34,19 @@ jobs:
             --exclude=.venv \
             --exclude=dist \
             .
-          printf 'https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/%s\n' "$TAG_NAME" > dist/install-url.txt
+          printf 'https://github.com/${{ github.repository }}/releases/download/%s/iobroker-adapter-zeekr-%s.tgz\n' "$TAG_NAME" "$TAG_NAME" > dist/install-url.txt
           cat > dist/install-command.txt <<EOF
-          iobroker url https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME} zeekr --host iobroker --debug
+          iobroker url https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/iobroker-adapter-zeekr-${TAG_NAME}.tgz zeekr --host iobroker --debug
           EOF
           cat > dist/install-command.sh <<EOF
           #!/usr/bin/env bash
           set -euo pipefail
-          iobroker url "https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME}" zeekr --host iobroker --debug
+          iobroker url "https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/iobroker-adapter-zeekr-${TAG_NAME}.tgz" zeekr --host iobroker --debug
           EOF
           chmod +x dist/install-command.sh
           echo "Install via ioBroker:" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`bash" >> "$GITHUB_STEP_SUMMARY"
-          echo "iobroker url https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME} zeekr --host iobroker --debug" >> "$GITHUB_STEP_SUMMARY"
+          echo "iobroker url https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/iobroker-adapter-zeekr-${TAG_NAME}.tgz zeekr --host iobroker --debug" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload release asset
         uses: softprops/action-gh-release@v2

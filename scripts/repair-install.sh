@@ -8,9 +8,9 @@ if command -v node >/dev/null 2>&1 && [ -f package.json ]; then
   VERSION="$(node -p "require('./package.json').version" 2>/dev/null || true)"
 fi
 if [ -n "$VERSION" ]; then
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
+  INSTALL_URL="${1:-https://github.com/${REPO}/releases/download/v${VERSION}/iobroker-adapter-zeekr-v${VERSION}.tgz}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.25}"
+  INSTALL_URL="${1:-https://github.com/${REPO}/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz}"
 fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
