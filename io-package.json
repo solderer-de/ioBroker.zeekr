@@ -1,0 +1,53 @@
+{
+  "common": {
+    "name": "zeekr",
+    "version": "0.1.0",
+    "title": "ioBroker Zeekr Adapter",
+    "titleLang": {
+      "en": "ioBroker Zeekr Adapter",
+      "de": "ioBroker Zeekr Adapter"
+    },
+    "desc": {
+      "en": "Connects Zeekr electric vehicles to ioBroker and exposes the available vehicle data as datapoints.",
+      "de": "Verbindet Zeekr-Fahrzeuge mit ioBroker und stellt die verfügbaren Fahrzeugsdaten als Datenpunkte bereit."
+    },
+    "authors": [
+      "Fryyyyy"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "mode": "daemon",
+    "icon": "img/zeekr.svg",
+    "enabled": true,
+    "keywords": [
+      "zeekr",
+      "ev",
+      "vehicle",
+      "car",
+      "iobroker"
+    ],
+    "tier": 2,
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "materialize": true,
+    "adminUI": {
+      "config": "json"
+    },
+    "type": "vehicle"
+  },
+  "native": {
+    "username": "",
+    "password": "",
+    "pollingInterval": 300,
+    "vehicleFilter": "",
+    "debug": false
+  },
+  "objects": [],
+  "instanceObjects": []
+}
