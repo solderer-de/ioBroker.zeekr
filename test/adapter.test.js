@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 
-const { createDeviceBaseId } = require('../lib/adapter');
+const { createDeviceBaseId, ZeekrAdapter } = require('../lib/adapter');
 
 test('createDeviceBaseId sanitizes VIN identifiers', () => {
   assert.equal(createDeviceBaseId({ vin: 'ABC-123/XYZ' }), 'vehicles.abc_123_xyz');
@@ -37,4 +37,11 @@ print(json.dumps(payload))
   assert.equal(payload.isCharging, true);
   assert.equal(payload.isLocked, true);
   assert.equal(payload.lockState, 'locked');
+});
+
+test('ensureBaseObjects creates the root info and vehicles channels', async () => {
+  const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+  await adapter.ensureBaseObjects();
+  assert.ok(adapter._objects.has('info'));
+  assert.ok(adapter._objects.has('vehicles'));
 });

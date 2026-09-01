@@ -63,5 +63,24 @@
     "pythonBinary": "",
     "debug": false
   },  "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information",
+        "type": "channel"
+      },
+      "native": {}
+    },
+    {
+      "_id": "vehicles",
+      "type": "channel",
+      "common": {
+        "name": "Vehicles",
+        "type": "channel"
+      },
+      "native": {}
+    }
+  ]
 }
