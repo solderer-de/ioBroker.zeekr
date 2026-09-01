@@ -23,6 +23,22 @@ def find_value(payload, keys):
     return None
 
 
+def coerce_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {'1', 'true', 'yes', 'y', 'on', 'active', 'charging', 'plugged', 'locked'}:
+            return True
+        if normalized in {'0', 'false', 'no', 'n', 'off', 'inactive', 'unplugged', 'unlocked', 'none', 'null', ''}:
+            return False
+    return bool(value)
+
+
 def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_state=None):
     if hasattr(vehicle_info, '__dict__'):
         vehicle_dict = {key: getattr(vehicle_info, key) for key in dir(vehicle_info) if not key.startswith('_')}
@@ -31,16 +47,31 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     else:
         vehicle_dict = {}
 
-    name = find_value(vehicle_dict, ['name', 'vehicleName', 'displayName', 'modelName']) or 'Vehicle'
-    vin = find_value(vehicle_dict, ['vin', 'VIN', 'vehicleId', 'id', 'vehicle_id']) or ''
-    battery = find_value(status or {}, ['batteryLevel', 'battery_level', 'stateOfCharge', 'soc'])
-    range_km = find_value(status or {}, ['rangeKm', 'range_km', 'drivingRange', 'remainingRange'])
-    odometer = find_value(status or {}, ['odometerKm', 'odometer_km', 'mileage', 'odometer'])
-    charge_power = find_value(charging_status or {}, ['chargePower', 'chargingPower', 'power'])
-    current_speed = find_value(status or {}, ['speed', 'currentSpeed', 'vehicleSpeed'])
-    plugged_in = find_value(charging_status or {}, ['pluggedIn', 'isPluggedIn'])
-    charging = find_value(charging_status or {}, ['isCharging', 'chargingStatus', 'charging'])
-    temperature = find_value(status or {}, ['insideTemperature', 'inside_temp', 'temperature'])
+    status_payload = status or {}
+    charging_payload = charging_status or {}
+    remote_payload = remote_state or {}
+    combined_payload = {
+        'vehicle': vehicle_dict,
+        'status': status_payload,
+        'charging': charging_payload,
+        'remote': remote_payload,
+    }
+
+    name = find_value(combined_payload, ['name', 'vehicleName', 'displayName', 'modelName']) or 'Vehicle'
+    vin = find_value(combined_payload, ['vin', 'VIN', 'vehicleId', 'id', 'vehicle_id']) or ''
+    battery = find_value(combined_payload, ['batteryLevel', 'battery_level', 'stateOfCharge', 'soc', 'battery'])
+    range_km = find_value(combined_payload, ['rangeKm', 'range_km', 'drivingRange', 'remainingRange', 'range', 'distanceToEmpty'])
+    odometer = find_value(combined_payload, ['odometerKm', 'odometer_km', 'mileage', 'odometer', 'odometerValue'])
+    charge_power = find_value(combined_payload, ['chargePower', 'chargingPower', 'power', 'chargingPowerKw'])
+    current_speed = find_value(combined_payload, ['speed', 'currentSpeed', 'vehicleSpeed', 'travelSpeed'])
+    plugged_in = find_value(combined_payload, ['pluggedIn', 'isPluggedIn', 'plugged', 'chargingCableConnected'])
+    charging = find_value(combined_payload, ['isCharging', 'chargingStatus', 'charging', 'is_charging', 'chargeStatus'])
+    temperature = find_value(combined_payload, ['insideTemperature', 'inside_temp', 'temperature', 'cabinTemperature'])
+    charging_state = find_value(combined_payload, ['chargingState', 'chargeState', 'chargingStatus', 'chargeStatus'])
+    lock_state = find_value(combined_payload, ['lockState', 'doorLockStatus', 'lock_status', 'lockStatus'])
+    is_locked = find_value(combined_payload, ['isLocked', 'locked', 'is_locked', 'vehicleLocked', 'lockState'])
+    climate_on = find_value(combined_payload, ['climateOn', 'climate', 'airConditioning', 'hvacOn'])
+    last_updated = find_value(combined_payload, ['lastUpdated', 'updatedAt', 'timestamp', 'updateTime', 'time'])
 
     return {
         'name': name,
@@ -50,13 +81,18 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'odometerKm': odometer,
         'chargePower': charge_power,
         'currentSpeed': current_speed,
-        'pluggedIn': plugged_in,
-        'isCharging': bool(charging),
+        'pluggedIn': coerce_bool(plugged_in),
+        'isCharging': coerce_bool(charging),
         'temperature': temperature,
-        'status': status or {},
-        'chargingStatus': charging_status or {},
-        'remoteControlState': remote_state or {},
-        'raw': vehicle_dict,
+        'chargingState': charging_state,
+        'lockState': lock_state,
+        'isLocked': coerce_bool(is_locked),
+        'climateOn': coerce_bool(climate_on),
+        'lastUpdated': last_updated,
+        'status': status_payload,
+        'chargingStatus': charging_payload,
+        'remoteControlState': remote_payload,
+        'raw': combined_payload,
     }
 
 

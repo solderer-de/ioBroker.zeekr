@@ -1,5 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const path = require('node:path');
 
 const { createDeviceBaseId } = require('../lib/adapter');
 
@@ -9,4 +11,30 @@ test('createDeviceBaseId sanitizes VIN identifiers', () => {
 
 test('createDeviceBaseId falls back to the vehicle name', () => {
   assert.equal(createDeviceBaseId({ name: 'My Car' }), 'vehicles.my_car');
+});
+
+test('bridge normalization exposes common vehicle fields', () => {
+  const result = spawnSync(process.env.PYTHON || 'python3', ['-c', `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle(
+    {'vehicleName': 'My Car', 'vin': 'ABC123'},
+    {'batteryLevel': 82, 'rangeKm': 410, 'odometer': 1234},
+    {'pluggedIn': True, 'isCharging': True, 'chargingPower': 11},
+    {'lockState': 'locked'}
+)
+print(json.dumps(payload))
+`], { cwd: path.join(__dirname, '..') });
+
+  assert.equal(result.status, 0, result.stderr.toString());
+  const payload = JSON.parse(result.stdout.toString());
+  assert.equal(payload.batteryLevel, 82);
+  assert.equal(payload.chargePower, 11);
+  assert.equal(payload.isCharging, true);
+  assert.equal(payload.isLocked, true);
+  assert.equal(payload.lockState, 'locked');
 });
