@@ -1,9 +1,26 @@
 {
   "name": "iobroker.zekr",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ioBroker adapter for Zeekr electric vehicles",
-  "private": true,
+  "private": false,
   "main": "main.js",
+  "files": [
+    "admin",
+    "img",
+    "lib",
+    "main.js",
+    "io-package.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schoebelh/iobroker-adapter-zeekr.git"
+  },
+  "homepage": "https://github.com/schoebelh/iobroker-adapter-zeekr",
+  "bugs": {
+    "url": "https://github.com/schoebelh/iobroker-adapter-zeekr/issues"
+  },
   "scripts": {
     "test": "NODE_ENV=test node --test",
     "lint": "echo 'No linting configured yet'"

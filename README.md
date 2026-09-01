@@ -30,16 +30,33 @@ npm test
 
 The adapter is designed to be installed directly into an ioBroker host.
 
-### 1. Install the repository locally
+### Option A: Install from file or URL in the ioBroker Admin UI
+
+This is the preferred method for a real installation.
+
+1. Create a release archive from the repository, or use the latest GitHub release asset.
+2. In ioBroker Admin, open the adapter tab and choose either:
+   - "Adapter from file install" and upload the archive, or
+   - "Adapter from URL install" and provide the direct URL to the release archive.
+3. The archive must contain the adapter package root with `io-package.json`, `package.json`, `main.js`, `lib/`, `admin/`, and `img/`.
+4. After installation, restart ioBroker and create a new instance of the `Zeekr` adapter.
+
+For example, a GitHub release URL can look like:
+
+```text
+https://github.com/schoebelh/iobroker-adapter-zeekr/releases/download/v0.1.1/iobroker-adapter-zeekr-0.1.1.tgz
+```
+
+### Option B: Install directly from a local checkout
+
+If you want to test the adapter from a local repository checkout, run:
 
 ```bash
 cd /path/to/iobroker-adapter-zeekr
 npm ci
 ```
 
-### 2. Make the adapter visible to ioBroker
-
-On a typical Linux host this looks like:
+Then make the adapter visible to ioBroker on a typical Linux host:
 
 ```bash
 mkdir -p /opt/iobroker/node_modules
