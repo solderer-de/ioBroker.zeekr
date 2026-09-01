@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.34",
+    "version": "0.1.35",
     "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
@@ -18,7 +18,7 @@
     "platform": "Javascript/Node.js",
     "main": "main.js",
     "mode": "daemon",
-    "icon": "img/zeekr.svg",
+    "icon": "admin/zeekr.svg",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker.zeekr/main/admin/zeekr.svg",
     "readme": "https://github.com/solderer-de/iobroker.zeekr/blob/main/README.md",
@@ -38,7 +38,7 @@
     "dataSource": "poll",
     "materialize": true,
     "adminUI": {
-      "config": "json"
+      "config": "materialize"
     },
     "type": "general",
     "compact": true,
