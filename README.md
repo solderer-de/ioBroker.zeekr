@@ -13,7 +13,7 @@ This repository contains an ioBroker adapter for Zeekr electric vehicles. It fol
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 18+ (20+ recommended)
 - Python 3
 
 No manual Python package installation is required. The adapter creates a local virtual environment on first run and installs the Zeekr dependency automatically.
