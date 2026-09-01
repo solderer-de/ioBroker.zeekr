@@ -1,70 +1,168 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <title>Zeekr Adapter Settings</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f3f6fb;
+        color: #17212b;
+      }
+      .adapter-container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 24px;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #e3e8f0;
+      }
+      .header img {
+        width: 84px;
+        height: 84px;
+        flex-shrink: 0;
+      }
+      .header h3 {
+        margin: 0 0 4px 0;
+      }
+      .subtitle {
+        margin: 0;
+        color: #5c6b82;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      label {
+        font-weight: 600;
+      }
+      input[type="text"], input[type="password"], input[type="number"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border: 1px solid #c7d2e0;
+        border-radius: 4px;
+        background: #fff;
+        color: #17212b;
+      }
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .checkbox-row label {
+        font-weight: 500;
+      }
+      .hint {
+        margin-top: 8px;
+        color: #5c6b82;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 24px;
+      }
+      .actions button {
+        border: none;
+        border-radius: 4px;
+        padding: 8px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .actions .primary {
+        background: #2d6cdf;
+        color: #fff;
+      }
+      .actions .secondary {
+        background: #eef2f7;
+        color: #17212b;
+      }
+    </style>
   </head>
   <body>
-    <div class="m adapter-container">
-      <div class="row">
-        <div class="col s12">
-          <h5 class="translate">Zeekr adapter configuration</h5>
-          <p class="translate">Configure your Zeekr credentials, polling behavior, and optional vehicle filter.</p>
+    <div class="adapter-container">
+      <div class="header">
+        <img src="zeekr.svg" alt="Zeekr logo" />
+        <div>
+          <h3 class="translate">Zeekr adapter configuration</h3>
+          <p class="subtitle">Configure your Zeekr credentials, polling behavior, and optional vehicle filter.</p>
         </div>
       </div>
-      <div class="row">
-        <div class="col s12 m6">
-          <label for="username" class="translate">Username</label>
+      <div class="grid">
+        <div class="field">
+          <label for="username">Username</label>
           <input id="username" type="text" />
         </div>
-        <div class="col s12 m6">
-          <label for="password" class="translate">Password</label>
+        <div class="field">
+          <label for="password">Password</label>
           <input id="password" type="password" />
         </div>
       </div>
-      <div class="row">
-        <div class="col s12 m6">
-          <label for="pollingInterval" class="translate">Polling interval (seconds)</label>
+      <div class="grid">
+        <div class="field">
+          <label for="pollingInterval">Polling interval (seconds)</label>
           <input id="pollingInterval" type="number" min="30" step="30" />
         </div>
-        <div class="col s12 m6">
-          <label for="vehicleFilter" class="translate">Vehicle filter</label>
+        <div class="field">
+          <label for="vehicleFilter">Vehicle filter</label>
           <input id="vehicleFilter" type="text" />
         </div>
       </div>
-      <div class="row">
-        <div class="col s12 m6">
-          <label for="pythonBinary" class="translate">Python binary</label>
+      <div class="grid">
+        <div class="field">
+          <label for="pythonBinary">Python binary</label>
           <input id="pythonBinary" type="text" />
         </div>
-        <div class="col s12 m6">
-          <label for="alertWebhook" class="translate">Alert webhook URL</label>
+        <div class="field">
+          <label for="alertWebhook">Alert webhook URL</label>
           <input id="alertWebhook" type="text" />
         </div>
       </div>
-      <div class="row">
-        <div class="col s12">
-          <label>
-            <input id="debug" type="checkbox" />
-            <span class="translate">Enable debug logging</span>
-          </label>
-        </div>
+      <div class="checkbox-row">
+        <input id="debug" type="checkbox" />
+        <label for="debug">Enable debug logging</label>
       </div>
-      <div class="row">
-        <div class="col s12">
-          <p class="translate">Leave the Python binary empty to use the default environment.</p>
-        </div>
+      <div class="hint">Leave the Python binary empty to use the default environment.</div>
+      <div class="actions">
+        <button type="button" class="primary" id="saveButton">Save</button>
+        <button type="button" class="secondary" id="cancelButton">Cancel</button>
       </div>
     </div>
     <script type="text/javascript">
+      let currentSettings = {};
+      let onChangeHandler = null;
+
       function load(settings, onChange) {
-        $('#username').val(settings.username || '');
-        $('#password').val(settings.password || '');
-        $('#pollingInterval').val(settings.pollingInterval || 300);
-        $('#vehicleFilter').val(settings.vehicleFilter || '');
-        $('#pythonBinary').val(settings.pythonBinary || '');
-        $('#alertWebhook').val(settings.alertWebhook || '');
-        $('#debug').prop('checked', !!settings.debug);
-        onChange(false);
+        currentSettings = settings || {};
+        onChangeHandler = onChange;
+        $('#username').val(currentSettings.username || '');
+        $('#password').val(currentSettings.password || '');
+        $('#pollingInterval').val(currentSettings.pollingInterval || 300);
+        $('#vehicleFilter').val(currentSettings.vehicleFilter || '');
+        $('#pythonBinary').val(currentSettings.pythonBinary || '');
+        $('#alertWebhook').val(currentSettings.alertWebhook || '');
+        $('#debug').prop('checked', !!currentSettings.debug);
+        if (onChangeHandler) {
+          onChangeHandler(false);
+        }
       }
 
       function save(callback) {
@@ -77,8 +175,25 @@
           alertWebhook: $('#alertWebhook').val(),
           debug: $('#debug').is(':checked')
         };
-        callback(settings);
+        currentSettings = settings;
+        if (callback) {
+          callback(settings);
+        }
       }
+
+      $('#saveButton').on('click', function () {
+        save(function (settings) {
+          if (typeof socket !== 'undefined' && socket.emit) {
+            socket.emit('submit', settings);
+          }
+        });
+      });
+
+      $('#cancelButton').on('click', function () {
+        if (typeof socket !== 'undefined' && socket.emit) {
+          socket.emit('cancel');
+        }
+      });
     </script>
   </body>
 </html>

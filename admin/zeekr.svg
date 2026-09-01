@@ -1,8 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Zeekr logo">
-  <rect width="256" height="256" rx="48" fill="#0F172A"/>
-  <path d="M72 72h112c27 0 48 21 48 48s-21 48-48 48H72V72Z" fill="#FFFFFF"/>
-  <path d="M72 72h98c20 0 35 15 35 35s-15 35-35 35H72V72Z" fill="#00A3E0"/>
-  <path d="M84 92h74c12 0 21 9 21 21s-9 21-21 21H84V92Z" fill="#0F172A"/>
-  <path d="M100 116h40v24h-40z" fill="#FFFFFF"/>
-  <path d="M104 56h20v64h-20z" fill="#FFFFFF"/>
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1567 1568" width="1567" height="1568">
+	<title>Zeekr_logo-svg</title>
+	<style>
+		.s0 { fill: #000000 } 
+	</style>
+	<path id="Layer" fill-rule="evenodd" class="s0" d="m0 0h1566.1v1567.3h-1566.1zm913.2 1436.3v-429.6l-391.6-391.5v-484.7h-391.2v1306.3zm522-1305.9h-782.8v431l391.7 391.5v483.8h391.6z"/>
 </svg>
