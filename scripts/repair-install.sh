@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INSTALL_URL="${1:-https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz}"
+REPO="${REPO:-solderer-de/iobroker-adapter-zeekr}"
+VERSION=""
+ADAPTER_NAME="${ADAPTER_NAME:-zeekr}"
+if command -v node >/dev/null 2>&1 && [ -f package.json ]; then
+  VERSION="$(node -p "require('./package.json').version" 2>/dev/null || true)"
+fi
+if [ -n "$VERSION" ]; then
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
+else
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.25}"
+fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
 ADAPTER_DIR="${NODE_MODULES_DIR}/iobroker.zeekr"
@@ -27,5 +37,5 @@ fi
 echo "Running ioBroker repair"
 $SUDO iobroker fix
 
-echo "Installing adapter from $INSTALL_URL"
-$SUDO iobroker url "$INSTALL_URL" --host iobroker --debug
+echo "Installing adapter ${ADAPTER_NAME} from $INSTALL_URL"
+$SUDO iobroker url "$INSTALL_URL" "$ADAPTER_NAME" --host iobroker --debug

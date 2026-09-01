@@ -30,32 +30,25 @@ npm test
 
 The adapter is designed to be installed directly into an ioBroker host.
 
-Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`. For `iobroker url` installs, use the GitHub release asset URL ending in `.tgz`; the GitHub source archive URL (`.../archive/refs/tags/...`) is not the right input for this install path and will be resolved as a Git dependency.
+Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`. For `iobroker url` installs, use a direct tarball URL from `codeload.github.com` rather than a GitHub release asset or GitHub archive URL. The `iobroker` CLI rewrites GitHub repository URLs into a Git dependency form, which can fail on hosts that use SSH-based GitHub access or that do not support the shorthand install path. A `codeload` tarball URL installs the package as a normal tarball and avoids that Git fallback.
 
-### Option A: Install from file or URL in the ioBroker Admin UI
+For tarball-based installs, pass the adapter name explicitly as the second argument. `iobroker url <url> zeekr ...` is the reliable form for this adapter. Without the explicit adapter name, the CLI can treat the full URL as the adapter identifier and fail later in the install/upload step even though the npm tarball install itself succeeded.
 
-This is the preferred method for a real installation.
+### Install via CLI (recommended)
 
-1. Create a release archive from the repository, or use the latest GitHub release asset.
-2. In ioBroker Admin, open the adapter tab and choose either:
-  - "Adapter from file install" and upload the archive, or
-  - "Adapter from URL install" and provide the direct URL to the release archive.
-3. The archive must contain the adapter package root with `io-package.json`, `package.json`, `main.js`, `lib/`, `admin/`, and `img/`.
-4. After installation, restart ioBroker and create a new instance of the `Zeekr` adapter.
-
-For example, use the GitHub release asset URL:
-
-```text
-https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz
-```
-
-The equivalent CLI command is:
+Use this exact install form:
 
 ```bash
-iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz --host iobroker --debug
+iobroker url https://codeload.github.com/solderer-de/iobroker-adapter-zeekr/tar.gz/refs/tags/<tag> zeekr --host iobroker --debug
 ```
 
-Use the command exactly once; the install target is the URL, not an additional `iobroker` argument.
+Replace `<tag>` with the release tag you want to install (for example `v0.1.25`). The second argument (`zeekr`) is required for this adapter. Do not use the GitHub repository archive URL or a GitHub release asset URL for this install path.
+
+### Install via ioBroker Admin UI
+
+If you prefer the Admin UI, use the same `codeload` URL in the "Adapter from URL install" field. If you upload a file instead, upload the tarball from the release; it must contain the adapter package root with `io-package.json`, `package.json`, `main.js`, `lib/`, `admin/`, and `img/`.
+
+After installation, restart ioBroker and create a new instance of the `Zeekr` adapter.
 
 ### Repairing a broken or half-installed adapter
 
@@ -65,19 +58,24 @@ If a previous install left a stale `node_modules/iobroker.zeekr` directory behin
 Cannot find module 'iobroker.zeekr/io-package.json'
 ```
 
-In that case, remove the stale module directory from the ioBroker host and reinstall the adapter from the current GitHub release asset:
+In that case, remove the stale module directory from the ioBroker host and reinstall the adapter from the current codeload tarball URL:
 
 ```bash
 sudo rm -rf /opt/iobroker/node_modules/iobroker.zeekr
 sudo iobroker fix
-sudo iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz --host iobroker --debug
+sudo iobroker url https://codeload.github.com/solderer-de/iobroker-adapter-zeekr/tar.gz/refs/tags/<tag> zeekr --host iobroker --debug
 ```
 
-The repository also ships a helper script for this case:
+Replace `<tag>` with the release tag you want to install (for example `v0.1.25`).
+
+The repository also ships helper scripts for this case:
 
 ```bash
 ./scripts/repair-install.sh
+./scripts/install-adapter.sh
 ```
+
+Both scripts use the same `codeload` tarball URL format and pass the adapter name `zeekr` explicitly for a clean, SSH-free installation path.
 
 ### Option B: Install directly from a local checkout
 
