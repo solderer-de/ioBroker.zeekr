@@ -10,7 +10,7 @@ fi
 if [ -n "$VERSION" ]; then
   INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.25}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.26}"
 fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
