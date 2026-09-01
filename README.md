@@ -44,13 +44,13 @@ This is the preferred method for a real installation.
 For example, use a GitHub source archive URL rather than the release-asset URL:
 
 ```text
-https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.1.tar.gz
+https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.2.tar.gz
 ```
 
 The ioBroker installer accepts this archive form directly. The equivalent CLI command is:
 
 ```bash
-iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.1.tar.gz --host iobroker --debug
+iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.2.tar.gz --host iobroker --debug
 ```
 
 ### Option B: Install directly from a local checkout
