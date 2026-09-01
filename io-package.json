@@ -20,11 +20,11 @@
     "mode": "daemon",
     "icon": "img/zeekr.svg",
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/schoebelh/iobroker-adapter-zeekr/main/admin/zeekr.svg",
-    "readme": "https://github.com/schoebelh/iobroker-adapter-zeekr/blob/main/README.md",
+    "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker-adapter-zeekr/main/admin/zeekr.svg",
+    "readme": "https://github.com/solderer-de/iobroker-adapter-zeekr/blob/main/README.md",
     "licenseInformation": {
       "license": "MIT",
-      "link": "https://github.com/schoebelh/iobroker-adapter-zeekr/blob/main/LICENSE"
+      "link": "https://github.com/solderer-de/iobroker-adapter-zeekr/blob/main/LICENSE"
     },
     "keywords": [
       "zeekr",

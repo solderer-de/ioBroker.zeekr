@@ -44,7 +44,7 @@ This is the preferred method for a real installation.
 For example, a GitHub release URL can look like:
 
 ```text
-https://github.com/schoebelh/iobroker-adapter-zeekr/releases/download/v0.1.1/iobroker-adapter-zeekr-0.1.1.tgz
+https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.1/iobroker-adapter-zeekr-0.1.1.tgz
 ```
 
 ### Option B: Install directly from a local checkout
