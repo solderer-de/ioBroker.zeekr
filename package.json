@@ -1,6 +1,6 @@
 {
   "name": "iobroker.zeekr",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "ioBroker adapter for Zeekr electric vehicles",
   "private": false,
   "main": "main.js",
@@ -28,10 +28,5 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {
-    "@iobroker/adapter-core": "^3.3.0"
-  },
-  "devDependencies": {
-    "@iobroker/testing": "^5.0.0"
-  }
+  "dependencies": {}
 }

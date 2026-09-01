@@ -5,6 +5,11 @@ const path = require('node:path');
 
 const { createDeviceBaseId, ZeekrAdapter } = require('../lib/adapter');
 
+function createMainAdapterInstance() {
+  const AdapterClass = require('../main');
+  return new AdapterClass({ name: 'zeekr' });
+}
+
 test('createDeviceBaseId sanitizes VIN identifiers', () => {
   assert.equal(createDeviceBaseId({ vin: 'ABC-123/XYZ' }), 'vehicles.abc_123_xyz');
 });
@@ -46,8 +51,8 @@ test('ensureBaseObjects creates the root info and vehicles channels', async () =
   assert.ok(adapter._objects.has('vehicles'));
 });
 
-test('main entrypoint exports an adapter instance', () => {
-  const adapter = require('../main');
+test('main entrypoint exports an adapter constructor', () => {
+  const adapter = createMainAdapterInstance();
   assert.equal(typeof adapter.on, 'function');
   assert.equal(typeof adapter.emit, 'function');
 });
