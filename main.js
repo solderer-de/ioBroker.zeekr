@@ -1,3 +1,5 @@
 'use strict';
 
-module.exports = require('./lib/adapter').ZeekrAdapter;
+const { createAdapter } = require('./lib/adapter');
+
+module.exports = createAdapter();
