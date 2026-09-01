@@ -39,10 +39,12 @@ For tarball-based installs, pass the adapter name explicitly as the second argum
 Use this exact install form:
 
 ```bash
-iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz zeekr --host iobroker --debug
+git config --global url."https://github.com/".insteadOf ssh://git@github.com/
+git config --global url."https://github.com/".insteadOf git@github.com:
+iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr zeekr --host iobroker --debug
 ```
 
-The second argument (`zeekr`) is required for this adapter. This is the concrete install link for the current release asset.
+The second argument (`zeekr`) is required for this adapter. The Git config lines force HTTPS for GitHub so ioBroker's npm-based install path does not fall back to SSH and fail.
 
 ### Install via ioBroker Admin UI
 

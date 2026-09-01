@@ -12,11 +12,14 @@ if [ -z "$VERSION" ]; then
   fi
 fi
 
+INSTALL_URL="${1:-https://github.com/${REPO}}"
+
 if [ -n "$VERSION" ]; then
-  INSTALL_URL="${1:-https://github.com/${REPO}/releases/download/v${VERSION}/iobroker-adapter-zeekr-v${VERSION}.tgz}"
-else
-  INSTALL_URL="${1:-https://github.com/${REPO}/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz}"
+  echo "Using adapter version ${VERSION}"
 fi
+
+git config --global url."https://github.com/".insteadOf ssh://git@github.com/
+git config --global url."https://github.com/".insteadOf git@github.com:
 
 echo "Installing adapter ${ADAPTER_NAME} from ${INSTALL_URL}"
 iobroker url "$INSTALL_URL" "$ADAPTER_NAME" --host "$HOST" --debug
