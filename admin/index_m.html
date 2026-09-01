@@ -118,19 +118,59 @@
       </div>
       <div class="grid">
         <div class="field">
+          <label for="countryCode">Country code</label>
+          <input id="countryCode" type="text" />
+        </div>
+        <div class="field">
+          <label for="hmacAccessKey">HMAC access key</label>
+          <input id="hmacAccessKey" type="password" />
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="hmacSecretKey">HMAC secret key</label>
+          <input id="hmacSecretKey" type="password" />
+        </div>
+        <div class="field">
+          <label for="passwordPublicKey">Password encryption public key</label>
+          <input id="passwordPublicKey" type="password" />
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="prodSecret">Production secret</label>
+          <input id="prodSecret" type="password" />
+        </div>
+        <div class="field">
+          <label for="vinKey">VIN encryption key</label>
+          <input id="vinKey" type="password" />
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="vinIv">VIN encryption IV</label>
+          <input id="vinIv" type="password" />
+        </div>
+        <div class="field">
           <label for="pollingInterval">Polling interval (seconds)</label>
           <input id="pollingInterval" type="number" min="30" step="30" />
         </div>
+      </div>
+      <div class="grid">
         <div class="field">
           <label for="vehicleFilter">Vehicle filter (optional)</label>
           <input id="vehicleFilter" type="text" />
+        </div>
+        <div class="field">
+          <label for="pythonBinary">Python binary (optional)</label>
+          <input id="pythonBinary" type="text" />
         </div>
       </div>
       <div class="checkbox-row">
         <input id="debug" type="checkbox" />
         <label for="debug">Enable debug logging</label>
       </div>
-      <div class="hint">Only Zeekr-specific connection settings are required here.</div>
+      <div class="hint">The adapter needs the same Zeekr-specific secrets required by the upstream zeekr_ev_api client.</div>
       <div class="actions">
         <button type="button" class="primary" id="saveButton">Save</button>
         <button type="button" class="secondary" id="cancelButton">Cancel</button>
@@ -145,8 +185,16 @@
         onChangeHandler = onChange;
         $('#username').val(currentSettings.username || '');
         $('#password').val(currentSettings.password || '');
+        $('#countryCode').val(currentSettings.countryCode || 'AU');
+        $('#hmacAccessKey').val(currentSettings.hmacAccessKey || '');
+        $('#hmacSecretKey').val(currentSettings.hmacSecretKey || '');
+        $('#passwordPublicKey').val(currentSettings.passwordPublicKey || '');
+        $('#prodSecret').val(currentSettings.prodSecret || '');
+        $('#vinKey').val(currentSettings.vinKey || '');
+        $('#vinIv').val(currentSettings.vinIv || '');
         $('#pollingInterval').val(currentSettings.pollingInterval || 300);
         $('#vehicleFilter').val(currentSettings.vehicleFilter || '');
+        $('#pythonBinary').val(currentSettings.pythonBinary || '');
         $('#debug').prop('checked', !!currentSettings.debug);
         if (onChangeHandler) {
           onChangeHandler(false);
@@ -157,8 +205,16 @@
         const settings = {
           username: $('#username').val(),
           password: $('#password').val(),
+          countryCode: $('#countryCode').val(),
+          hmacAccessKey: $('#hmacAccessKey').val(),
+          hmacSecretKey: $('#hmacSecretKey').val(),
+          passwordPublicKey: $('#passwordPublicKey').val(),
+          prodSecret: $('#prodSecret').val(),
+          vinKey: $('#vinKey').val(),
+          vinIv: $('#vinIv').val(),
           pollingInterval: parseInt($('#pollingInterval').val(), 10) || 300,
           vehicleFilter: $('#vehicleFilter').val(),
+          pythonBinary: $('#pythonBinary').val(),
           debug: $('#debug').is(':checked')
         };
         currentSettings = settings;

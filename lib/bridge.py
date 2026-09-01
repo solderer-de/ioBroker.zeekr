@@ -129,6 +129,13 @@ def main() -> int:
 
     username = payload.get('username') or os.getenv('ZEEKR_USERNAME') or ''
     password = payload.get('password') or os.getenv('ZEEKR_PASSWORD') or ''
+    country_code = payload.get('countryCode') or payload.get('country_code') or os.getenv('ZEEKR_COUNTRY_CODE') or 'AU'
+    hmac_access_key = payload.get('hmacAccessKey') or payload.get('hmac_access_key') or os.getenv('ZEEKR_HMAC_ACCESS_KEY') or ''
+    hmac_secret_key = payload.get('hmacSecretKey') or payload.get('hmac_secret_key') or os.getenv('ZEEKR_HMAC_SECRET_KEY') or ''
+    password_public_key = payload.get('passwordPublicKey') or payload.get('password_public_key') or os.getenv('ZEEKR_PASSWORD_PUBLIC_KEY') or ''
+    prod_secret = payload.get('prodSecret') or payload.get('prod_secret') or os.getenv('ZEEKR_PROD_SECRET') or ''
+    vin_key = payload.get('vinKey') or payload.get('vin_key') or os.getenv('ZEEKR_VIN_KEY') or ''
+    vin_iv = payload.get('vinIv') or payload.get('vin_iv') or os.getenv('ZEEKR_VIN_IV') or ''
 
     if not username or not password:
         print(json.dumps({"error": "Missing Zeekr credentials", "vehicles": [], "connection": False}))
@@ -141,7 +148,17 @@ def main() -> int:
         return 0
 
     try:
-        client = ZeekrClient(username=username, password=password)
+        client = ZeekrClient(
+            username=username,
+            password=password,
+            country_code=country_code,
+            hmac_access_key=hmac_access_key,
+            hmac_secret_key=hmac_secret_key,
+            password_public_key=password_public_key,
+            prod_secret=prod_secret,
+            vin_key=vin_key,
+            vin_iv=vin_iv,
+        )
         client.login()
         if action == 'command':
             vin = payload.get('vin') or ''

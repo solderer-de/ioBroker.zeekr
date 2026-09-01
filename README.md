@@ -9,7 +9,7 @@ This repository contains an ioBroker adapter for Zeekr electric vehicles. It fol
 ## Features
 
 - Standard ioBroker adapter layout with a configuration UI
-- Credentials, polling interval, vehicle filter, and debug mode configurable in the ioBroker admin interface
+- Zeekr username/password plus the Zeekr-specific secrets required by the upstream zeekr_ev_api client are configurable in the ioBroker admin interface
 - Vehicle discovery and status polling via a Python bridge that uses the Zeekr API client
 - Datapoints for vehicle identity, battery level, range, odometer, charging state, lock state, climate state, and raw payloads
 - Health and alert states such as `info.health`, `info.alertCount`, and `info.lastSuccessfulUpdate`
@@ -107,6 +107,13 @@ Open the ioBroker Admin UI, create a new instance of the `Zeekr` adapter, and co
 
 - username: your Zeekr account email or login name
 - password: your Zeekr account password
+- countryCode: ISO country code used by the upstream Zeekr API client (defaults to `AU`)
+- hmacAccessKey: HMAC access key required by the upstream client
+- hmacSecretKey: HMAC secret key required by the upstream client
+- passwordPublicKey: password encryption public key required by the upstream client
+- prodSecret: production secret required by the upstream client
+- vinKey: VIN encryption key required by the upstream client
+- vinIv: VIN encryption IV required by the upstream client
 - polling interval: refresh interval in seconds
 - vehicle filter: optional substring filter for one or more vehicles
 - debug: enable verbose bridge logging
@@ -118,6 +125,13 @@ The adapter exposes the following configuration fields:
 
 - `username`
 - `password`
+- `countryCode`
+- `hmacAccessKey`
+- `hmacSecretKey`
+- `passwordPublicKey`
+- `prodSecret`
+- `vinKey`
+- `vinIv`
 - `pollingInterval`
 - `vehicleFilter`
 - `pythonBinary` (optional)

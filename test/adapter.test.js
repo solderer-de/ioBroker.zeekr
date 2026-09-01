@@ -50,6 +50,24 @@ test('ensureBaseObjects creates the root info and vehicles channels', async () =
   assert.ok(adapter._objects.has('vehicles'));
 });
 
+test('config hashes include the Zeekr secrets', () => {
+  const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+  adapter.config = {
+    username: 'demo',
+    password: 'secret',
+    countryCode: 'DE',
+    hmacAccessKey: 'hmac',
+    hmacSecretKey: 'secret-key',
+    passwordPublicKey: 'pub',
+    prodSecret: 'prod',
+    vinKey: 'vin-key',
+    vinIv: 'vin-iv',
+  };
+  const hash = adapter.getConfigHash();
+  assert.match(hash, /hmacAccessKey/);
+  assert.match(hash, /vinIv/);
+});
+
 test('main entrypoint exports an adapter factory', () => {
   const factory = createMainAdapterFactory();
   const adapter = factory({ name: 'zeekr' });
