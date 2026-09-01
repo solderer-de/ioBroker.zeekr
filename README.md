@@ -26,6 +26,25 @@ pip install -r requirements.txt
 npm test
 ```
 
+## Local ioBroker installation
+
+To try the adapter in a local ioBroker instance, install it from the repository directory or from a local archive:
+
+```bash
+cd /path/to/iobroker-adapter-zeekr
+npm ci
+pip3 install zeekr-ev-api
+```
+
+Then make the adapter available to ioBroker, for example by linking it into the ioBroker modules directory:
+
+```bash
+mkdir -p /opt/iobroker/node_modules
+ln -s /path/to/iobroker-adapter-zeekr /opt/iobroker/node_modules/iobroker.zekr
+```
+
+After that, restart ioBroker and add a new instance of the `Zeekr` adapter in the admin UI. Configure the credentials and polling interval there.
+
 ## Configuration
 
 In the ioBroker admin UI, enter:
