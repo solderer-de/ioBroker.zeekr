@@ -39,7 +39,7 @@ For tarball-based installs, pass the adapter name explicitly as the second argum
 Use this exact install form:
 
 ```bash
-iobroker url https://codeload.github.com/solderer-de/iobroker.zekr/tar.gz/refs/tags/v0.1.27 zeekr --host iobroker --debug
+iobroker url https://codeload.github.com/solderer-de/iobroker.zekr/tar.gz/refs/tags/v0.1.29 zeekr --host iobroker --debug
 ```
 
 The second argument (`zeekr`) is required for this adapter. This is the concrete install command for the current release.
@@ -63,7 +63,7 @@ In that case, remove the stale module directory from the ioBroker host and reins
 ```bash
 sudo rm -rf /opt/iobroker/node_modules/iobroker.zeekr
 sudo iobroker fix
-sudo iobroker url https://codeload.github.com/solderer-de/iobroker.zekr/tar.gz/refs/tags/v0.1.27 zeekr --host iobroker --debug
+sudo iobroker url https://codeload.github.com/solderer-de/iobroker.zekr/tar.gz/refs/tags/v0.1.29 zeekr --host iobroker --debug
 ```
 
 The repository also ships helper scripts for this case:
