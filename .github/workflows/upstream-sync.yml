@@ -1,0 +1,90 @@
+name: Upstream Sync
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check upstream repository for new commits
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_REPO: ${{ vars.UPSTREAM_REPO || 'Fryyyyy/zeekr_homeassistant' }}
+          UPSTREAM_BRANCH: ${{ vars.UPSTREAM_BRANCH || 'main' }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ['UPSTREAM_REPO']
+          branch = os.environ['UPSTREAM_BRANCH']
+          token = os.environ['GH_TOKEN']
+          state_path = Path('.upstream-sync.json')
+          state = {}
+          if state_path.exists():
+              state = json.loads(state_path.read_text())
+
+          req = urllib.request.Request(
+              f'https://api.github.com/repos/{repo}/commits/{branch}',
+              headers={
+                  'Accept': 'application/vnd.github+json',
+                  'Authorization': f'token {token}',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              },
+          )
+          with urllib.request.urlopen(req) as response:
+              payload = json.load(response)
+
+          latest_sha = payload['sha']
+          if state.get('sha') == latest_sha:
+              print('No upstream changes detected')
+              sys.exit(0)
+
+          state_path.write_text(json.dumps({'repo': repo, 'branch': branch, 'sha': latest_sha, 'updated_at': payload['commit']['committer']['date']}, indent=2))
+
+          issue_body = (
+              f'Upstream changes were detected in {repo}@{branch}.\n\n'
+              f'- Latest commit: {latest_sha}\n'
+              f'- Commit URL: https://github.com/{repo}/commit/{latest_sha}\n\n'
+              'Please review whether the adapter logic or datapoints need to be adjusted.'
+          )
+          issue_data = {
+              'title': f'Upstream changes detected in {repo}',
+              'body': issue_body,
+          }
+          issue_req = urllib.request.Request(
+              f'https://api.github.com/repos/{os.environ["GITHUB_REPOSITORY"]}/issues',
+              data=json.dumps(issue_data).encode(),
+              headers={
+                  'Accept': 'application/vnd.github+json',
+                  'Authorization': f'token {token}',
+                  'X-GitHub-Api-Version': '2022-11-28',
+                  'Content-Type': 'application/json',
+              },
+          )
+          with urllib.request.urlopen(issue_req) as response:
+              issue_payload = json.load(response)
+          print(f'Created issue #{issue_payload["number"]}: {issue_payload["html_url"]}')
+          PY
+      - name: Commit upstream sync state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .upstream-sync.json
+          if git diff --cached --quiet; then
+            echo 'No state change to commit'
+          else
+            git commit -m "Record upstream sync state"
+            git push
+          fi

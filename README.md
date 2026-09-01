@@ -52,6 +52,7 @@ The command is routed through the Python bridge and forwarded to the underlying 
 - The repository includes GitHub Actions for CI and release creation.
 - Releases are now automated with `release-please`: conventional commits on `main` open or update a release PR, and publishing that release triggers the asset build workflow.
 - The release workflow builds a tar archive and attaches it to the GitHub release automatically.
+- A scheduled upstream sync workflow checks the reference repository for new commits and opens a tracking issue when changes are detected.
 
 ## Roadmap
 
