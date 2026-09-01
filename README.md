@@ -49,9 +49,8 @@ The command is routed through the Python bridge and forwarded to the underlying 
 
 ## Release and Maintenance
 
-- The repository includes GitHub Actions for CI, release creation and upstream-repo monitoring.
+- The repository includes GitHub Actions for CI and release creation.
 - Create a new release by pushing a tag like `v0.1.0`.
-- The upstream sync workflow checks the current releases of the underlying Zeekr projects and stores the result in `upstream-releases.json`.
 
 ## Roadmap
 

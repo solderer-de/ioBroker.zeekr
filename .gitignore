@@ -1,6 +1,5 @@
 node_modules/
 dist/
-upstream-releases.json
 *.log
 .vscode/
 .pyc
