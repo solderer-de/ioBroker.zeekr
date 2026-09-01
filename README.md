@@ -41,10 +41,16 @@ This is the preferred method for a real installation.
 3. The archive must contain the adapter package root with `io-package.json`, `package.json`, `main.js`, `lib/`, `admin/`, and `img/`.
 4. After installation, restart ioBroker and create a new instance of the `Zeekr` adapter.
 
-For example, a GitHub release URL can look like:
+For example, use a GitHub source archive URL rather than the release-asset URL:
 
 ```text
-https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.1/iobroker-adapter-zeekr-0.1.1.tgz
+https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.1.tar.gz
+```
+
+The ioBroker installer accepts this archive form directly. The equivalent CLI command is:
+
+```bash
+iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.1.tar.gz --host iobroker --debug
 ```
 
 ### Option B: Install directly from a local checkout
