@@ -27,7 +27,12 @@ jobs:
           mkdir -p dist
           TAG_NAME="${{ github.event.release.tag_name || github.ref_name }}"
           npm pack --pack-destination dist
-          mv "dist/iobroker-adapter-zeekr-${TAG_NAME#v}.tgz" "dist/iobroker-adapter-zeekr-${TAG_NAME}.tgz"
+          PACKED_ARCHIVE=$(find dist -maxdepth 1 -type f -name 'iobroker-adapter-zeekr-*.tgz' | head -n 1)
+          if [ -z "$PACKED_ARCHIVE" ]; then
+            echo "No packed archive was produced by npm pack" >&2
+            exit 1
+          fi
+          cp "$PACKED_ARCHIVE" "dist/iobroker-adapter-zeekr-${TAG_NAME}.tgz"
           tar -czf "dist/iobroker-adapter-zeekr-${TAG_NAME}.tar.gz" \
             --exclude=.git \
             --exclude=node_modules \
