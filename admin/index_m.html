@@ -103,16 +103,16 @@
         <img src="zeekr.svg" alt="Zeekr logo" />
         <div>
           <h3 class="translate">Zeekr adapter configuration</h3>
-          <p class="subtitle">Configure your Zeekr credentials, polling behavior, and optional vehicle filter.</p>
+          <p class="subtitle">Configure the Zeekr account connection and the vehicles you want to monitor.</p>
         </div>
       </div>
       <div class="grid">
         <div class="field">
-          <label for="username">Username</label>
+          <label for="username">Zeekr username</label>
           <input id="username" type="text" />
         </div>
         <div class="field">
-          <label for="password">Password</label>
+          <label for="password">Zeekr password</label>
           <input id="password" type="password" />
         </div>
       </div>
@@ -122,25 +122,15 @@
           <input id="pollingInterval" type="number" min="30" step="30" />
         </div>
         <div class="field">
-          <label for="vehicleFilter">Vehicle filter</label>
+          <label for="vehicleFilter">Vehicle filter (optional)</label>
           <input id="vehicleFilter" type="text" />
-        </div>
-      </div>
-      <div class="grid">
-        <div class="field">
-          <label for="pythonBinary">Python binary</label>
-          <input id="pythonBinary" type="text" />
-        </div>
-        <div class="field">
-          <label for="alertWebhook">Alert webhook URL</label>
-          <input id="alertWebhook" type="text" />
         </div>
       </div>
       <div class="checkbox-row">
         <input id="debug" type="checkbox" />
         <label for="debug">Enable debug logging</label>
       </div>
-      <div class="hint">Leave the Python binary empty to use the default environment.</div>
+      <div class="hint">Only Zeekr-specific connection settings are required here.</div>
       <div class="actions">
         <button type="button" class="primary" id="saveButton">Save</button>
         <button type="button" class="secondary" id="cancelButton">Cancel</button>
@@ -157,8 +147,6 @@
         $('#password').val(currentSettings.password || '');
         $('#pollingInterval').val(currentSettings.pollingInterval || 300);
         $('#vehicleFilter').val(currentSettings.vehicleFilter || '');
-        $('#pythonBinary').val(currentSettings.pythonBinary || '');
-        $('#alertWebhook').val(currentSettings.alertWebhook || '');
         $('#debug').prop('checked', !!currentSettings.debug);
         if (onChangeHandler) {
           onChangeHandler(false);
@@ -171,8 +159,6 @@
           password: $('#password').val(),
           pollingInterval: parseInt($('#pollingInterval').val(), 10) || 300,
           vehicleFilter: $('#vehicleFilter').val(),
-          pythonBinary: $('#pythonBinary').val(),
-          alertWebhook: $('#alertWebhook').val(),
           debug: $('#debug').is(':checked')
         };
         currentSettings = settings;
