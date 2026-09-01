@@ -4,6 +4,33 @@ import os
 import sys
 
 
+try:
+    import venv
+except ImportError:  # pragma: no cover - very old Python fallback
+    venv = None
+
+
+def ensure_runtime_dependencies():
+    venv_dir = os.environ.get('ZEEKR_VENV')
+    if not venv_dir:
+        return
+    if not os.path.isdir(venv_dir):
+        if venv is None:
+            return
+        venv.EnvBuilder(with_pip=True, clear=False, symlinks=True).create(venv_dir)
+    if os.name == 'nt':
+        python_exe = os.path.join(venv_dir, 'Scripts', 'python.exe')
+    else:
+        python_exe = os.path.join(venv_dir, 'bin', 'python')
+    if not os.path.exists(python_exe):
+        return
+    import subprocess
+    subprocess.check_call([python_exe, '-m', 'pip', 'install', '--quiet', 'zeekr-ev-api'])
+
+
+ensure_runtime_dependencies()
+
+
 def find_value(payload, keys):
     if payload is None:
         return None

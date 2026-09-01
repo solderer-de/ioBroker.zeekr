@@ -33,8 +33,9 @@ To try the adapter in a local ioBroker instance, install it from the repository 
 ```bash
 cd /path/to/iobroker-adapter-zeekr
 npm ci
-pip3 install zeekr-ev-api
 ```
+
+The adapter bootstraps its Python runtime automatically on first use and installs the Zeekr dependency into a local virtual environment when needed.
 
 Then make the adapter available to ioBroker, for example by linking it into the ioBroker modules directory:
 
