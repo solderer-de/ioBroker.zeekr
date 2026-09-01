@@ -12,14 +12,11 @@ if [ -z "$VERSION" ]; then
   fi
 fi
 
-INSTALL_URL="${1:-https://github.com/${REPO}}"
-
 if [ -n "$VERSION" ]; then
-  echo "Using adapter version ${VERSION}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
+else
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.25}"
 fi
-
-git config --global url."https://github.com/".insteadOf ssh://git@github.com/
-git config --global url."https://github.com/".insteadOf git@github.com:
 
 echo "Installing adapter ${ADAPTER_NAME} from ${INSTALL_URL}"
 iobroker url "$INSTALL_URL" "$ADAPTER_NAME" --host "$HOST" --debug

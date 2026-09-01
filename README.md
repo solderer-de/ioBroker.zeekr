@@ -30,7 +30,7 @@ npm test
 
 The adapter is designed to be installed directly into an ioBroker host.
 
-Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`. For `iobroker url` installs, use the GitHub release asset URL for the adapter tarball. This avoids the GitHub repository fallback that can trigger SSH-based clone errors on the ioBroker host. The release asset URL is the reliable install target for this adapter.
+Important: the adapter repository is published at `solderer-de/iobroker-adapter-zeekr`. For `iobroker url` installs, use a direct tarball URL from `codeload.github.com` rather than a GitHub repository URL or a GitHub release asset URL. The ioBroker CLI treats GitHub repository URLs as Git dependencies and can fall back to SSH-based installs; that is what triggers the `Permission denied (publickey)` failures on this host. A `codeload` tarball URL installs the package as a normal tarball and avoids that Git fallback.
 
 For tarball-based installs, pass the adapter name explicitly as the second argument. `iobroker url <url> zeekr ...` is the reliable form for this adapter. Without the explicit adapter name, the CLI can treat the full URL as the adapter identifier and fail later in the install/upload step even though the npm tarball install itself succeeded.
 
@@ -39,12 +39,10 @@ For tarball-based installs, pass the adapter name explicitly as the second argum
 Use this exact install form:
 
 ```bash
-git config --global url."https://github.com/".insteadOf ssh://git@github.com/
-git config --global url."https://github.com/".insteadOf git@github.com:
-iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr zeekr --host iobroker --debug
+iobroker url https://codeload.github.com/solderer-de/iobroker-adapter-zeekr/tar.gz/refs/tags/v0.1.25 zeekr --host iobroker --debug
 ```
 
-The second argument (`zeekr`) is required for this adapter. The Git config lines force HTTPS for GitHub so ioBroker's npm-based install path does not fall back to SSH and fail.
+The second argument (`zeekr`) is required for this adapter. This is the concrete install command for the current release.
 
 ### Install via ioBroker Admin UI
 
@@ -65,7 +63,7 @@ In that case, remove the stale module directory from the ioBroker host and reins
 ```bash
 sudo rm -rf /opt/iobroker/node_modules/iobroker.zeekr
 sudo iobroker fix
-sudo iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz zeekr --host iobroker --debug
+sudo iobroker url https://codeload.github.com/solderer-de/iobroker-adapter-zeekr/tar.gz/refs/tags/v0.1.25 zeekr --host iobroker --debug
 ```
 
 The repository also ships helper scripts for this case:

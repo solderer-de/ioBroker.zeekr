@@ -7,9 +7,10 @@ ADAPTER_NAME="${ADAPTER_NAME:-zeekr}"
 if command -v node >/dev/null 2>&1 && [ -f package.json ]; then
   VERSION="$(node -p "require('./package.json').version" 2>/dev/null || true)"
 fi
-INSTALL_URL="${1:-https://github.com/${REPO}}"
 if [ -n "$VERSION" ]; then
-  echo "Using adapter version ${VERSION}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
+else
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.25}"
 fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
@@ -35,9 +36,6 @@ fi
 
 echo "Running ioBroker repair"
 $SUDO iobroker fix
-
-git config --global url."https://github.com/".insteadOf ssh://git@github.com/
-git config --global url."https://github.com/".insteadOf git@github.com:
 
 echo "Installing adapter ${ADAPTER_NAME} from $INSTALL_URL"
 $SUDO iobroker url "$INSTALL_URL" "$ADAPTER_NAME" --host iobroker --debug
