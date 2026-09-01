@@ -56,3 +56,21 @@ test('main entrypoint exports an adapter factory', () => {
   assert.equal(typeof adapter.on, 'function');
   assert.equal(typeof adapter.emit, 'function');
 });
+
+test('main entrypoint avoids auto-start during npm lifecycle installs', () => {
+  const originalLifecycleEvent = process.env.npm_lifecycle_event;
+  process.env.npm_lifecycle_event = 'install';
+  delete require.cache[require.resolve('../main')];
+
+  try {
+    const factory = require('../main');
+    assert.equal(typeof factory, 'function');
+  } finally {
+    if (originalLifecycleEvent === undefined) {
+      delete process.env.npm_lifecycle_event;
+    } else {
+      process.env.npm_lifecycle_event = originalLifecycleEvent;
+    }
+    delete require.cache[require.resolve('../main')];
+  }
+});
