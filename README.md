@@ -57,6 +57,28 @@ iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/
 
 Use the command exactly once; the install target is the URL, not an additional `iobroker` argument.
 
+### Repairing a broken or half-installed adapter
+
+If a previous install left a stale `node_modules/iobroker.zeekr` directory behind, `iobroker del zeekr` can fail with:
+
+```text
+Cannot find module 'iobroker.zeekr/io-package.json'
+```
+
+In that case, remove the stale module directory from the ioBroker host and reinstall the adapter from the current GitHub release asset:
+
+```bash
+sudo rm -rf /opt/iobroker/node_modules/iobroker.zeekr
+sudo iobroker fix
+sudo iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/releases/download/v0.1.25/iobroker-adapter-zeekr-v0.1.25.tgz --host iobroker --debug
+```
+
+The repository also ships a helper script for this case:
+
+```bash
+./scripts/repair-install.sh
+```
+
 ### Option B: Install directly from a local checkout
 
 If you want to test the adapter from a local repository checkout, run:
