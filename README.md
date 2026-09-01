@@ -36,6 +36,17 @@ In the ioBroker admin UI, enter:
 - optional vehicle filter
 - optional debug logging
 
+## Commands
+
+The adapter accepts a lightweight `sendCommand` message with:
+
+- `vin`: target vehicle VIN
+- `command`: remote-control command (for example `start` or `stop` depending on the target action)
+- `serviceId`: Zeekr service identifier (for example `RCS` for charge control or other remote-control services)
+- `setting`: payload object forwarded to the Zeekr API
+
+The command is routed through the Python bridge and forwarded to the underlying `zeekr_ev_api` client.
+
 ## Roadmap
 
 - expose additional datapoints from the Zeekr API

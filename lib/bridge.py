@@ -80,6 +80,18 @@ def main() -> int:
     try:
         client = ZeekrClient(username=username, password=password)
         client.login()
+        if action == 'command':
+            vin = payload.get('vin') or ''
+            command = payload.get('command') or ''
+            service_id = payload.get('serviceId') or ''
+            setting = payload.get('setting') or {}
+            vehicle = next((item for item in client.get_vehicle_list() if getattr(item, 'vin', None) == vin), None)
+            if vehicle is None:
+                print(json.dumps({"error": "Vehicle not found", "ok": False}))
+                return 0
+            ok = vehicle.do_remote_control(command, service_id, setting)
+            print(json.dumps({"ok": ok}))
+            return 0
         vehicles = client.get_vehicle_list()
         normalized = []
         for vehicle in vehicles:
@@ -88,7 +100,7 @@ def main() -> int:
             remote_state = {}
             try:
                 status = vehicle.get_status() or {}
-            except Exception as exc:  # pragma: no cover - bridge should not crash on one vehicle
+            except Exception:  # pragma: no cover - bridge should not crash on one vehicle
                 status = {}
             try:
                 charging_status = vehicle.get_charging_status() or {}
