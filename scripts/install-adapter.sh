@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="${REPO:-solderer-de/iobroker-adapter-zeekr}"
+REPO="${REPO:-solderer-de/iobroker.zeekr}"
 VERSION="${VERSION:-}"
 ADAPTER_NAME="${ADAPTER_NAME:-zeekr}"
 HOST="${HOST:-iobroker}"
@@ -15,7 +15,7 @@ fi
 if [ -n "$VERSION" ]; then
   INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.31}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.32}"
 fi
 
 echo "Installing adapter ${ADAPTER_NAME} from ${INSTALL_URL}"

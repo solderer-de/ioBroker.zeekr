@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "iobroker-adapter-zeekr",
+      "package-name": "iobroker.zeekr",
       "include-component-in-tag": false,
       "changelog-path": "CHANGELOG.md"
     }
