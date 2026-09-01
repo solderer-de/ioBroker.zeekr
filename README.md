@@ -50,7 +50,8 @@ The command is routed through the Python bridge and forwarded to the underlying 
 ## Release and Maintenance
 
 - The repository includes GitHub Actions for CI and release creation.
-- Create a new release by pushing a tag like `v0.1.0`.
+- Releases are now automated with `release-please`: conventional commits on `main` open or update a release PR, and publishing that release triggers the asset build workflow.
+- The release workflow builds a tar archive and attaches it to the GitHub release automatically.
 
 ## Roadmap
 
