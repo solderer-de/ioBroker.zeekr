@@ -5,7 +5,7 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "test": "node --test",
+    "test": "NODE_ENV=test node --test",
     "lint": "echo 'No linting configured yet'"
   },
   "engines": {
