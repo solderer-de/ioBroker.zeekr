@@ -61,6 +61,7 @@
     "pollingInterval": 300,
     "vehicleFilter": "",
     "pythonBinary": "",
+    "alertWebhook": "",
     "debug": false
   },  "objects": [],
   "instanceObjects": [

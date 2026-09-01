@@ -37,6 +37,12 @@
           <input id="pythonBinary" type="text" />
         </div>
         <div class="col s12 m6">
+          <label for="alertWebhook" class="translate">Alert webhook URL</label>
+          <input id="alertWebhook" type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
           <label>
             <input id="debug" type="checkbox" />
             <span class="translate">Enable debug logging</span>
@@ -56,6 +62,7 @@
         $('#pollingInterval').val(settings.pollingInterval || 300);
         $('#vehicleFilter').val(settings.vehicleFilter || '');
         $('#pythonBinary').val(settings.pythonBinary || '');
+        $('#alertWebhook').val(settings.alertWebhook || '');
         $('#debug').prop('checked', !!settings.debug);
         onChange(false);
       }
@@ -67,6 +74,7 @@
           pollingInterval: parseInt($('#pollingInterval').val(), 10) || 300,
           vehicleFilter: $('#vehicleFilter').val(),
           pythonBinary: $('#pythonBinary').val(),
+          alertWebhook: $('#alertWebhook').val(),
           debug: $('#debug').is(':checked')
         };
         callback(settings);
