@@ -1,5 +1,6 @@
 'use strict';
 
-const { createAdapter } = require('./lib/adapter');
-
-module.exports = (options = {}) => createAdapter(options);
+module.exports = (options = {}) => {
+  const { createAdapter } = require('./lib/adapter');
+  return createAdapter(options);
+};
