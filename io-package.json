@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
@@ -20,11 +20,11 @@
     "mode": "daemon",
     "icon": "img/zeekr.svg",
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker-adapter-zeekr/main/admin/zeekr.svg",
-    "readme": "https://github.com/solderer-de/iobroker-adapter-zeekr/blob/main/README.md",
+    "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker.zekr/main/admin/zeekr.svg",
+    "readme": "https://github.com/solderer-de/iobroker.zekr/blob/main/README.md",
     "licenseInformation": {
       "license": "MIT",
-      "link": "https://github.com/solderer-de/iobroker-adapter-zeekr/blob/main/LICENSE"
+      "link": "https://github.com/solderer-de/iobroker.zekr/blob/main/LICENSE"
     },
     "keywords": [
       "zeekr",
