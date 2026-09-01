@@ -57,6 +57,55 @@ test('main entrypoint exports an adapter factory', () => {
   assert.equal(typeof adapter.emit, 'function');
 });
 
+test('adapter falls back to the stub when no ioBroker runtime is present', () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+  const originalIobDataDir = process.env.IOB_DATA_DIR;
+  const originalIoBrokerDataDir = process.env.IOBROKER_DATA_DIR;
+  const originalIoBrokerHost = process.env.IOBROKER_HOST;
+  const originalObjdbType = process.env.OBJDB_TYPE;
+
+  delete process.env.NODE_ENV;
+  delete process.env.IOB_DATA_DIR;
+  delete process.env.IOBROKER_DATA_DIR;
+  delete process.env.IOBROKER_HOST;
+  delete process.env.OBJDB_TYPE;
+  delete require.cache[require.resolve('../lib/adapter')];
+
+  try {
+    const { createAdapter } = require('../lib/adapter');
+    const adapter = createAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const grandParent = Object.getPrototypeOf(Object.getPrototypeOf(adapter));
+    assert.equal(grandParent.constructor.name, 'AdapterStub');
+  } finally {
+    if (originalNodeEnv === undefined) {
+      delete process.env.NODE_ENV;
+    } else {
+      process.env.NODE_ENV = originalNodeEnv;
+    }
+    if (originalIobDataDir === undefined) {
+      delete process.env.IOB_DATA_DIR;
+    } else {
+      process.env.IOB_DATA_DIR = originalIobDataDir;
+    }
+    if (originalIoBrokerDataDir === undefined) {
+      delete process.env.IOBROKER_DATA_DIR;
+    } else {
+      process.env.IOBROKER_DATA_DIR = originalIoBrokerDataDir;
+    }
+    if (originalIoBrokerHost === undefined) {
+      delete process.env.IOBROKER_HOST;
+    } else {
+      process.env.IOBROKER_HOST = originalIoBrokerHost;
+    }
+    if (originalObjdbType === undefined) {
+      delete process.env.OBJDB_TYPE;
+    } else {
+      process.env.OBJDB_TYPE = originalObjdbType;
+    }
+    delete require.cache[require.resolve('../lib/adapter')];
+  }
+});
+
 test('main entrypoint avoids auto-start during npm lifecycle installs', () => {
   const originalLifecycleEvent = process.env.npm_lifecycle_event;
   process.env.npm_lifecycle_event = 'install';
