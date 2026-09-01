@@ -15,6 +15,7 @@ fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
 ADAPTER_DIR="${NODE_MODULES_DIR}/iobroker.zeekr"
+ADAPTER_DIR_ALT="${NODE_MODULES_DIR}/iobroker-adapter-zeekr"
 
 if [ "$(id -u)" -ne 0 ]; then
   SUDO="sudo"
@@ -22,13 +23,15 @@ else
   SUDO=""
 fi
 
-if [ -d "$ADAPTER_DIR" ]; then
-  echo "Removing stale adapter directory: $ADAPTER_DIR"
-  $SUDO rm -rf "$ADAPTER_DIR"
-fi
+for stale_dir in "$ADAPTER_DIR" "$ADAPTER_DIR_ALT"; do
+  if [ -d "$stale_dir" ]; then
+    echo "Removing stale adapter directory: $stale_dir"
+    $SUDO rm -rf "$stale_dir"
+  fi
+done
 
 if [ -d "${NODE_MODULES_DIR}/.bin" ]; then
-  find "${NODE_MODULES_DIR}" -maxdepth 1 -type d -name 'iobroker.zeekr*' -print0 | while IFS= read -r -d '' dir; do
+  find "${NODE_MODULES_DIR}" -maxdepth 1 -type d \( -name 'iobroker.zeekr*' -o -name 'iobroker-adapter-zeekr*' \) -print0 | while IFS= read -r -d '' dir; do
     echo "Removing stale adapter directory: $dir"
     $SUDO rm -rf "$dir"
   done
