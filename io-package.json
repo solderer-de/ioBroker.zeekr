@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
@@ -45,7 +45,7 @@
     "adminUI": {
       "config": "json"
     },
-    "type": "vehicle",
+    "type": "general",
     "compact": true,
     "singleton": false,
     "os": [
