@@ -46,13 +46,13 @@ This is the preferred method for a real installation.
 For example, use the GitHub archive URL:
 
 ```text
-https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.5.tar.gz
+https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.6.tar.gz
 ```
 
 The equivalent CLI command is:
 
 ```bash
-iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.5.tar.gz --host iobroker --debug
+iobroker url https://github.com/solderer-de/iobroker-adapter-zeekr/archive/refs/tags/v0.1.6.tar.gz --host iobroker --debug
 ```
 
 Use the command exactly once; the install target is the URL, not an additional `iobroker` argument.

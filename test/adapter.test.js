@@ -45,3 +45,9 @@ test('ensureBaseObjects creates the root info and vehicles channels', async () =
   assert.ok(adapter._objects.has('info'));
   assert.ok(adapter._objects.has('vehicles'));
 });
+
+test('main entrypoint exports an adapter instance', () => {
+  const adapter = require('../main');
+  assert.equal(typeof adapter.on, 'function');
+  assert.equal(typeof adapter.emit, 'function');
+});
