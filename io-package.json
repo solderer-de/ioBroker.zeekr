@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
@@ -34,11 +34,6 @@
       "iobroker"
     ],
     "tier": 2,
-    "dependencies": [
-      {
-        "js-controller": ">=5.0.0"
-      }
-    ],
     "connectionType": "cloud",
     "dataSource": "poll",
     "materialize": true,
