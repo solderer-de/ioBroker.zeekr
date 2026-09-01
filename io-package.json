@@ -2,14 +2,14 @@
   "common": {
     "name": "zeekr",
     "version": "0.1.0",
-    "title": "ioBroker Zeekr Adapter",
+    "title": "Zeekr",
     "titleLang": {
-      "en": "ioBroker Zeekr Adapter",
-      "de": "ioBroker Zeekr Adapter"
+      "en": "Zeekr",
+      "de": "Zeekr"
     },
     "desc": {
-      "en": "Connects Zeekr electric vehicles to ioBroker and exposes the available vehicle data as datapoints.",
-      "de": "Verbindet Zeekr-Fahrzeuge mit ioBroker und stellt die verfügbaren Fahrzeugsdaten als Datenpunkte bereit."
+      "en": "Connects Zeekr electric vehicles to ioBroker and exposes vehicle status, charging state, and control data as datapoints.",
+      "de": "Verbindet Zeekr-Fahrzeuge mit ioBroker und stellt Fahrzeugstatus, Ladezustand und Steuerdaten als Datenpunkte bereit."
     },
     "authors": [
       "Fryyyyy"
@@ -20,6 +20,12 @@
     "mode": "daemon",
     "icon": "img/zeekr.svg",
     "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/schoebelh/iobroker-adapter-zeekr/main/admin/zeekr.svg",
+    "readme": "https://github.com/schoebelh/iobroker-adapter-zeekr/blob/main/README.md",
+    "licenseInformation": {
+      "license": "MIT",
+      "link": "https://github.com/schoebelh/iobroker-adapter-zeekr/blob/main/LICENSE"
+    },
     "keywords": [
       "zeekr",
       "ev",
@@ -39,15 +45,23 @@
     "adminUI": {
       "config": "json"
     },
-    "type": "vehicle"
+    "type": "vehicle",
+    "compact": true,
+    "singleton": false,
+    "os": [
+      "linux",
+      "darwin",
+      "win32"
+    ],
+    "serviceName": "zeekr"
   },
   "native": {
     "username": "",
     "password": "",
     "pollingInterval": 300,
     "vehicleFilter": "",
+    "pythonBinary": "",
     "debug": false
-  },
-  "objects": [],
+  },  "objects": [],
   "instanceObjects": []
 }

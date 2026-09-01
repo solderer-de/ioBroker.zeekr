@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col s12">
           <h5 class="translate">Zeekr adapter configuration</h5>
-          <p class="translate">Configure your Zeekr credentials and the polling interval for the adapter.</p>
+          <p class="translate">Configure your Zeekr credentials, polling behavior, and optional vehicle filter.</p>
         </div>
       </div>
       <div class="row">
@@ -24,7 +24,7 @@
       <div class="row">
         <div class="col s12 m6">
           <label for="pollingInterval" class="translate">Polling interval (seconds)</label>
-          <input id="pollingInterval" type="number" min="30" />
+          <input id="pollingInterval" type="number" min="30" step="30" />
         </div>
         <div class="col s12 m6">
           <label for="vehicleFilter" class="translate">Vehicle filter</label>
@@ -32,11 +32,20 @@
         </div>
       </div>
       <div class="row">
-        <div class="col s12">
+        <div class="col s12 m6">
+          <label for="pythonBinary" class="translate">Python binary</label>
+          <input id="pythonBinary" type="text" />
+        </div>
+        <div class="col s12 m6">
           <label>
             <input id="debug" type="checkbox" />
             <span class="translate">Enable debug logging</span>
           </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <p class="translate">Leave the Python binary empty to use the default environment.</p>
         </div>
       </div>
     </div>
@@ -46,6 +55,7 @@
         $('#password').val(settings.password || '');
         $('#pollingInterval').val(settings.pollingInterval || 300);
         $('#vehicleFilter').val(settings.vehicleFilter || '');
+        $('#pythonBinary').val(settings.pythonBinary || '');
         $('#debug').prop('checked', !!settings.debug);
         onChange(false);
       }
@@ -56,6 +66,7 @@
           password: $('#password').val(),
           pollingInterval: parseInt($('#pollingInterval').val(), 10) || 300,
           vehicleFilter: $('#vehicleFilter').val(),
+          pythonBinary: $('#pythonBinary').val(),
           debug: $('#debug').is(':checked')
         };
         callback(settings);
