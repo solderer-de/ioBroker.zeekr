@@ -23,24 +23,24 @@ def find_value(payload, keys):
     return None
 
 
-def normalize_vehicle(vehicle):
-    if hasattr(vehicle, '__dict__'):
-        vehicle_dict = {key: getattr(vehicle, key) for key in dir(vehicle) if not key.startswith('_')}
-    elif isinstance(vehicle, dict):
-        vehicle_dict = vehicle
+def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_state=None):
+    if hasattr(vehicle_info, '__dict__'):
+        vehicle_dict = {key: getattr(vehicle_info, key) for key in dir(vehicle_info) if not key.startswith('_')}
+    elif isinstance(vehicle_info, dict):
+        vehicle_dict = vehicle_info
     else:
         vehicle_dict = {}
 
     name = find_value(vehicle_dict, ['name', 'vehicleName', 'displayName', 'modelName']) or 'Vehicle'
     vin = find_value(vehicle_dict, ['vin', 'VIN', 'vehicleId', 'id', 'vehicle_id']) or ''
-    battery = find_value(vehicle_dict, ['batteryLevel', 'battery_level', 'stateOfCharge', 'soc'])
-    range_km = find_value(vehicle_dict, ['rangeKm', 'range_km', 'drivingRange', 'remainingRange'])
-    odometer = find_value(vehicle_dict, ['odometerKm', 'odometer_km', 'mileage', 'odometer'])
-    charge_power = find_value(vehicle_dict, ['chargePower', 'chargingPower', 'power'])
-    current_speed = find_value(vehicle_dict, ['speed', 'currentSpeed', 'vehicleSpeed'])
-    plugged_in = find_value(vehicle_dict, ['pluggedIn', 'isPluggedIn'])
-    charging = find_value(vehicle_dict, ['isCharging', 'chargingStatus', 'charging'])
-    temperature = find_value(vehicle_dict, ['insideTemperature', 'inside_temp', 'temperature'])
+    battery = find_value(status or {}, ['batteryLevel', 'battery_level', 'stateOfCharge', 'soc'])
+    range_km = find_value(status or {}, ['rangeKm', 'range_km', 'drivingRange', 'remainingRange'])
+    odometer = find_value(status or {}, ['odometerKm', 'odometer_km', 'mileage', 'odometer'])
+    charge_power = find_value(charging_status or {}, ['chargePower', 'chargingPower', 'power'])
+    current_speed = find_value(status or {}, ['speed', 'currentSpeed', 'vehicleSpeed'])
+    plugged_in = find_value(charging_status or {}, ['pluggedIn', 'isPluggedIn'])
+    charging = find_value(charging_status or {}, ['isCharging', 'chargingStatus', 'charging'])
+    temperature = find_value(status or {}, ['insideTemperature', 'inside_temp', 'temperature'])
 
     return {
         'name': name,
@@ -53,6 +53,9 @@ def normalize_vehicle(vehicle):
         'pluggedIn': plugged_in,
         'isCharging': bool(charging),
         'temperature': temperature,
+        'status': status or {},
+        'chargingStatus': charging_status or {},
+        'remoteControlState': remote_state or {},
         'raw': vehicle_dict,
     }
 
@@ -69,24 +72,37 @@ def main() -> int:
         return 0
 
     try:
-        import zeekr_ev_api  # type: ignore
+        from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
     except ImportError:
         print(json.dumps({"error": "Python dependency zeekr_ev_api not installed", "vehicles": []}))
         return 0
 
     try:
-        client = zeekr_ev_api.Client(username=username, password=password)  # type: ignore[attr-defined]
-        vehicles = []
-        if hasattr(client, 'get_vehicles'):
-            vehicles = client.get_vehicles()
-        elif hasattr(client, 'vehicles'):
-            vehicles = client.vehicles
-        elif hasattr(client, 'list_vehicles'):
-            vehicles = client.list_vehicles()
-        if not isinstance(vehicles, list):
-            vehicles = []
-        normalized = [normalize_vehicle(vehicle) for vehicle in vehicles]
+        client = ZeekrClient(username=username, password=password)
+        client.login()
+        vehicles = client.get_vehicle_list()
+        normalized = []
+        for vehicle in vehicles:
+            status = {}
+            charging_status = {}
+            remote_state = {}
+            try:
+                status = vehicle.get_status() or {}
+            except Exception as exc:  # pragma: no cover - bridge should not crash on one vehicle
+                status = {}
+            try:
+                charging_status = vehicle.get_charging_status() or {}
+            except Exception:
+                charging_status = {}
+            try:
+                remote_state = vehicle.get_remote_control_state() or {}
+            except Exception:
+                remote_state = {}
+            normalized.append(normalize_vehicle(vehicle.data or {}, status, charging_status, remote_state))
         print(json.dumps({"vehicles": normalized}))
+        return 0
+    except ZeekrException as exc:
+        print(json.dumps({"error": str(exc), "vehicles": []}))
         return 0
     except Exception as exc:  # pragma: no cover - bridge should not crash the adapter
         print(json.dumps({"error": str(exc), "vehicles": []}))
