@@ -10,7 +10,7 @@ fi
 if [ -n "$VERSION" ]; then
   INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v${VERSION}}"
 else
-  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.39}"
+  INSTALL_URL="${1:-https://codeload.github.com/${REPO}/tar.gz/refs/tags/v0.1.40}"
 fi
 IOBROKER_ROOT="${IOBROKER_ROOT:-/opt/iobroker}"
 NODE_MODULES_DIR="${IOBROKER_ROOT}/node_modules"
@@ -33,6 +33,13 @@ for stale_dir in "$ADAPTER_DIR" "${LEGACY_ADAPTER_DIRS[@]}"; do
   fi
 done
 
+if [ -d "${IOBROKER_ROOT}/iobroker-data" ]; then
+  echo "Removing cached adapter data from iobroker-data"
+  $SUDO find "${IOBROKER_ROOT}/iobroker-data" -maxdepth 2 \( -path "*${ADAPTER_NAME}*" -o -path "*zeekr*" \) -print0 | while IFS= read -r -d '' path; do
+    $SUDO rm -rf "$path"
+  done
+fi
+
 if [ -d "${NODE_MODULES_DIR}/.bin" ]; then
   find "${NODE_MODULES_DIR}" -maxdepth 1 -type d \( -name 'iobroker.zeekr*' -o -name 'iobroker.zekr*' -o -name 'iobroker-adapter-zeekr*' \) -print0 | while IFS= read -r -d '' dir; do
     echo "Removing stale adapter directory: $dir"
@@ -40,6 +47,9 @@ if [ -d "${NODE_MODULES_DIR}/.bin" ]; then
   done
 fi
 
+echo "Removing existing adapter instance and package metadata before reinstall"
+$SUDO iobroker del "$ADAPTER_NAME" >/dev/null 2>&1 || true
+ 
 echo "Running ioBroker repair"
 $SUDO iobroker fix
  
