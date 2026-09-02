@@ -134,14 +134,21 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
 ### How to provide the APKs
 
 1. Download or copy the Zeekr APK files onto the ioBroker host. The adapter expects two files:
-   - the base APK (for example `base.apk` or an APK downloaded from the Zeekr app package)
+   - the base APK (for example `base.apk` or the main Zeekr app APK package)
    - the ARM64 split APK (the variant for `arm64-v8a`)
-2. Store them in a folder that is accessible to the `iobroker` user, for example:
+2. Make sure the files are readable by the `iobroker` user. A simple place is the adapter data directory, for example:
    - `/opt/iobroker/iobroker-data/zeekr/base.apk`
    - `/opt/iobroker/iobroker-data/zeekr/arm64.apk`
-3. In the adapter admin UI, enable `autoExtractSecrets` and enter the absolute paths in `apkBasePath` and `apkArm64Path`.
-4. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
-5. Save the adapter configuration and restart the instance. The adapter will then try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and populate the missing secrets automatically.
+3. If the files are not already present, copy them there with a command such as:
+   - `sudo mkdir -p /opt/iobroker/iobroker-data/zeekr`
+   - `sudo cp /path/to/your/base.apk /opt/iobroker/iobroker-data/zeekr/base.apk`
+   - `sudo cp /path/to/your/arm64.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
+4. Make sure the `iobroker` user can read them:
+   - `sudo chown iobroker:iobroker /opt/iobroker/iobroker-data/zeekr/base.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
+   - `sudo chmod 644 /opt/iobroker/iobroker-data/zeekr/base.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
+5. In the adapter admin UI, enable `autoExtractSecrets` and enter the absolute paths in `apkBasePath` and `apkArm64Path`.
+6. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
+7. Save the adapter configuration and restart the instance. The adapter will then try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and populate the missing secrets automatically.
 
 ### Alternative: use a secrets JSON file
 
