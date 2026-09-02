@@ -131,24 +131,28 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
 - the full Zeekr base APK and the matching ARM64 split APK on the ioBroker host, or
 - a pre-generated `zeekr_secrets.json` file.
 
-### How to provide the APKs
+### How to obtain the APKs from a phone or emulator
 
-1. Download or copy the Zeekr APK files onto the ioBroker host. The adapter expects two files:
-   - the base APK (for example `base.apk` or the main Zeekr app APK package)
-   - the ARM64 split APK (the variant for `arm64-v8a`)
-2. Make sure the files are readable by the `iobroker` user. A simple place is the adapter data directory, for example:
-   - `/opt/iobroker/iobroker-data/zeekr/base.apk`
-   - `/opt/iobroker/iobroker-data/zeekr/arm64.apk`
-3. If the files are not already present, copy them there with a command such as:
+1. On the Android phone or emulator, install the Zeekr app from the Play Store or from the APK package you already have.
+2. Export the installed app package from the device/emulator. Typical ways are:
+   - use `adb shell pm path <package>` and `adb pull` to copy the APK from the device
+   - use an emulator snapshot or Android backup tool to export the app package
+   - if you already have the APK from another source, use that file directly
+3. If you use `adb`, the typical workflow is:
+   - `adb devices`
+   - `adb shell pm path com.zeekr.app` (or the package name used by your Zeekr app build)
+   - `adb pull /data/app/<...>/base.apk /tmp/base.apk`
+   - `adb pull /data/app/<...>/split_config.arm64_v8a.apk /tmp/arm64.apk`
+4. Copy the resulting files to a location readable by the `iobroker` user on the ioBroker host, for example:
    - `sudo mkdir -p /opt/iobroker/iobroker-data/zeekr`
-   - `sudo cp /path/to/your/base.apk /opt/iobroker/iobroker-data/zeekr/base.apk`
-   - `sudo cp /path/to/your/arm64.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
-4. Make sure the `iobroker` user can read them:
+   - `sudo cp /tmp/base.apk /opt/iobroker/iobroker-data/zeekr/base.apk`
+   - `sudo cp /tmp/arm64.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
+5. Make sure the files are readable by the `iobroker` user:
    - `sudo chown iobroker:iobroker /opt/iobroker/iobroker-data/zeekr/base.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
    - `sudo chmod 644 /opt/iobroker/iobroker-data/zeekr/base.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
-5. In the adapter admin UI, enable `autoExtractSecrets` and enter the absolute paths in `apkBasePath` and `apkArm64Path`.
-6. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
-7. Save the adapter configuration and restart the instance. The adapter will then try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and populate the missing secrets automatically.
+6. In the adapter admin UI, enable `autoExtractSecrets` and enter the absolute paths in `apkBasePath` and `apkArm64Path`.
+7. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
+8. Save the adapter configuration and restart the instance. The adapter will then try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and populate the missing secrets automatically.
 
 ### Alternative: use a secrets JSON file
 
