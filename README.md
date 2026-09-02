@@ -126,12 +126,26 @@ Open the ioBroker Admin UI, create a new instance of the `Zeekr` adapter, and co
 
 ## Automatic secret extraction
 
-The adapter can automate the extraction flow from the upstream `zeekr_key_extractor` tool:
+The adapter can automate the extraction flow from the upstream `zeekr_key_extractor` tool. For this to work, you need either:
 
-1. Put the Zeekr APKs on the ioBroker host (base APK plus the ARM64 split APK).
-2. In the admin UI, set `autoExtractSecrets` to `true` and provide `apkBasePath`, `apkArm64Path`, and the desired `extractRegion`.
-3. The adapter will try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and load the resulting secrets into the adapter configuration automatically.
-4. If you already have a `zeekr_secrets.json` from the extractor, you can skip the APK step and point `secretsJsonPath` to that file instead.
+- the full Zeekr base APK and the matching ARM64 split APK on the ioBroker host, or
+- a pre-generated `zeekr_secrets.json` file.
+
+### How to provide the APKs
+
+1. Download or copy the Zeekr APK files onto the ioBroker host. The adapter expects two files:
+   - the base APK (for example `base.apk` or an APK downloaded from the Zeekr app package)
+   - the ARM64 split APK (the variant for `arm64-v8a`)
+2. Store them in a folder that is accessible to the `iobroker` user, for example:
+   - `/opt/iobroker/iobroker-data/zeekr/base.apk`
+   - `/opt/iobroker/iobroker-data/zeekr/arm64.apk`
+3. In the adapter admin UI, enable `autoExtractSecrets` and enter the absolute paths in `apkBasePath` and `apkArm64Path`.
+4. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
+5. Save the adapter configuration and restart the instance. The adapter will then try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and populate the missing secrets automatically.
+
+### Alternative: use a secrets JSON file
+
+If you already have a `zeekr_secrets.json` from the extractor, you can skip the APK step completely and provide its absolute path in `secretsJsonPath`.
 
 This removes the need to copy the six secrets manually into the admin page once the APKs or the JSON file are available on the host.
 

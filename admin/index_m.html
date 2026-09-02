@@ -194,7 +194,7 @@
         <input id="debug" type="checkbox" />
         <label for="debug">Enable debug logging</label>
       </div>
-      <div class="hint">The adapter needs the same Zeekr-specific secrets required by the upstream zeekr_ev_api client. If you have a `zeekr_secrets.json` from the extractor, point the adapter to it; otherwise provide the APK paths and it will try to extract them automatically.</div>
+      <div class="hint">The adapter needs the same Zeekr-specific secrets required by the upstream zeekr_ev_api client. Use absolute file paths on the ioBroker host. If you already have a `zeekr_secrets.json`, point the adapter to it; otherwise provide the base APK and the ARM64 split APK so the adapter can try to extract them automatically.</div>
       <div class="actions">
         <button type="button" class="primary" id="saveButton">Save</button>
         <button type="button" class="secondary" id="cancelButton">Cancel</button>
