@@ -10,6 +10,7 @@ This repository contains an ioBroker adapter for Zeekr electric vehicles. It fol
 
 - Standard ioBroker adapter layout with a configuration UI
 - Zeekr username/password plus the Zeekr-specific secrets required by the upstream zeekr_ev_api client are configurable in the ioBroker admin interface
+- Optional automatic secret extraction from a `zeekr_secrets.json` file or directly from the Zeekr APKs on the ioBroker host
 - Vehicle discovery and status polling via a Python bridge that uses the Zeekr API client
 - Datapoints for vehicle identity, battery level, range, odometer, charging state, lock state, climate state, and raw payloads
 - Health and alert states such as `info.health`, `info.alertCount`, and `info.lastSuccessfulUpdate`
@@ -115,9 +116,24 @@ Open the ioBroker Admin UI, create a new instance of the `Zeekr` adapter, and co
 - vinKey: VIN encryption key required by the upstream client
 - vinIv: VIN encryption IV required by the upstream client
 - polling interval: refresh interval in seconds
-- vehicle filter: optional substring filter for one or more vehicles
+- vehicle filter: optional substring filter for one or more vehicles; it only decides which vehicles are exposed as datapoints
+- pythonBinary: optional override for the Python executable used by the adapter bridge and secret extractor
+- autoExtractSecrets: if enabled, the adapter will try to extract missing secrets from the APKs or from a `zeekr_secrets.json` file when the adapter starts
+- apkBasePath/apkArm64Path: optional paths to the Zeekr APK files for automated extraction
+- secretsJsonPath: optional path to a `zeekr_secrets.json` created by the extractor
+- extractRegion: region used by the upstream extractor (`EM`, `SEA`, `EU`, `CN`)
 - debug: enable verbose bridge logging
-- pythonBinary: optional override for the Python executable if needed
+
+## Automatic secret extraction
+
+The adapter can automate the extraction flow from the upstream `zeekr_key_extractor` tool:
+
+1. Put the Zeekr APKs on the ioBroker host (base APK plus the ARM64 split APK).
+2. In the admin UI, set `autoExtractSecrets` to `true` and provide `apkBasePath`, `apkArm64Path`, and the desired `extractRegion`.
+3. The adapter will try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and load the resulting secrets into the adapter configuration automatically.
+4. If you already have a `zeekr_secrets.json` from the extractor, you can skip the APK step and point `secretsJsonPath` to that file instead.
+
+This removes the need to copy the six secrets manually into the admin page once the APKs or the JSON file are available on the host.
 
 ## Configuration
 
@@ -135,6 +151,10 @@ The adapter exposes the following configuration fields:
 - `pollingInterval`
 - `vehicleFilter`
 - `pythonBinary` (optional)
+- `autoExtractSecrets` (boolean)
+- `apkBasePath` / `apkArm64Path` (optional)
+- `secretsJsonPath` (optional)
+- `extractRegion`
 - `debug` (boolean)
 
 ## Datapoints

@@ -158,19 +158,43 @@
       </div>
       <div class="grid">
         <div class="field">
-          <label for="vehicleFilter">Vehicle filter (optional)</label>
+          <label for="vehicleFilter">Vehicle filter (optional; only exposes matching vehicles)</label>
           <input id="vehicleFilter" type="text" />
         </div>
         <div class="field">
-          <label for="pythonBinary">Python binary (optional)</label>
+          <label for="pythonBinary">Python binary (optional; used by the bridge and secret extractor)</label>
           <input id="pythonBinary" type="text" />
         </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="apkBasePath">APK base path (optional; used for automatic secret extraction)</label>
+          <input id="apkBasePath" type="text" />
+        </div>
+        <div class="field">
+          <label for="apkArm64Path">APK arm64 path (optional; used for automatic secret extraction)</label>
+          <input id="apkArm64Path" type="text" />
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="secretsJsonPath">Secrets JSON path (optional; skips APK extraction if present)</label>
+          <input id="secretsJsonPath" type="text" />
+        </div>
+        <div class="field">
+          <label for="extractRegion">Extract region (EM/SEA/EU/CN)</label>
+          <input id="extractRegion" type="text" />
+        </div>
+      </div>
+      <div class="checkbox-row">
+        <input id="autoExtractSecrets" type="checkbox" />
+        <label for="autoExtractSecrets">Automatically try extracting missing secrets on startup</label>
       </div>
       <div class="checkbox-row">
         <input id="debug" type="checkbox" />
         <label for="debug">Enable debug logging</label>
       </div>
-      <div class="hint">The adapter needs the same Zeekr-specific secrets required by the upstream zeekr_ev_api client.</div>
+      <div class="hint">The adapter needs the same Zeekr-specific secrets required by the upstream zeekr_ev_api client. If you have a `zeekr_secrets.json` from the extractor, point the adapter to it; otherwise provide the APK paths and it will try to extract them automatically.</div>
       <div class="actions">
         <button type="button" class="primary" id="saveButton">Save</button>
         <button type="button" class="secondary" id="cancelButton">Cancel</button>
@@ -195,6 +219,11 @@
         $('#pollingInterval').val(currentSettings.pollingInterval || 300);
         $('#vehicleFilter').val(currentSettings.vehicleFilter || '');
         $('#pythonBinary').val(currentSettings.pythonBinary || '');
+        $('#apkBasePath').val(currentSettings.apkBasePath || '');
+        $('#apkArm64Path').val(currentSettings.apkArm64Path || '');
+        $('#secretsJsonPath').val(currentSettings.secretsJsonPath || '');
+        $('#extractRegion').val(currentSettings.extractRegion || 'EM');
+        $('#autoExtractSecrets').prop('checked', !!currentSettings.autoExtractSecrets);
         $('#debug').prop('checked', !!currentSettings.debug);
         if (onChangeHandler) {
           onChangeHandler(false);
@@ -215,6 +244,11 @@
           pollingInterval: parseInt($('#pollingInterval').val(), 10) || 300,
           vehicleFilter: $('#vehicleFilter').val(),
           pythonBinary: $('#pythonBinary').val(),
+          apkBasePath: $('#apkBasePath').val(),
+          apkArm64Path: $('#apkArm64Path').val(),
+          secretsJsonPath: $('#secretsJsonPath').val(),
+          extractRegion: $('#extractRegion').val(),
+          autoExtractSecrets: $('#autoExtractSecrets').is(':checked'),
           debug: $('#debug').is(':checked')
         };
         currentSettings = settings;

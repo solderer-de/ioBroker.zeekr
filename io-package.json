@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.42",
+    "version": "0.1.43",
     "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
@@ -60,6 +60,11 @@
     "prodSecret": "",
     "vinKey": "",
     "vinIv": "",
+    "autoExtractSecrets": false,
+    "apkBasePath": "",
+    "apkArm64Path": "",
+    "secretsJsonPath": "",
+    "extractRegion": "EM",
     "pollingInterval": 300,
     "vehicleFilter": "",
     "pythonBinary": "",
