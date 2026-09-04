@@ -216,3 +216,12 @@ The command is routed through the Python bridge and forwarded to the underlying 
 - expose additional datapoints from the Zeekr API
 - add controls for charging and climate operations
 - improve live validation against a real Zeekr account
+
+## Disclaimer
+
+Unofficial community project. Not affiliated with Zeekr or Geely.
+
+- Personal and educational use only, at your own risk.
+- The adapter talks to undocumented Zeekr APIs and derives keys from the official Android app (see `wysie/zeekr_key_extractor`). Reverse engineering and API use may violate Zeekr's terms and local law; check before use.
+- Never commit APKs, `zeekr_secrets.json`, credentials, or tokens. Secrets belong in ioBroker `protectedNative`, never in git, logs, or states (enforced by CI secret scan).
+- No APKs or keys are shipped in this repository.
