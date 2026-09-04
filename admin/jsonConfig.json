@@ -152,6 +152,12 @@
       "sm": 6
     },
     "alertWebhook": { "type": "text", "label": "Alert-Webhook https:// (optional)", "sm": 6 },
-    "debug": { "type": "checkbox", "label": "Debug-Logging (Secrets werden maskiert)", "sm": 12 }
+    "debug": { "type": "checkbox", "label": "Debug-Logging (Secrets werden maskiert)", "sm": 12 },
+    "mockMode": {
+      "type": "checkbox",
+      "label": "Mock-Modus (ohne echten Account testen)",
+      "help": "Zeigt ein Mock-Fahrzeug mit allen neuen States/Buttons. Für Live-Validierung ohne Account + für testConnection.",
+      "sm": 12
+    }
   }
 }

@@ -121,6 +121,48 @@ test('getErrorHint maps known Zeekr errors to German hints', () => {
   assert.match(getErrorHint('079021 session'), /Zweitaccount/);
 });
 
+test('typed commands cover lock/climate/charge', () => {
+  const { TYPED_COMMANDS } = require('../lib/adapter');
+  for (const key of ['lock', 'unlock', 'climateStart', 'climateStop', 'chargeStart', 'chargeStop']) {
+    assert.ok(TYPED_COMMANDS[key], key);
+    assert.equal(typeof TYPED_COMMANDS[key].command, 'string');
+  }
+  assert.equal(TYPED_COMMANDS.chargeStart.serviceId, 'RCS');
+});
+
+test('bridge mock mode returns fixture vehicles', () => {
+  const result = spawnSync(process.env.PYTHON || 'python3', ['lib/bridge.py', 'vehicles'],
+    { input: JSON.stringify({ username: 'mock', password: 'mock' }), cwd: path.join(__dirname, '..'), encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const payload = JSON.parse(result.stdout);
+  assert.ok(Array.isArray(payload.vehicles) && payload.vehicles.length >= 1);
+  assert.equal(payload.vehicles[0].vin, 'MOCKVIN1234567890');
+  assert.equal(typeof payload.vehicles[0].chargingLimit, 'number');
+});
+
+test('bridge mock test_connection works', () => {
+  const result = spawnSync(process.env.PYTHON || 'python3', ['lib/bridge.py', 'test_connection'],
+    { input: JSON.stringify({ username: 'mock', password: 'mock' }), cwd: path.join(__dirname, '..'), encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).ok, true);
+});
+
+test('bridge extended normalization keeps new fields', () => {
+  const result = spawnSync(process.env.PYTHON || 'python3', ['-c', `
+import importlib.util, json, pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+p = m.normalize_vehicle({'vin': 'X'}, {'batteryLevel': 80}, {}, {}, {'tirePressureFl': 2.5, 'latitude': 52.5}, {'chargingLimit': 90}, {'enabled': True}, {}, {'lastTripDistanceKm': 12})
+print(json.dumps(p))
+`], { cwd: path.join(__dirname, '..') });
+  assert.equal(result.status, 0, result.stderr.toString());
+  const p = JSON.parse(result.stdout.toString());
+  assert.equal(p.chargingLimit, 90);
+  assert.equal(p.tirePressureFl, 2.5);
+  assert.equal(p.lastTripDistanceKm, 12);
+});
+
 test('main entrypoint exports an adapter factory', () => {
   const factory = createMainAdapterFactory();
   const adapter = factory({ name: 'zeekr' });
