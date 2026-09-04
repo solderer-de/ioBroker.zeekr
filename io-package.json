@@ -20,11 +20,11 @@
     "mode": "daemon",
     "icon": "admin/zeekr.svg",
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/solderer-de/iobroker.zeekr/main/admin/zeekr.svg",
-    "readme": "https://github.com/solderer-de/iobroker.zeekr/blob/main/README.md",
+    "extIcon": "https://raw.githubusercontent.com/solderer-de/ioBroker.zeekr/main/admin/zeekr.svg",
+    "readme": "https://github.com/solderer-de/ioBroker.zeekr/blob/main/README.md",
     "licenseInformation": {
       "license": "MIT",
-      "link": "https://github.com/solderer-de/iobroker.zeekr/blob/main/LICENSE"
+      "link": "https://github.com/solderer-de/ioBroker.zeekr/blob/main/LICENSE"
     },
     "keywords": [
       "zeekr",
@@ -36,19 +36,33 @@
     "tier": 2,
     "connectionType": "cloud",
     "dataSource": "poll",
-    "materialize": true,
     "adminUI": {
       "config": "json"
     },
-    "type": "general",
+    "type": "vehicle",
     "compact": true,
+    "messagebox": true,
     "singleton": false,
     "os": [
       "linux",
       "darwin",
       "win32"
     ],
-    "serviceName": "zeekr"
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.0"
+      },
+      {
+        "admin": ">=6.0.0"
+      }
+    ],
+    "serviceName": "zeekr",
+    "news": {
+      "0.1.44": {
+        "en": "EU key wizard with region preset, prod-secret candidates loop and error hints; typed charging/climate controls; mock mode with testConnection.",
+        "de": "EU-Key-Wizard mit Regions-Vorschlag, Prod-Secret-Kandidaten und Fehlerhinweisen; typisierte Lade-/Klima-Buttons; Mock-Modus mit testConnection."
+      }
+    }
   },
   "native": {
     "username": "",
@@ -84,14 +98,36 @@
     "prodSecretCandidates",
     "vinKey",
     "vinIv"
+  ],
+  "encryptedNative": [
+    "password",
+    "hmacAccessKey",
+    "hmacSecretKey",
+    "passwordPublicKey",
+    "prodSecret",
+    "prodSecretCandidates",
+    "vinKey",
+    "vinIv"
   ],  "objects": [],
   "instanceObjects": [
     {
       "_id": "info",
       "type": "channel",
       "common": {
-        "name": "Information",
-        "type": "channel"
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "name": "Connection status",
+        "type": "boolean",
+        "role": "indicator.connected",
+        "read": true,
+        "write": false,
+        "def": false
       },
       "native": {}
     },

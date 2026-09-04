@@ -4,7 +4,7 @@
   <img src="admin/zeekr.svg" alt="Zeekr logo" width="160" height="160" />
 </p>
 
-This repository contains an ioBroker adapter for Zeekr electric vehicles. It follows the standard ioBroker adapter structure and exposes vehicle state data as datapoints.
+This repository contains an ioBroker adapter for [Zeekr electric vehicles](https://www.zeekr.com). It follows the standard ioBroker adapter structure and exposes vehicle state data as datapoints.
 
 ## Features
 

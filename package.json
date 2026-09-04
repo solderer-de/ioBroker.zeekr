@@ -2,6 +2,7 @@
   "name": "iobroker.zeekr",
   "version": "0.1.44",
   "description": "ioBroker adapter for Zeekr electric vehicles",
+  "author": "solderer-de",
   "private": false,
   "main": "main.js",
   "files": [
@@ -10,16 +11,17 @@
     "lib",
     "main.js",
     "io-package.json",
+    "requirements.txt",
     "LICENSE",
     "README.md"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/solderer-de/iobroker.zeekr.git"
+    "url": "git+https://github.com/solderer-de/ioBroker.zeekr.git"
   },
-  "homepage": "https://github.com/solderer-de/iobroker.zeekr",
+  "homepage": "https://github.com/solderer-de/ioBroker.zeekr",
   "bugs": {
-    "url": "https://github.com/solderer-de/iobroker.zeekr/issues"
+    "url": "https://github.com/solderer-de/ioBroker.zeekr/issues"
   },
   "scripts": {
     "test": "NODE_ENV=test node --test",
@@ -27,7 +29,7 @@
     "check-versions": "node scripts/check-versions.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.0"
