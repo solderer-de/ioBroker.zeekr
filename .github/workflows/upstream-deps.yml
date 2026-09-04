@@ -1,0 +1,178 @@
+name: Upstream Deps
+
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  check-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check PyPI + extractor upstream
+        id: check-deps
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          token = os.environ.get('GH_TOKEN', '')
+          gh_headers = {
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+          }
+          if token:
+              gh_headers['Authorization'] = f'token {token}'
+
+          def gh_json(url):
+              req = urllib.request.Request(url, headers=gh_headers)
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.load(resp)
+
+          def pypi_latest(package):
+              req = urllib.request.Request(f'https://pypi.org/pypi/{package}/json')
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.load(resp)['info']['version']
+
+          # 1) zeekr-ev-api (PyPI) vs requirements.txt pin
+          latest_api = pypi_latest('zeekr-ev-api')
+          req_path = Path('requirements.txt')
+          pinned = ''
+          m = re.search(r'zeekr-ev-api==([^\s;#]+)', req_path.read_text() if req_path.exists() else '')
+          if m:
+              pinned = m.group(1).strip()
+          Path('.pypi-sync.json').write_text(json.dumps({
+              'package': 'zeekr-ev-api',
+              'pinned': pinned,
+              'latest': latest_api,
+              'checked_at': datetime.now(timezone.utc).isoformat(),
+          }, indent=2) + '\n')
+          print(f'zeekr-ev-api pinned={pinned} latest={latest_api}')
+
+          # 2) extractor repo SHA vs state file
+          ext = gh_json('https://api.github.com/repos/wysie/zeekr_key_extractor/commits/main')
+          ext_sha = ext['sha']
+          ext_date = ext['commit']['committer']['date']
+          state_path = Path('.extractor-sync.json')
+          prev = {}
+          if state_path.exists():
+              try:
+                  prev = json.loads(state_path.read_text())
+              except Exception:
+                  prev = {}
+          state_path.write_text(json.dumps({
+              'repo': 'wysie/zeekr_key_extractor',
+              'branch': 'main',
+              'sha': ext_sha,
+              'updated_at': ext_date,
+              'checked_at': datetime.now(timezone.utc).isoformat(),
+          }, indent=2) + '\n')
+          print(f'extractor sha={ext_sha} prev={prev.get("sha", "")}')
+
+          # Output for later steps
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+              fh.write(f'pinned={pinned}\n')
+              fh.write(f'latest={latest_api}\n')
+              fh.write(f'ext_sha={ext_sha}\n')
+              fh.write(f'ext_prev={prev.get("sha", "")}\n')
+              fh.write(f'ext_changed={str(prev.get("sha") != ext_sha).lower()}\n')
+              fh.write(f'api_changed={str(pinned != latest_api).lower()}\n')
+          PY
+      - name: Commit sync state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .pypi-sync.json .extractor-sync.json
+          if git diff --cached --quiet; then
+            echo 'No state change to commit'
+          else
+            git commit -m "chore: record upstream deps state"
+            git push
+          fi
+      - name: Open issues on change
+        if: steps.check-deps.outputs.api_changed == 'true' || steps.check-deps.outputs.ext_changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          token = os.environ['GH_TOKEN']
+          repo = os.environ['GITHUB_REPOSITORY']
+          pinned = '${{ steps.check-deps.outputs.pinned }}'
+          latest = '${{ steps.check-deps.outputs.latest }}'
+          ext_sha = '${{ steps.check-deps.outputs.ext_sha }}'
+          api_changed = '${{ steps.check-deps.outputs.api_changed }}' == 'true'
+          ext_changed = '${{ steps.check-deps.outputs.ext_changed }}' == 'true'
+
+          def open_issue(title, body):
+              data = json.dumps({'title': title, 'body': body}).encode()
+              req = urllib.request.Request(
+                  f'https://api.github.com/repos/{repo}/issues',
+                  data=data,
+                  headers={
+                      'Accept': 'application/vnd.github+json',
+                      'Authorization': f'token {token}',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'Content-Type': 'application/json',
+                  },
+              )
+              with urllib.request.urlopen(req) as resp:
+                  payload = json.load(resp)
+              print(f'Created issue #{payload["number"]}')
+
+          if api_changed:
+              open_issue(
+                  f'Upstream zeekr-ev-api {latest} available (pinned {pinned})',
+                  f'PyPI shows zeekr-ev-api {latest}, requirements.txt pins {pinned}.\n\n'
+                  f'- PyPI: https://pypi.org/project/zeekr-ev-api/{latest}/\n'
+                  f'- Diff: https://github.com/Fryyyyy/zeekr_ev_api/compare/v{pinned}...v{latest} (falls getaggt)\n\n'
+                  'Bitte prüfen + requirements.txt bump als fix(deps) PR (release-please erzeugt dann Patch/Minor).',
+              )
+          if ext_changed:
+              open_issue(
+                  'Upstream zeekr_key_extractor changed',
+                  f'Neuer Commit: {ext_sha}\n'
+                  f'- Commit: https://github.com/wysie/zeekr_key_extractor/commit/{ext_sha}\n'
+                  f'- Relevant für EU 3.0.x (#11/#13) + App 1.6 (#12).\n\n'
+                  'Bitte prüfen ob EXTRACTOR_DEPS / Docs / Region-Mapping anzupassen sind.',
+              )
+          PY
+      - name: Propose requirements bump PR
+        if: steps.check-deps.outputs.api_changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PINNED='${{ steps.check-deps.outputs.pinned }}'
+          LATEST='${{ steps.check-deps.outputs.latest }}'
+          BRANCH="chore/zeekr-ev-api-$LATEST"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH" || git checkout "$BRANCH"
+          printf 'zeekr-ev-api==%s\n' "$LATEST" > requirements.txt
+          # bridge fallback stays as safety net; requirements.txt is source of truth
+          git add requirements.txt .pypi-sync.json
+          if git diff --cached --quiet; then
+            echo 'Nothing to propose'
+            exit 0
+          fi
+          git commit -m "fix(deps): bump zeekr-ev-api $PINNED -> $LATEST"
+          git push -u origin "$BRANCH" --force-with-lease
+          gh pr create --base main --head "$BRANCH" \
+            --title "fix(deps): bump zeekr-ev-api $PINNED -> $LATEST" \
+            --body "Automatischer Upstream-Bump (PyPI). Bitte CI + manuellen Login-Test abwarten. Bei Merge erzeugt release-please die nächste Version." \
+            || echo 'PR already exists or creation failed'
