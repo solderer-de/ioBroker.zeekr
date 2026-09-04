@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.46",
+    "version": "0.1.47",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.47": {
+        "en": "Repository listing fixes.",
+        "de": "Korrekturen für das Repository-Listing.",
+        "ru": "Исправления для листинга репозитория.",
+        "pt": "Correções para a listagem do repositório.",
+        "nl": "Fixes voor de repositorylijst.",
+        "fr": "Corrections pour le référencement.",
+        "it": "Correzioni per l'elenco repository.",
+        "es": "Correcciones para el listado del repositorio.",
+        "pl": "Poprawki listy repozytorium.",
+        "uk": "Виправлення для лістингу репозиторію.",
+        "zh-cn": "仓库列表修复。"
+      },
       "0.1.46": {
         "en": "Correct Zeekr logo icon.",
         "de": "Korrektes Zeekr-Logo als Icon.",
@@ -86,32 +99,6 @@
         "pl": "Poprawna ikona Zeekr.",
         "uk": "Правильний значок Zeekr.",
         "zh-cn": "正确的Zeekr图标。"
-      },
-      "0.1.45": {
-        "en": "Repository compliance, simplified admin and green CI.",
-        "de": "Repository-Konformität, vereinfachtes Admin und grüne CI.",
-        "ru": "Соответствие репозиторию, упрощённый админ и зелёный CI.",
-        "pt": "Conformidade do repositório, admin simplificado e CI verde.",
-        "nl": "Repository-conformiteit, vereenvoudigde admin en groene CI.",
-        "fr": "Conformité du dépôt, admin simplifié et CI verte.",
-        "it": "Conformità repository, admin semplificato e CI verde.",
-        "es": "Conformidad del repositorio, admin simplificado y CI verde.",
-        "pl": "Zgodność z repozytorium, uproszczony admin i zielone CI.",
-        "uk": "Відповідність репозиторію, спрощений адмін і зелений CI.",
-        "zh-cn": "仓库合规、简化的管理界面和通过的CI。"
-      },
-      "0.1.44": {
-        "en": "EU key wizard, typed charging/climate controls and mock mode.",
-        "de": "EU-Key-Wizard, typisierte Lade-/Klima-Buttons und Mock-Modus.",
-        "ru": "Мастер ключей EU, кнопки зарядки/климата и mock-режим.",
-        "pt": "Assistente de chaves EU, botões de carregamento/clima e modo mock.",
-        "nl": "EU-key-wizard, knoppen voor laden/klimaat en mock-modus.",
-        "fr": "Assistant de clés EU, boutons charge/climat et mode mock.",
-        "it": "Procedura guidata chiavi EU, pulsanti ricarica/clima e modalità mock.",
-        "es": "Asistente de claves EU, botones de carga/clima y modo mock.",
-        "pl": "Kreator kluczy EU, przyciski ładowania/klimy i tryb mock.",
-        "uk": "Майстер ключів EU, кнопки заряджання/клімату та mock-режим.",
-        "zh-cn": "EU密钥向导、充电/空调按钮和模拟模式。"
       }
     }
   },
