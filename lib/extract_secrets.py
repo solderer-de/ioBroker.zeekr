@@ -51,23 +51,37 @@ def _find_output_json(base_apk: Path, arm64_apk: Path, output_path: str | None) 
     return None
 
 
+EXTRACTOR_REPO = 'https://github.com/wysie/zeekr_key_extractor.git'
+# Pinned for reproducibility; bump deliberately after manual verification.
+EXTRACTOR_COMMIT = os.environ.get('ZEEKR_EXTRACTOR_COMMIT') or 'main'
+EXTRACTOR_DEPS = ['capstone==5.0.9', 'pyelftools==0.33']
+
+
 def _clone_extractor(extractor_dir: Path) -> None:
     if (extractor_dir / 'zeekr_extract_secrets.py').exists():
         return
     extractor_dir.mkdir(parents=True, exist_ok=True)
-    subprocess.check_call(['git', 'clone', '--depth', '1', 'https://github.com/wysie/zeekr_key_extractor.git', str(extractor_dir)])
+    subprocess.check_call(
+        ['git', 'clone', '--depth', '1', '--branch', EXTRACTOR_COMMIT, EXTRACTOR_REPO, str(extractor_dir)]
+        if EXTRACTOR_COMMIT not in ('main', 'master', '')
+        else ['git', 'clone', '--depth', '1', EXTRACTOR_REPO, str(extractor_dir)],
+        timeout=120,
+    )
 
 
 def _ensure_dependencies(python_binary: str, extractor_dir: Path) -> None:
     venv_dir = extractor_dir / '.venv'
     if not venv_dir.exists():
-        subprocess.check_call([python_binary, '-m', 'venv', str(venv_dir)])
+        subprocess.check_call([python_binary, '-m', 'venv', str(venv_dir)], timeout=120)
     python_exe = venv_dir / 'bin' / 'python'
     if os.name == 'nt':
         python_exe = venv_dir / 'Scripts' / 'python.exe'
     if not python_exe.exists():
         raise RuntimeError('Unable to create the extractor virtualenv')
-    subprocess.check_call([str(python_exe), '-m', 'pip', 'install', '--quiet', 'capstone', 'pyelftools'])
+    subprocess.check_call(
+        [str(python_exe), '-m', 'pip', 'install', '--quiet', '--disable-pip-version-check'] + EXTRACTOR_DEPS,
+        timeout=180,
+    )
 
 
 def main() -> int:
@@ -97,6 +111,9 @@ def main() -> int:
 
     base_apk = Path(apk_base_path)
     arm64_apk = Path(apk_arm64_path)
+    if not base_apk.is_absolute() or not arm64_apk.is_absolute():
+        print(json.dumps({'ok': False, 'error': 'APK paths must be absolute'}))
+        return 0
     if not base_apk.exists() or not arm64_apk.exists():
         print(json.dumps({'ok': False, 'error': 'One or both APK files do not exist'}))
         return 0
@@ -126,6 +143,7 @@ def main() -> int:
             capture_output=True,
             text=True,
             check=False,
+            timeout=300,
         )
         if completed.returncode != 0:
             print(json.dumps({'ok': False, 'error': completed.stderr.strip() or completed.stdout.strip()}))
@@ -141,17 +159,14 @@ def main() -> int:
         secrets = _normalize_secrets(data)
         print(json.dumps({'ok': True, 'secrets': secrets, 'source': str(output_json)}))
         return 0
+    except subprocess.TimeoutExpired:
+        print(json.dumps({'ok': False, 'error': 'Extractor timed out after 300s'}))
+        return 0
     finally:
+        import shutil
+
         if temp_dir.exists():
-            for child in temp_dir.iterdir():
-                try:
-                    child.unlink()
-                except IsADirectoryError:
-                    pass
-            try:
-                temp_dir.rmdir()
-            except OSError:
-                pass
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 if __name__ == '__main__':

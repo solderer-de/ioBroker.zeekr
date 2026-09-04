@@ -1,0 +1,43 @@
+{
+  "i18n": true,
+  "type": "panel",
+  "items": {
+    "username": { "type": "text", "label": "Zeekr username", "sm": 6 },
+    "password": { "type": "password", "label": "Zeekr password", "sm": 6 },
+    "countryCode": { "type": "text", "label": "Country code", "default": "AU", "sm": 6 },
+    "pollingInterval": {
+      "type": "number",
+      "label": "Polling interval (seconds)",
+      "default": 300,
+      "min": 30,
+      "step": 30,
+      "sm": 6
+    },
+    "hmacAccessKey": { "type": "password", "label": "HMAC access key", "sm": 6 },
+    "hmacSecretKey": { "type": "password", "label": "HMAC secret key", "sm": 6 },
+    "passwordPublicKey": { "type": "password", "label": "Password encryption public key", "sm": 6 },
+    "prodSecret": { "type": "password", "label": "Production secret", "sm": 6 },
+    "vinKey": { "type": "password", "label": "VIN encryption key", "sm": 6 },
+    "vinIv": { "type": "password", "label": "VIN encryption IV", "sm": 6 },
+    "vehicleFilter": { "type": "text", "label": "Vehicle filter (optional)", "sm": 6 },
+    "pythonBinary": { "type": "text", "label": "Python binary (optional)", "sm": 6 },
+    "apkBasePath": { "type": "text", "label": "APK base path (absolute, optional)", "sm": 6 },
+    "apkArm64Path": { "type": "text", "label": "APK arm64 path (absolute, optional)", "sm": 6 },
+    "secretsJsonPath": { "type": "text", "label": "Secrets JSON path (optional)", "sm": 6 },
+    "extractRegion": {
+      "type": "select",
+      "label": "Extract region",
+      "default": "EM",
+      "options": [
+        { "label": "EM", "value": "EM" },
+        { "label": "SEA", "value": "SEA" },
+        { "label": "EU", "value": "EU" },
+        { "label": "CN", "value": "CN" }
+      ],
+      "sm": 6
+    },
+    "alertWebhook": { "type": "text", "label": "Alert webhook https:// (optional)", "sm": 12 },
+    "autoExtractSecrets": { "type": "checkbox", "label": "Automatically try extracting missing secrets on startup", "sm": 12 },
+    "debug": { "type": "checkbox", "label": "Enable debug logging", "sm": 12 }
+  }
+}

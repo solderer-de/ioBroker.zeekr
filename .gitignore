@@ -4,3 +4,8 @@ dist/
 .vscode/
 .pyc
 __pycache__/
+.venv/
+.tools/
+*.apk
+zeekr_secrets.json
+.iobroker-data/

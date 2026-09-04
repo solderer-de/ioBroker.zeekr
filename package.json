@@ -23,7 +23,8 @@
   },
   "scripts": {
     "test": "NODE_ENV=test node --test",
-    "lint": "echo 'No linting configured yet'"
+    "lint": "node --check main.js && node --check lib/adapter.js && python3 -m py_compile lib/bridge.py lib/extract_secrets.py",
+    "check-versions": "node scripts/check-versions.js"
   },
   "engines": {
     "node": ">=18"
