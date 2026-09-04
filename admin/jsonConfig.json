@@ -4,316 +4,763 @@
   "items": {
     "access": {
       "type": "panel",
-      "label": "Zugang",
+      "label": {
+        "en": "Access",
+        "de": "Zugang",
+        "ru": "Доступ",
+        "pt": "Acesso",
+        "nl": "Toegang",
+        "fr": "Accès",
+        "it": "Accesso",
+        "es": "Acceso",
+        "pl": "Dostęp",
+        "uk": "Доступ",
+        "zh-cn": "访问"
+      },
       "items": {
         "_hint": {
           "type": "staticText",
-          "text": "Zeekr-Account eintragen. EU-Konten (com.zeekr.overseas) brauchen Region EU. Details stehen im README.",
-          "sm": 12,
           "xs": 12,
+          "sm": 12,
           "md": 12,
           "lg": 12,
-          "xl": 12
+          "xl": 12,
+          "text": {
+            "en": "Enter the Zeekr account. EU accounts (com.zeekr.overseas) need region EU. See README for details.",
+            "de": "Zeekr-Account eintragen. EU-Konten (com.zeekr.overseas) brauchen Region EU. Details im README.",
+            "ru": "Введите учётную запись Zeekr. Для EU нужен регион EU. Подробности в README.",
+            "pt": "Introduza a conta Zeekr. Contas EU precisam da região EU. Detalhes no README.",
+            "nl": "Voer het Zeekr-account in. EU-accounts hebben regio EU nodig. Details in README.",
+            "fr": "Saisissez le compte Zeekr. Les comptes EU exigent la région EU. Détails dans README.",
+            "it": "Inserisci l’account Zeekr. Gli account EU richiedono la regione EU. Dettagli nel README.",
+            "es": "Introduzca la cuenta Zeekr. Las cuentas EU necesitan la región EU. Detalles en README.",
+            "pl": "Wprowadź konto Zeekr. Konta EU wymagają regionu EU. Szczegóły w README.",
+            "uk": "Введіть обліковий запис Zeekr. Для EU потрібен регіон EU. Деталі в README.",
+            "zh-cn": "输入Zeekr账户。欧盟账户需要EU区域。详见README。"
+          }
         },
         "username": {
           "type": "text",
-          "label": "Benutzername (E-Mail)",
-          "help": "Tipp: Zweitaccount in der Zeekr-App fürs Auto freigeben (Fehler 079021 vermeiden).",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Username (email)",
+            "de": "Benutzername (E-Mail)",
+            "ru": "Имя пользователя (email)",
+            "pt": "Nome de utilizador (email)",
+            "nl": "Gebruikersnaam (e-mail)",
+            "fr": "Nom d’utilisateur (e-mail)",
+            "it": "Nome utente (email)",
+            "es": "Nombre de usuario (email)",
+            "pl": "Nazwa użytkownika (email)",
+            "uk": "Ім’я користувача (email)",
+            "zh-cn": "用户名（邮箱）"
+          },
+          "help": {
+            "en": "Tip: share the car with a second account to avoid session conflicts (error 079021).",
+            "de": "Tipp: Zweitaccount fürs Auto freigeben (Fehler 079021 vermeiden).",
+            "ru": "Совет: откройте доступ второму аккаунту (ошибка 079021).",
+            "pt": "Dica: partilhe o carro com uma segunda conta (erro 079021).",
+            "nl": "Tip: deel de auto met een tweede account (fout 079021).",
+            "fr": "Astuce : partagez la voiture avec un second compte (erreur 079021).",
+            "it": "Suggerimento: condividi l’auto con un secondo account (errore 079021).",
+            "es": "Consejo: comparta el coche con una segunda cuenta (error 079021).",
+            "pl": "Wskazówka: udostępnij auto drugiemu kontu (błąd 079021).",
+            "uk": "Порада: надайте доступ другому обліковому запису (помилка 079021).",
+            "zh-cn": "提示：与第二个账户共享车辆（避免079021错误）。"
+          }
         },
         "password": {
           "type": "password",
-          "label": "Passwort",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Password",
+            "de": "Passwort",
+            "ru": "Пароль",
+            "pt": "Palavra-passe",
+            "nl": "Wachtwoord",
+            "fr": "Mot de passe",
+            "it": "Password",
+            "es": "Contraseña",
+            "pl": "Hasło",
+            "uk": "Пароль",
+            "zh-cn": "密码"
+          }
         },
         "countryCode": {
-          "type": "select",
-          "label": "Land",
-          "default": "AU",
-          "options": [
-            {
-              "label": "DE – Deutschland (EU)",
-              "value": "DE"
-            },
-            {
-              "label": "DK – Dänemark (EU)",
-              "value": "DK"
-            },
-            {
-              "label": "SE – Schweden (EU)",
-              "value": "SE"
-            },
-            {
-              "label": "NL – Niederlande (EU)",
-              "value": "NL"
-            },
-            {
-              "label": "EU – sonstiges Europa",
-              "value": "EU"
-            },
-            {
-              "label": "AU – Australien (EM)",
-              "value": "AU"
-            },
-            {
-              "label": "SG – Singapur (EM/SEA)",
-              "value": "SG"
-            },
-            {
-              "label": "CN – China",
-              "value": "CN"
-            }
-          ],
-          "sm": 6,
+          "type": "text",
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "default": "AU",
+          "label": {
+            "en": "Country code (e.g. DE, AU)",
+            "de": "Ländercode (z.B. DE, AU)",
+            "ru": "Код страны (напр. DE, AU)",
+            "pt": "Código do país (ex. DE, AU)",
+            "nl": "Landcode (bijv. DE, AU)",
+            "fr": "Code pays (p. ex. DE, AU)",
+            "it": "Codice paese (es. DE, AU)",
+            "es": "Código de país (p. ej. DE, AU)",
+            "pl": "Kod kraju (np. DE, AU)",
+            "uk": "Код країни (напр. DE, AU)",
+            "zh-cn": "国家代码（例如DE、AU）"
+          },
+          "help": {
+            "en": "EU countries suggest region EU automatically.",
+            "de": "EU-Länder schlagen automatisch Region EU vor.",
+            "ru": "Страны EU автоматически предлагают регион EU.",
+            "pt": "Países EU sugerem região EU automaticamente.",
+            "nl": "EU-landen stellen automatisch regio EU voor.",
+            "fr": "Les pays EU suggèrent automatiquement la région EU.",
+            "it": "I paesi EU suggeriscono automaticamente la regione EU.",
+            "es": "Los países EU sugieren automáticamente la región EU.",
+            "pl": "Kraje EU automatycznie proponują region EU.",
+            "uk": "Країни EU автоматично пропонують регіон EU.",
+            "zh-cn": "欧盟国家自动建议EU区域。"
+          }
         },
         "extractRegion": {
           "type": "select",
-          "label": "Region",
-          "help": "EU-Konten brauchen EU. Bei „Invalid access key“ ist die Region fast immer falsch.",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
           "default": "EM",
+          "label": {
+            "en": "Region",
+            "de": "Region",
+            "ru": "Регион",
+            "pt": "Região",
+            "nl": "Regio",
+            "fr": "Région",
+            "it": "Regione",
+            "es": "Región",
+            "pl": "Region",
+            "uk": "Регіон",
+            "zh-cn": "区域"
+          },
+          "help": {
+            "en": "EU accounts need EU. “Invalid access key” almost always means wrong region.",
+            "de": "EU-Konten brauchen EU. „Invalid access key“ heißt fast immer falsche Region.",
+            "ru": "Для EU нужна EU. «Invalid access key» почти всегда неверный регион.",
+            "pt": "Contas EU precisam de EU. «Invalid access key» é quase sempre região errada.",
+            "nl": "EU-accounts hebben EU nodig. «Invalid access key» is bijna altijd verkeerde regio.",
+            "fr": "Les comptes EU exigent EU. «Invalid access key» = presque toujours mauvaise région.",
+            "it": "Gli account EU richiedono EU. «Invalid access key» quasi sempre regione errata.",
+            "es": "Las cuentas EU necesitan EU. «Invalid access key» casi siempre es región errónea.",
+            "pl": "Konta EU wymagają EU. „Invalid access key” to prawie zawsze zły region.",
+            "uk": "Для EU потрібна EU. «Invalid access key» майже завжди неправильний регіон.",
+            "zh-cn": "欧盟账户需要EU。“Invalid access key”几乎总是区域错误。"
+          },
           "options": [
             {
-              "label": "EM – Emerging Markets",
+              "label": {
+                "en": "EM – Emerging Markets",
+                "de": "EM – Emerging Markets",
+                "ru": "EM – развивающиеся рынки",
+                "pt": "EM – Mercados Emergentes",
+                "nl": "EM – Opkomende markten",
+                "fr": "EM – Marchés émergents",
+                "it": "EM – Mercati emergenti",
+                "es": "EM – Mercados emergentes",
+                "pl": "EM – Rynki wschodzące",
+                "uk": "EM – Ринки, що розвиваються",
+                "zh-cn": "EM – 新兴市场"
+              },
               "value": "EM"
             },
             {
-              "label": "EU – Europa",
+              "label": {
+                "en": "EU – Europe",
+                "de": "EU – Europa",
+                "ru": "EU – Европа",
+                "pt": "EU – Europa",
+                "nl": "EU – Europa",
+                "fr": "EU – Europe",
+                "it": "EU – Europa",
+                "es": "EU – Europa",
+                "pl": "EU – Europa",
+                "uk": "EU – Європа",
+                "zh-cn": "EU – 欧洲"
+              },
               "value": "EU"
             },
             {
-              "label": "SEA – Südostasien",
+              "label": {
+                "en": "SEA – Southeast Asia",
+                "de": "SEA – Südostasien",
+                "ru": "SEA – ЮВА",
+                "pt": "SEA – Sudeste Asiático",
+                "nl": "SEA – Zuidoost-Azië",
+                "fr": "SEA – Asie du Sud-Est",
+                "it": "SEA – Sud-est asiatico",
+                "es": "SEA – Sudeste Asiático",
+                "pl": "SEA – Azja Pd.-Wsch.",
+                "uk": "SEA – ПСА",
+                "zh-cn": "SEA – 东南亚"
+              },
               "value": "SEA"
             },
             {
-              "label": "CN – China",
+              "label": {
+                "en": "CN – China",
+                "de": "CN – China",
+                "ru": "CN – Китай",
+                "pt": "CN – China",
+                "nl": "CN – China",
+                "fr": "CN – Chine",
+                "it": "CN – Cina",
+                "es": "CN – China",
+                "pl": "CN – Chiny",
+                "uk": "CN – Китай",
+                "zh-cn": "CN – 中国"
+              },
               "value": "CN"
             }
-          ],
-          "sm": 6,
-          "xs": 12,
-          "md": 6,
-          "lg": 6,
-          "xl": 6
+          ]
         },
         "autoExtractSecrets": {
           "type": "checkbox",
-          "label": "Fehlende Keys beim Start automatisch auslesen",
-          "sm": 12,
           "xs": 12,
+          "sm": 12,
           "md": 12,
           "lg": 12,
-          "xl": 12
+          "xl": 12,
+          "label": {
+            "en": "Extract missing keys automatically on start",
+            "de": "Fehlende Keys beim Start automatisch auslesen",
+            "ru": "Извлекать ключи автоматически при старте",
+            "pt": "Extrair chaves em falta automaticamente",
+            "nl": "Ontbrekende sleutels automatisch uitlezen",
+            "fr": "Extraire les clés manquantes automatiquement",
+            "it": "Estrai automaticamente le chiavi mancanti",
+            "es": "Extraer claves faltantes automáticamente",
+            "pl": "Pobieraj brakujące klucze automatycznie",
+            "uk": "Витягувати відсутні ключі автоматично",
+            "zh-cn": "启动时自动提取缺失的密钥"
+          }
         },
         "apkBasePath": {
           "type": "text",
-          "label": "APK base.apk (Pfad am ioBroker-Host)",
-          "help": "z.B. /opt/iobroker/iobroker-data/zeekr/base.apk",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "APK base.apk (path on host)",
+            "de": "APK base.apk (Pfad am Host)",
+            "ru": "APK base.apk (путь)",
+            "pt": "APK base.apk (caminho)",
+            "nl": "APK base.apk (pad)",
+            "fr": "APK base.apk (chemin)",
+            "it": "APK base.apk (percorso)",
+            "es": "APK base.apk (ruta)",
+            "pl": "APK base.apk (ścieżka)",
+            "uk": "APK base.apk (шлях)",
+            "zh-cn": "APK base.apk（主机路径）"
+          },
+          "help": {
+            "en": "e.g. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "de": "z.B. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "ru": "напр. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "pt": "ex.: /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "nl": "bijv. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "fr": "p. ex. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "it": "es. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "es": "p. ej. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "pl": "np. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "uk": "напр. /opt/iobroker/iobroker-data/zeekr/base.apk",
+            "zh-cn": "例如 /opt/iobroker/iobroker-data/zeekr/base.apk"
+          }
         },
         "apkArm64Path": {
           "type": "text",
-          "label": "APK split_config.arm64_v8a.apk (Pfad)",
-          "help": "Enthält die HMAC-Keys. Nicht die xxhdpi-Datei nehmen.",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "APK split arm64 (path)",
+            "de": "APK split arm64 (Pfad)",
+            "ru": "APK split arm64 (путь)",
+            "pt": "APK split arm64 (caminho)",
+            "nl": "APK split arm64 (pad)",
+            "fr": "APK split arm64 (chemin)",
+            "it": "APK split arm64 (percorso)",
+            "es": "APK split arm64 (ruta)",
+            "pl": "APK split arm64 (ścieżka)",
+            "uk": "APK split arm64 (шлях)",
+            "zh-cn": "APK split arm64（路径）"
+          },
+          "help": {
+            "en": "Contains the HMAC keys. Not the xxhdpi file.",
+            "de": "Enthält die HMAC-Keys. Nicht die xxhdpi-Datei.",
+            "ru": "Содержит HMAC-ключи. Не xxhdpi-файл.",
+            "pt": "Contém as chaves HMAC. Não o ficheiro xxhdpi.",
+            "nl": "Bevat de HMAC-sleutels. Niet het xxhdpi-bestand.",
+            "fr": "Contient les clés HMAC. Pas le fichier xxhdpi.",
+            "it": "Contiene le chiavi HMAC. Non il file xxhdpi.",
+            "es": "Contiene las claves HMAC. No el archivo xxhdpi.",
+            "pl": "Zawiera klucze HMAC. Nie plik xxhdpi.",
+            "uk": "Містить ключі HMAC. Не файл xxhdpi.",
+            "zh-cn": "包含HMAC密钥。不要用xxhdpi文件。"
+          }
         },
         "secretsJsonPath": {
           "type": "text",
-          "label": "Oder: zeekr_secrets.json Pfad (statt APKs)",
-          "sm": 12,
           "xs": 12,
+          "sm": 12,
           "md": 12,
           "lg": 12,
-          "xl": 12
+          "xl": 12,
+          "label": {
+            "en": "Or: zeekr_secrets.json path (instead of APKs)",
+            "de": "Oder: zeekr_secrets.json Pfad (statt APKs)",
+            "ru": "Или: путь zeekr_secrets.json (вместо APK)",
+            "pt": "Ou: caminho zeekr_secrets.json (em vez de APKs)",
+            "nl": "Of: zeekr_secrets.json-pad (i.p.v. APK’s)",
+            "fr": "Ou : chemin zeekr_secrets.json (au lieu des APK)",
+            "it": "Oppure: percorso zeekr_secrets.json (invece degli APK)",
+            "es": "O: ruta zeekr_secrets.json (en vez de APKs)",
+            "pl": "Lub: ścieżka zeekr_secrets.json (zamiast APK)",
+            "uk": "Або: шлях zeekr_secrets.json (замість APK)",
+            "zh-cn": "或：zeekr_secrets.json路径（代替APK）"
+          }
         }
       }
     },
     "keys": {
       "type": "panel",
-      "label": "Keys",
+      "label": {
+        "en": "Keys",
+        "de": "Keys",
+        "ru": "Ключи",
+        "pt": "Chaves",
+        "nl": "Sleutels",
+        "fr": "Clés",
+        "it": "Chiavi",
+        "es": "Claves",
+        "pl": "Klucze",
+        "uk": "Ключі",
+        "zh-cn": "密钥"
+      },
       "items": {
         "_hint": {
           "type": "staticText",
-          "text": "Werden per Auto-Extraktion gefüllt. Nur von Hand eintragen, wenn die Extraktion nicht möglich ist.",
-          "sm": 12,
           "xs": 12,
+          "sm": 12,
           "md": 12,
           "lg": 12,
-          "xl": 12
+          "xl": 12,
+          "text": {
+            "en": "Filled in automatically. Only enter manually if extraction is impossible.",
+            "de": "Werden automatisch gefüllt. Nur von Hand eintragen, wenn Extraktion unmöglich ist.",
+            "ru": "Заполняются автоматически. Вручную — только если извлечение невозможно.",
+            "pt": "Preenchido automaticamente. Só manual se a extração for impossível.",
+            "nl": "Wordt automatisch ingevuld. Alleen handmatig bij onmogelijke extractie.",
+            "fr": "Rempli automatiquement. Manuel uniquement si extraction impossible.",
+            "it": "Compilato automaticamente. Manuale solo se estrazione impossibile.",
+            "es": "Se rellena automáticamente. Solo manual si la extracción es imposible.",
+            "pl": "Wypełniane automatycznie. Ręcznie tylko gdy ekstrakcja niemożliwa.",
+            "uk": "Заповнюється автоматично. Вручну, лише якщо витягнення неможливе.",
+            "zh-cn": "自动填充。仅在无法提取时手动输入。"
+          }
         },
         "hmacAccessKey": {
           "type": "password",
-          "label": "HMAC Access Key",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "HMAC Access Key",
+            "de": "HMAC Access Key",
+            "ru": "HMAC Access Key",
+            "pt": "HMAC Access Key",
+            "nl": "HMAC Access Key",
+            "fr": "Clé d’accès HMAC",
+            "it": "HMAC Access Key",
+            "es": "Clave de acceso HMAC",
+            "pl": "Klucz HMAC Access",
+            "uk": "HMAC Access Key",
+            "zh-cn": "HMAC Access Key"
+          }
         },
         "hmacSecretKey": {
           "type": "password",
-          "label": "HMAC Secret Key",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "HMAC Secret Key",
+            "de": "HMAC Secret Key",
+            "ru": "HMAC Secret Key",
+            "pt": "HMAC Secret Key",
+            "nl": "HMAC Secret Key",
+            "fr": "Clé secrète HMAC",
+            "it": "HMAC Secret Key",
+            "es": "Clave secreta HMAC",
+            "pl": "Klucz HMAC Secret",
+            "uk": "HMAC Secret Key",
+            "zh-cn": "HMAC Secret Key"
+          }
         },
         "passwordPublicKey": {
           "type": "password",
-          "label": "Password Public Key",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Password Public Key",
+            "de": "Password Public Key",
+            "ru": "Password Public Key",
+            "pt": "Password Public Key",
+            "nl": "Password Public Key",
+            "fr": "Clé publique du mot de passe",
+            "it": "Password Public Key",
+            "es": "Clave pública de contraseña",
+            "pl": "Klucz publiczny hasła",
+            "uk": "Password Public Key",
+            "zh-cn": "Password Public Key"
+          }
         },
         "prodSecret": {
           "type": "password",
-          "label": "Prod Secret",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Prod Secret",
+            "de": "Prod Secret",
+            "ru": "Prod Secret",
+            "pt": "Prod Secret",
+            "nl": "Prod Secret",
+            "fr": "Secret prod",
+            "it": "Prod Secret",
+            "es": "Prod Secret",
+            "pl": "Prod Secret",
+            "uk": "Prod Secret",
+            "zh-cn": "Prod Secret"
+          }
         },
         "prodSecretCandidates": {
           "type": "text",
-          "label": "Prod-Secret Kandidaten (kommagetrennt)",
-          "help": "Falls mehrere in zeekr_secrets.json stehen: alle hierher, werden durchprobiert.",
-          "sm": 12,
           "xs": 12,
+          "sm": 12,
           "md": 12,
           "lg": 12,
-          "xl": 12
+          "xl": 12,
+          "label": {
+            "en": "Prod secret candidates (comma separated)",
+            "de": "Prod-Secret Kandidaten (kommagetrennt)",
+            "ru": "Кандидаты prod-secret (через запятую)",
+            "pt": "Candidatos prod-secret (separados por vírgula)",
+            "nl": "Prod-secret-kandidaten (kommagescheiden)",
+            "fr": "Candidats prod-secret (séparés par virgule)",
+            "it": "Candidati prod-secret (separati da virgola)",
+            "es": "Candidatos prod-secret (separados por coma)",
+            "pl": "Kandydaci prod-secret (po przecinku)",
+            "uk": "Кандидати prod-secret (через кому)",
+            "zh-cn": "Prod-secret候选项（逗号分隔）"
+          },
+          "help": {
+            "en": "If several are listed in zeekr_secrets.json, paste them all here.",
+            "de": "Falls mehrere in zeekr_secrets.json stehen: alle hierher.",
+            "ru": "Если в zeekr_secrets.json несколько — вставьте все сюда.",
+            "pt": "Se houver vários em zeekr_secrets.json, cole todos aqui.",
+            "nl": "Als er meerdere in zeekr_secrets.json staan: plak ze hier.",
+            "fr": "S’il y en a plusieurs dans zeekr_secrets.json : collez-les ici.",
+            "it": "Se ce ne sono diversi in zeekr_secrets.json: incollali qui.",
+            "es": "Si hay varios en zeekr_secrets.json, péguelos aquí.",
+            "pl": "Jeśli w zeekr_secrets.json jest kilka, wklej wszystkie tutaj.",
+            "uk": "Якщо в zeekr_secrets.json декілька — вставте всі сюди.",
+            "zh-cn": "如果zeekr_secrets.json中有多个，请全部粘贴到此处。"
+          }
         },
         "vinKey": {
           "type": "password",
-          "label": "VIN Key",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "VIN Key",
+            "de": "VIN Key",
+            "ru": "VIN Key",
+            "pt": "VIN Key",
+            "nl": "VIN-sleutel",
+            "fr": "Clé VIN",
+            "it": "VIN Key",
+            "es": "Clave VIN",
+            "pl": "Klucz VIN",
+            "uk": "VIN Key",
+            "zh-cn": "VIN Key"
+          }
         },
         "vinIv": {
           "type": "password",
-          "label": "VIN IV",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "VIN IV",
+            "de": "VIN IV",
+            "ru": "VIN IV",
+            "pt": "VIN IV",
+            "nl": "VIN-IV",
+            "fr": "IV VIN",
+            "it": "VIN IV",
+            "es": "IV VIN",
+            "pl": "VIN IV",
+            "uk": "VIN IV",
+            "zh-cn": "VIN IV"
+          }
         }
       }
     },
     "advanced": {
       "type": "panel",
-      "label": "Erweitert",
+      "label": {
+        "en": "Advanced",
+        "de": "Erweitert",
+        "ru": "Расширенные",
+        "pt": "Avançado",
+        "nl": "Geavanceerd",
+        "fr": "Avancé",
+        "it": "Avanzate",
+        "es": "Avanzado",
+        "pl": "Zaawansowane",
+        "uk": "Розширені",
+        "zh-cn": "高级"
+      },
       "items": {
         "_hint": {
           "type": "staticText",
-          "text": "Nur bei Problemen nötig. Fehlerhinweise stehen live unter info.lastErrorHint.",
-          "sm": 12,
           "xs": 12,
+          "sm": 12,
           "md": 12,
           "lg": 12,
-          "xl": 12
+          "xl": 12,
+          "text": {
+            "en": "Only needed for problems. Live hints: info.lastErrorHint.",
+            "de": "Nur bei Problemen nötig. Hinweise live unter info.lastErrorHint.",
+            "ru": "Только при проблемах. Подсказки: info.lastErrorHint.",
+            "pt": "Só em caso de problemas. Dicas em info.lastErrorHint.",
+            "nl": "Alleen bij problemen nodig. Hints: info.lastErrorHint.",
+            "fr": "Uniquement en cas de problème. Astuces : info.lastErrorHint.",
+            "it": "Solo in caso di problemi. Suggerimenti: info.lastErrorHint.",
+            "es": "Solo en caso de problemas. Ayuda en info.lastErrorHint.",
+            "pl": "Tylko w razie problemów. Wskazówki: info.lastErrorHint.",
+            "uk": "Лише за проблем. Підказки: info.lastErrorHint.",
+            "zh-cn": "仅在出现问题时需要。实时提示：info.lastErrorHint。"
+          }
         },
         "pollingInterval": {
           "type": "number",
-          "label": "Abfrageintervall (Sekunden)",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
           "default": 300,
           "min": 30,
           "step": 30,
-          "sm": 6,
-          "xs": 12,
-          "md": 6,
-          "lg": 6,
-          "xl": 6
+          "label": {
+            "en": "Poll interval (seconds)",
+            "de": "Abfrageintervall (Sekunden)",
+            "ru": "Интервал опроса (сек)",
+            "pt": "Intervalo (segundos)",
+            "nl": "Pollinterval (seconden)",
+            "fr": "Intervalle (secondes)",
+            "it": "Intervallo (secondi)",
+            "es": "Intervalo (segundos)",
+            "pl": "Interwał (sekundy)",
+            "uk": "Інтервал (сек)",
+            "zh-cn": "轮询间隔（秒）"
+          }
         },
         "vehicleFilter": {
           "type": "text",
-          "label": "Fahrzeug-Filter",
-          "help": "Teilstring aus Name oder VIN. Leer = alle.",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Vehicle filter",
+            "de": "Fahrzeug-Filter",
+            "ru": "Фильтр авто",
+            "pt": "Filtro de veículo",
+            "nl": "Voertuigfilter",
+            "fr": "Filtre véhicule",
+            "it": "Filtro veicolo",
+            "es": "Filtro de vehículo",
+            "pl": "Filtr pojazdu",
+            "uk": "Фільтр авто",
+            "zh-cn": "车辆过滤器"
+          },
+          "help": {
+            "en": "Part of name or VIN. Empty = all.",
+            "de": "Teilstring aus Name oder VIN. Leer = alle.",
+            "ru": "Часть имени или VIN. Пусто = все.",
+            "pt": "Parte do nome ou VIN. Vazio = todos.",
+            "nl": "Deel van naam of VIN. Leeg = alle.",
+            "fr": "Partie du nom ou VIN. Vide = tous.",
+            "it": "Parte di nome o VIN. Vuoto = tutti.",
+            "es": "Parte del nombre o VIN. Vacío = todos.",
+            "pl": "Fragment nazwy lub VIN. Pusto = wszystkie.",
+            "uk": "Частина імені або VIN. Порожньо = всі.",
+            "zh-cn": "名称或VIN的一部分。为空=全部。"
+          }
         },
         "apkLegacyPath": {
           "type": "text",
-          "label": "Legacy-APK 1.5.5 (nur VIN, alte Apps)",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Legacy APK 1.5.5 (VIN only)",
+            "de": "Legacy-APK 1.5.5 (nur VIN)",
+            "ru": "Legacy APK 1.5.5 (только VIN)",
+            "pt": "APK legado 1.5.5 (só VIN)",
+            "nl": "Legacy-APK 1.5.5 (alleen VIN)",
+            "fr": "APK legacy 1.5.5 (VIN uniquement)",
+            "it": "APK legacy 1.5.5 (solo VIN)",
+            "es": "APK legado 1.5.5 (solo VIN)",
+            "pl": "Legacy APK 1.5.5 (tylko VIN)",
+            "uk": "Legacy APK 1.5.5 (лише VIN)",
+            "zh-cn": "旧版APK 1.5.5（仅VIN）"
+          }
         },
         "runtimeSecretsJsonPath": {
           "type": "text",
-          "label": "Runtime-JSON aus Frida (nur App 3.x)",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Runtime JSON from Frida (app 3.x only)",
+            "de": "Runtime-JSON aus Frida (nur App 3.x)",
+            "ru": "Runtime JSON из Frida (только app 3.x)",
+            "pt": "JSON runtime do Frida (só app 3.x)",
+            "nl": "Runtime-JSON uit Frida (alleen app 3.x)",
+            "fr": "JSON runtime de Frida (app 3.x uniquement)",
+            "it": "JSON runtime da Frida (solo app 3.x)",
+            "es": "JSON runtime de Frida (solo app 3.x)",
+            "pl": "Runtime JSON z Frida (tylko app 3.x)",
+            "uk": "Runtime JSON із Frida (лише app 3.x)",
+            "zh-cn": "来自Frida的Runtime JSON（仅3.x应用）"
+          }
         },
         "pythonBinary": {
           "type": "text",
-          "label": "Python-Programm (leer = automatisch)",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Python program (empty = auto)",
+            "de": "Python-Programm (leer = automatisch)",
+            "ru": "Python (пусто = авто)",
+            "pt": "Python (vazio = auto)",
+            "nl": "Python-programma (leeg = auto)",
+            "fr": "Programme Python (vide = auto)",
+            "it": "Programma Python (vuoto = auto)",
+            "es": "Programa Python (vacío = auto)",
+            "pl": "Program Python (pusto = auto)",
+            "uk": "Python (порожньо = авто)",
+            "zh-cn": "Python程序（空=自动）"
+          }
         },
         "alertWebhook": {
           "type": "text",
-          "label": "Alert-Webhook https://",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Alert webhook https://",
+            "de": "Alert-Webhook https://",
+            "ru": "Alert webhook https://",
+            "pt": "Webhook de alerta https://",
+            "nl": "Alert-webhook https://",
+            "fr": "Webhook d’alerte https://",
+            "it": "Webhook avvisi https://",
+            "es": "Webhook de alertas https://",
+            "pl": "Webhook alertów https://",
+            "uk": "Alert webhook https://",
+            "zh-cn": "告警Webhook https://"
+          }
         },
         "debug": {
           "type": "checkbox",
-          "label": "Debug-Logging",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Debug logging",
+            "de": "Debug-Logging",
+            "ru": "Отладка",
+            "pt": "Depuração",
+            "nl": "Debuggen",
+            "fr": "Débogage",
+            "it": "Debug",
+            "es": "Depuración",
+            "pl": "Debugowanie",
+            "uk": "Налагодження",
+            "zh-cn": "调试日志"
+          }
         },
         "mockMode": {
           "type": "checkbox",
-          "label": "Mock-Modus (Test ohne echten Account)",
-          "sm": 6,
           "xs": 12,
+          "sm": 6,
           "md": 6,
           "lg": 6,
-          "xl": 6
+          "xl": 6,
+          "label": {
+            "en": "Mock mode (test without account)",
+            "de": "Mock-Modus (Test ohne Account)",
+            "ru": "Mock-режим (тест без аккаунта)",
+            "pt": "Modo mock (teste sem conta)",
+            "nl": "Mock-modus (test zonder account)",
+            "fr": "Mode mock (test sans compte)",
+            "it": "Modalità mock (test senza account)",
+            "es": "Modo mock (prueba sin cuenta)",
+            "pl": "Tryb mock (test bez konta)",
+            "uk": "Mock-режим (тест без обліковки)",
+            "zh-cn": "模拟模式（无账户测试）"
+          }
         }
       }
     }
