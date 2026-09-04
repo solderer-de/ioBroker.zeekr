@@ -151,11 +151,35 @@ test('jsonConfig parses and covers every native key', () => {
 
 test('typed commands cover lock/climate/charge', () => {
   const { TYPED_COMMANDS } = require('../lib/adapter');
-  for (const key of ['lock', 'unlock', 'climateStart', 'climateStop', 'chargeStart', 'chargeStop']) {
+  for (const key of ['lock', 'unlock', 'climateStart', 'climateStop', 'chargeStart', 'chargeStop',
+                     'windowsOpen', 'windowsClose', 'windowsVentilate',
+                     'sunshadeOpen', 'sunshadeClose', 'flash', 'honkFlash']) {
     assert.ok(TYPED_COMMANDS[key], key);
     assert.equal(typeof TYPED_COMMANDS[key].command, 'string');
   }
   assert.equal(TYPED_COMMANDS.chargeStart.serviceId, 'RCS');
+});
+
+test('typed commands match upstream values (Fryyyyy/zeekr_homeassistant)', () => {
+  const { TYPED_COMMANDS } = require('../lib/adapter');
+  assert.deepEqual(TYPED_COMMANDS.lock, {
+    command: 'start', serviceId: 'RDL',
+    setting: { serviceParameters: [{ key: 'door', value: 'all' }] },
+  });
+  assert.deepEqual(TYPED_COMMANDS.unlock, {
+    command: 'stop', serviceId: 'RDU',
+    setting: { serviceParameters: [{ key: 'door', value: 'all' }] },
+  });
+  assert.deepEqual(TYPED_COMMANDS.windowsVentilate, {
+    command: 'start', serviceId: 'RWS',
+    setting: { serviceParameters: [{ key: 'target', value: 'ventilate' }] },
+  });
+  assert.deepEqual(TYPED_COMMANDS.flash, {
+    command: 'start', serviceId: 'RHL',
+    setting: { serviceParameters: [{ key: 'rhl', value: 'light-flash' }] },
+  });
+  assert.equal(TYPED_COMMANDS.climateStart.serviceId, 'ZAF');
+  assert.equal(TYPED_COMMANDS.climateStop.serviceId, 'ZAF');
 });
 
 test('bridge mock mode returns fixture vehicles', () => {
@@ -189,6 +213,25 @@ print(json.dumps(p))
   assert.equal(p.chargingLimit, 90);
   assert.equal(p.tirePressureFl, 2.5);
   assert.equal(p.lastTripDistanceKm, 12);
+});
+
+test('bridge reads nested additionalVehicleStatus', () => {
+  const result = spawnSync(PYTHON, ['-c', `
+import importlib.util, json, pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+p = m.normalize_vehicle(
+    {'vin': 'X'},
+    {'additionalVehicleStatus': {'drivingSafetyStatus': {'centralLockingStatus': 'locked'},
+     'climateStatus': {'winPosDriver': 0, 'winPosPassenger': 50}}},
+    {}, {})
+print(json.dumps(p))
+`], { cwd: path.join(__dirname, '..') });
+  assert.equal(result.status, 0, result.stderr.toString());
+  const p = JSON.parse(result.stdout.toString());
+  assert.equal(p.centralLockingStatus, 'locked');
+  assert.equal(p.windowPositionAvg, 25);
 });
 
 test('main entrypoint exports an adapter factory', () => {

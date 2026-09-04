@@ -127,6 +127,8 @@ MOCK_VEHICLES = [
         'chargePlan': {'enabled': False},
         'travelPlan': {'enabled': False},
         'lastTripDistanceKm': 42.5,
+        'centralLockingStatus': 'locked',
+        'windowPositionAvg': 0,
         'status': {'mock': True},
         'chargingStatus': {'mock': True},
         'remoteControlState': {'mock': True},
@@ -170,8 +172,18 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'journey': journey_payload,
     }
 
-    # Explicit priority: vehicle -> status -> charging -> remote. No blind deep-scan
-    # for generic keys like 'range'/'power'/'id' anymore (false-positive source).
+    # additionalVehicleStatus (drivingSafetyStatus, electricVehicleStatus,
+    # climateStatus) liegt teils eine Ebene tiefer -> als Fallback mit einbeziehen.
+    # Explizite Priorität: vehicle -> status -> charging -> remote, danach nested.
+    nested_subs = []
+    for container in (status_payload, vtm_payload, charging_payload, vehicle_dict):
+        if not isinstance(container, dict):
+            continue
+        add = container.get('additionalVehicleStatus')
+        if isinstance(add, dict):
+            for sub in add.values():
+                if isinstance(sub, dict) and sub not in nested_subs:
+                    nested_subs.append(sub)
     name = get_first(vehicle_dict, status_payload, charging_payload, remote_payload,
                      keys=['vehicleName', 'displayName', 'name', 'modelName'], default='Vehicle')
     vin = get_first(vehicle_dict, status_payload,
@@ -238,6 +250,17 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         trips = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else None
         if trips:
             last_trip = coerce_number((trips[0] or {}).get('distance') if isinstance(trips[0], dict) else None)
+    central_locking = get_first(
+        status_payload, vtm_payload, vehicle_dict, *nested_subs,
+        keys=['centralLockingStatus', 'doorLockStatus'])
+    if not isinstance(central_locking, str):
+        central_locking = str(central_locking) if central_locking is not None else ''
+    win_positions = []
+    for win_key in ['winPosDriver', 'winPosPassenger', 'winPosDriverRear', 'winPosPassengerRear']:
+        win_positions.append(coerce_number(get_first(
+            status_payload, vtm_payload, *nested_subs, keys=[win_key])))
+    win_positions = [v for v in win_positions if v is not None]
+    window_position_avg = sum(win_positions) / len(win_positions) if win_positions else None
 
     return {
         'name': name,
@@ -266,6 +289,8 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'chargePlan': charge_plan_payload,
         'travelPlan': travel_plan_payload,
         'lastTripDistanceKm': last_trip,
+        'centralLockingStatus': central_locking,
+        'windowPositionAvg': window_position_avg,
         'status': status_payload,
         'chargingStatus': charging_payload,
         'remoteControlState': remote_payload,
