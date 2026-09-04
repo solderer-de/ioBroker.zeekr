@@ -194,7 +194,23 @@
         <input id="debug" type="checkbox" />
         <label for="debug">Enable debug logging</label>
       </div>
-      <div class="hint">The adapter needs the same Zeekr-specific secrets required by the upstream zeekr_ev_api client. Use absolute file paths on the ioBroker host. If you already have a `zeekr_secrets.json`, point the adapter to it; otherwise provide the base APK and the ARM64 split APK so the adapter can try to extract them automatically.</div>
+      <div class="hint"><strong>EU-Konten (com.zeekr.overseas, DE/DK/SE/NL): Region EU wählen, nicht EM.</strong> 0001 Invalid access key = fast immer falsche Region. 079025 = prod_secret falsch (Kandidaten unten + ggf. Frida). X-VIN-Fehler = VIN-Key falsch (Legacy 1.5.5 oder Frida). App ≤3.0.3 statisch ok, ab 3.0.6 EU sind prod+VIN nur per Frida aus laufender App holbar.</div>
+      <div class="grid">
+        <div class="field">
+          <label for="prodSecretCandidates">Prod-Secret Kandidaten (kommagetrennt)</label>
+          <input id="prodSecretCandidates" type="text" />
+        </div>
+        <div class="field">
+          <label for="apkLegacyPath">Legacy-APK 1.5.5 (optional, nur VIN)</label>
+          <input id="apkLegacyPath" type="text" />
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="runtimeSecretsJsonPath">Runtime-JSON (Frida, App 3.x, optional)</label>
+          <input id="runtimeSecretsJsonPath" type="text" />
+        </div>
+      </div>
       <div class="actions">
         <button type="button" class="primary" id="saveButton">Save</button>
         <button type="button" class="secondary" id="cancelButton">Cancel</button>
@@ -214,6 +230,7 @@
         $('#hmacSecretKey').val(currentSettings.hmacSecretKey || '');
         $('#passwordPublicKey').val(currentSettings.passwordPublicKey || '');
         $('#prodSecret').val(currentSettings.prodSecret || '');
+        $('#prodSecretCandidates').val(currentSettings.prodSecretCandidates || '');
         $('#vinKey').val(currentSettings.vinKey || '');
         $('#vinIv').val(currentSettings.vinIv || '');
         $('#pollingInterval').val(currentSettings.pollingInterval || 300);
@@ -221,7 +238,9 @@
         $('#pythonBinary').val(currentSettings.pythonBinary || '');
         $('#apkBasePath').val(currentSettings.apkBasePath || '');
         $('#apkArm64Path').val(currentSettings.apkArm64Path || '');
+        $('#apkLegacyPath').val(currentSettings.apkLegacyPath || '');
         $('#secretsJsonPath').val(currentSettings.secretsJsonPath || '');
+        $('#runtimeSecretsJsonPath').val(currentSettings.runtimeSecretsJsonPath || '');
         $('#extractRegion').val(currentSettings.extractRegion || 'EM');
         $('#autoExtractSecrets').prop('checked', !!currentSettings.autoExtractSecrets);
         $('#debug').prop('checked', !!currentSettings.debug);
@@ -239,6 +258,7 @@
           hmacSecretKey: $('#hmacSecretKey').val(),
           passwordPublicKey: $('#passwordPublicKey').val(),
           prodSecret: $('#prodSecret').val(),
+          prodSecretCandidates: $('#prodSecretCandidates').val(),
           vinKey: $('#vinKey').val(),
           vinIv: $('#vinIv').val(),
           pollingInterval: parseInt($('#pollingInterval').val(), 10) || 300,
@@ -246,7 +266,9 @@
           pythonBinary: $('#pythonBinary').val(),
           apkBasePath: $('#apkBasePath').val(),
           apkArm64Path: $('#apkArm64Path').val(),
+          apkLegacyPath: $('#apkLegacyPath').val(),
           secretsJsonPath: $('#secretsJsonPath').val(),
+          runtimeSecretsJsonPath: $('#runtimeSecretsJsonPath').val(),
           extractRegion: $('#extractRegion').val(),
           autoExtractSecrets: $('#autoExtractSecrets').is(':checked'),
           debug: $('#debug').is(':checked')

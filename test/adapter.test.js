@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 
-const { createDeviceBaseId, ZeekrAdapter } = require('../lib/adapter');
+const { createDeviceBaseId, ZeekrAdapter, suggestRegionForCountry, getErrorHint } = require('../lib/adapter');
 
 function createMainAdapterFactory() {
   return require('../main');
@@ -105,6 +105,20 @@ test('sendCommand validates vin/command', async () => {
   };
   await adapter.onMessage({ command: 'sendCommand', message: {}, from: 'test', callback: () => {} });
   assert.equal(sent.ok, false);
+});
+
+test('suggestRegion maps EU countries to EU', () => {
+  assert.equal(suggestRegionForCountry('DE'), 'EU');
+  assert.equal(suggestRegionForCountry('DK'), 'EU');
+  assert.equal(suggestRegionForCountry('AU'), 'EM');
+  assert.equal(suggestRegionForCountry('CN'), 'CN');
+});
+
+test('getErrorHint maps known Zeekr errors to German hints', () => {
+  assert.match(getErrorHint('0001 Invalid access key'), /Region/);
+  assert.match(getErrorHint('079025 Signature authentication failed'), /prod_secret/);
+  assert.match(getErrorHint('Decrypt X-VIN failed'), /VIN/);
+  assert.match(getErrorHint('079021 session'), /Zweitaccount/);
 });
 
 test('main entrypoint exports an adapter factory', () => {

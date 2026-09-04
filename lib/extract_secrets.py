@@ -24,15 +24,37 @@ def _read_json(path: Path):
 
 
 def _normalize_secrets(raw: dict) -> dict:
+    prod_candidates = (
+        raw.get('prod_secret_candidates')
+        or raw.get('prodSecretCandidates')
+        or raw.get('prod_secrets')
+        or []
+    )
+    if isinstance(prod_candidates, str):
+        prod_candidates = [c.strip() for c in prod_candidates.split(',') if c.strip()]
+    primary = raw.get('prod_secret') or raw.get('prodSecret') or ''
+    if not primary and prod_candidates:
+        primary = prod_candidates[0]
     mapping = {
         'hmacAccessKey': raw.get('hmac_access_key') or raw.get('hmacAccessKey') or raw.get('hmac_access') or '',
         'hmacSecretKey': raw.get('hmac_secret_key') or raw.get('hmacSecretKey') or raw.get('hmac_secret') or '',
         'passwordPublicKey': raw.get('password_public_key') or raw.get('passwordPublicKey') or '',
-        'prodSecret': raw.get('prod_secret') or raw.get('prodSecret') or '',
+        'prodSecret': primary,
+        'prodSecretCandidates': ','.join(prod_candidates) if isinstance(prod_candidates, list) else (prod_candidates or ''),
         'vinKey': raw.get('vin_key') or raw.get('vinKey') or '',
         'vinIv': raw.get('vin_iv') or raw.get('vinIv') or '',
     }
     return mapping
+
+
+def _merge_secrets(base: dict, override: dict, only_keys=None) -> dict:
+    merged = dict(base)
+    for key, value in override.items():
+        if only_keys and key not in only_keys:
+            continue
+        if value:
+            merged[key] = value
+    return merged
 
 
 def _find_output_json(base_apk: Path, arm64_apk: Path, output_path: str | None) -> Path | None:
@@ -87,8 +109,10 @@ def _ensure_dependencies(python_binary: str, extractor_dir: Path) -> None:
 def main() -> int:
     payload = _load_payload()
     secrets_json_path = payload.get('secretsJsonPath') or ''
+    runtime_json_path = payload.get('runtimeSecretsJsonPath') or ''
     apk_base_path = payload.get('apkBasePath') or ''
     apk_arm64_path = payload.get('apkArm64Path') or ''
+    apk_legacy_path = payload.get('apkLegacyPath') or ''
     region = payload.get('extractRegion') or 'EM'
     python_binary = payload.get('pythonBinary') or os.environ.get('ZEEKR_PYTHON') or 'python3'
 
@@ -102,6 +126,14 @@ def main() -> int:
             print(json.dumps({'ok': False, 'error': 'Secrets JSON did not contain a JSON object'}))
             return 0
         secrets = _normalize_secrets(data)
+        # Runtime-JSON (Frida, App 3.x) überschreibt prod/vin wenn vorhanden.
+        if runtime_json_path and Path(runtime_json_path).exists():
+            runtime_data = _read_json(Path(runtime_json_path))
+            if isinstance(runtime_data, dict):
+                runtime_secrets = _normalize_secrets(runtime_data)
+                secrets = _merge_secrets(secrets, runtime_secrets, only_keys=['prodSecret', 'prodSecretCandidates', 'vinKey', 'vinIv'])
+                print(json.dumps({'ok': True, 'secrets': secrets, 'source': str(path), 'runtimeSource': str(runtime_json_path)}))
+                return 0
         print(json.dumps({'ok': True, 'secrets': secrets, 'source': str(path)}))
         return 0
 
@@ -157,7 +189,28 @@ def main() -> int:
             print(json.dumps({'ok': False, 'error': 'Extractor output was not a JSON object'}))
             return 0
         secrets = _normalize_secrets(data)
-        print(json.dumps({'ok': True, 'secrets': secrets, 'source': str(output_json)}))
+        warnings = []
+        if not secrets.get('hmacAccessKey') or not secrets.get('hmacSecretKey'):
+            warnings.append('HMAC keys missing — App 1.6+ oder falsches Split? Siehe Upstream-Issue #12. Region prüfen.')
+        if not secrets.get('vinKey') or not secrets.get('vinIv'):
+            warnings.append('VIN Key/IV fehlen — normal ab App ≥1.5.7 (iWall). Legacy-1.5.5-APK oder Frida-Runtime-JSON nutzen.')
+        # Legacy-1.5.5-APK nur für VIN mergen (gilt nicht für overseas 3.0.6+, dort Frida nötig).
+        if apk_legacy_path and (not secrets.get('vinKey') or not secrets.get('vinIv')):
+            legacy_data = _read_json(Path(apk_legacy_path)) if Path(apk_legacy_path).is_file() else None
+            # apkLegacyPath kann JSON oder APK sein: JSON direkt mergen, APK-Hinweis geben.
+            if isinstance(legacy_data, dict):
+                legacy_secrets = _normalize_secrets(legacy_data)
+                secrets = _merge_secrets(secrets, legacy_secrets, only_keys=['vinKey', 'vinIv'])
+                warnings.append('VIN aus Legacy-JSON gemerged (1.5.5-Trick, nicht gültig für overseas 3.0.6+).')
+            else:
+                warnings.append('apkLegacyPath ist gesetzt, aber kein JSON — bitte Legacy-APK separat extrahieren und als JSON hierher mergen, oder Runtime-JSON (Frida) nutzen.')
+        # Runtime-JSON (Frida, App 3.x) hat Vorrang für prod/vin.
+        if runtime_json_path and Path(runtime_json_path).exists():
+            runtime_data = _read_json(Path(runtime_json_path))
+            if isinstance(runtime_data, dict):
+                runtime_secrets = _normalize_secrets(runtime_data)
+                secrets = _merge_secrets(secrets, runtime_secrets, only_keys=['prodSecret', 'prodSecretCandidates', 'vinKey', 'vinIv'])
+        print(json.dumps({'ok': True, 'secrets': secrets, 'source': str(output_json), 'warnings': warnings}))
         return 0
     except subprocess.TimeoutExpired:
         print(json.dumps({'ok': False, 'error': 'Extractor timed out after 300s'}))

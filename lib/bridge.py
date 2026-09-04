@@ -223,6 +223,20 @@ def main() -> int:
     hmac_secret_key = payload.get('hmacSecretKey') or payload.get('hmac_secret_key') or os.getenv('ZEEKR_HMAC_SECRET_KEY') or ''
     password_public_key = payload.get('passwordPublicKey') or payload.get('password_public_key') or os.getenv('ZEEKR_PASSWORD_PUBLIC_KEY') or ''
     prod_secret = payload.get('prodSecret') or payload.get('prod_secret') or os.getenv('ZEEKR_PROD_SECRET') or ''
+    prod_candidates_raw = payload.get('prodSecretCandidates') or payload.get('prod_secret_candidates') or ''
+    if isinstance(prod_candidates_raw, str):
+        prod_candidates = [c.strip() for c in prod_candidates_raw.split(',') if c.strip()]
+    elif isinstance(prod_candidates_raw, list):
+        prod_candidates = [str(c).strip() for c in prod_candidates_raw if str(c).strip()]
+    else:
+        prod_candidates = []
+    # Primär zuerst, dann Kandidaten (3.0.3 hat mehrere). Duplikate raus.
+    prod_try_list = []
+    for cand in [prod_secret] + prod_candidates:
+        if cand and cand not in prod_try_list:
+            prod_try_list.append(cand)
+    if not prod_try_list:
+        prod_try_list = ['']
     vin_key = payload.get('vinKey') or payload.get('vin_key') or os.getenv('ZEEKR_VIN_KEY') or ''
     vin_iv = payload.get('vinIv') or payload.get('vin_iv') or os.getenv('ZEEKR_VIN_IV') or ''
 
@@ -237,18 +251,33 @@ def main() -> int:
         return 0
 
     try:
-        client = ZeekrClient(
-            username=username,
-            password=password,
-            country_code=country_code,
-            hmac_access_key=hmac_access_key,
-            hmac_secret_key=hmac_secret_key,
-            password_public_key=password_public_key,
-            prod_secret=prod_secret,
-            vin_key=vin_key,
-            vin_iv=vin_iv,
-        )
-        client.login()
+        last_login_error = None
+        client = None
+        for prod_candidate in prod_try_list:
+            try:
+                client = ZeekrClient(
+                    username=username,
+                    password=password,
+                    country_code=country_code,
+                    hmac_access_key=hmac_access_key,
+                    hmac_secret_key=hmac_secret_key,
+                    password_public_key=password_public_key,
+                    prod_secret=prod_candidate,
+                    vin_key=vin_key,
+                    vin_iv=vin_iv,
+                )
+                client.login()
+                prod_secret = prod_candidate
+                break
+            except Exception as exc:
+                last_login_error = exc
+                # Nur bei Signatur-Fehlern nächsten Kandidaten versuchen, sonst sofort raus.
+                msg = str(exc)
+                if '079025' in msg or 'Signature' in msg or 'signature' in msg:
+                    continue
+                raise
+        if client is None:
+            raise last_login_error or RuntimeError('Login failed')
         if action == 'command':
             vin = payload.get('vin') or ''
             command = payload.get('command') or ''
