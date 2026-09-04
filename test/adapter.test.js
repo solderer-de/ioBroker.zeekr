@@ -5,6 +5,9 @@ const path = require('node:path');
 
 const { createDeviceBaseId, ZeekrAdapter, suggestRegionForCountry, getErrorHint } = require('../lib/adapter');
 
+// Windows runners provide `python`, not `python3`.
+const PYTHON = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+
 function createMainAdapterFactory() {
   return require('../main');
 }
@@ -18,7 +21,7 @@ test('createDeviceBaseId falls back to the vehicle name', () => {
 });
 
 test('bridge normalization exposes common vehicle fields', () => {
-  const result = spawnSync(process.env.PYTHON || 'python3', ['-c', `
+  const result = spawnSync(PYTHON, ['-c', `
 import importlib.util
 import json
 import pathlib
@@ -156,7 +159,7 @@ test('typed commands cover lock/climate/charge', () => {
 });
 
 test('bridge mock mode returns fixture vehicles', () => {
-  const result = spawnSync(process.env.PYTHON || 'python3', ['lib/bridge.py', 'vehicles'],
+  const result = spawnSync(PYTHON, ['lib/bridge.py', 'vehicles'],
     { input: JSON.stringify({ username: 'mock', password: 'mock' }), cwd: path.join(__dirname, '..'), encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
   const payload = JSON.parse(result.stdout);
@@ -166,14 +169,14 @@ test('bridge mock mode returns fixture vehicles', () => {
 });
 
 test('bridge mock test_connection works', () => {
-  const result = spawnSync(process.env.PYTHON || 'python3', ['lib/bridge.py', 'test_connection'],
+  const result = spawnSync(PYTHON, ['lib/bridge.py', 'test_connection'],
     { input: JSON.stringify({ username: 'mock', password: 'mock' }), cwd: path.join(__dirname, '..'), encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(result.stdout).ok, true);
 });
 
 test('bridge extended normalization keeps new fields', () => {
-  const result = spawnSync(process.env.PYTHON || 'python3', ['-c', `
+  const result = spawnSync(PYTHON, ['-c', `
 import importlib.util, json, pathlib
 spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
 m = importlib.util.module_from_spec(spec)
