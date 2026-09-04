@@ -9,3 +9,4 @@ __pycache__/
 *.apk
 zeekr_secrets.json
 .iobroker-data/
+.commitinfo

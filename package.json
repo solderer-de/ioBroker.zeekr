@@ -3,8 +3,16 @@
   "version": "0.1.44",
   "description": "ioBroker adapter for Zeekr electric vehicles",
   "author": "solderer-de",
-  "private": false,
+  "license": "MIT",
   "main": "main.js",
+  "keywords": [
+    "ioBroker",
+    "zeekr",
+    "ev",
+    "vehicle",
+    "car",
+    "charging"
+  ],
   "files": [
     "admin",
     "img",
@@ -24,17 +32,21 @@
     "url": "https://github.com/solderer-de/ioBroker.zeekr/issues"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test node --test",
+    "test": "cross-env NODE_ENV=test node --test test/adapter.test.js",
+    "test:package": "mocha test/package.js --exit",
+    "test:integration": "mocha test/integration.js --exit --timeout 120000",
     "lint": "node --check main.js && node --check lib/adapter.js && python3 -m py_compile lib/bridge.py lib/extract_secrets.py",
     "check-versions": "node scripts/check-versions.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.0"
   },
   "devDependencies": {
+    "@iobroker/testing": "^5.3.0",
+    "@types/node": "^22.20.1",
     "cross-env": "^7.0.3"
   }
 }
