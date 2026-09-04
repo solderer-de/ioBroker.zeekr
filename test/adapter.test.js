@@ -121,6 +121,31 @@ test('getErrorHint maps known Zeekr errors to German hints', () => {
   assert.match(getErrorHint('079021 session'), /Zweitaccount/);
 });
 
+test('jsonConfig parses and covers every native key', () => {
+  const fs = require('node:fs');
+  const ioPkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'io-package.json'), 'utf8'));
+  const jsonConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'admin', 'jsonConfig.json'), 'utf8'));
+  const seen = new Set();
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') {
+      return;
+    }
+    if (node.items && typeof node.items === 'object') {
+      for (const [key, item] of Object.entries(node.items)) {
+        seen.add(key);
+        walk(item);
+      }
+    }
+  };
+  walk(jsonConfig);
+  for (const key of Object.keys(ioPkg.native)) {
+    assert.ok(seen.has(key), `native key missing in jsonConfig: ${key}`);
+  }
+  for (const secret of ioPkg.protectedNative) {
+    assert.ok(seen.has(secret), `protected key missing in jsonConfig: ${secret}`);
+  }
+});
+
 test('typed commands cover lock/climate/charge', () => {
   const { TYPED_COMMANDS } = require('../lib/adapter');
   for (const key of ['lock', 'unlock', 'climateStart', 'climateStop', 'chargeStart', 'chargeStop']) {
