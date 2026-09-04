@@ -1,0 +1,17 @@
+# Gitleaks allowlist: field names and test dummies, never real secrets.
+[allowlist]
+description = "adapter field names and test fixtures"
+paths = [
+  '''admin/jsonConfig\.json''',
+  '''admin/index_m\.html''',
+  '''io-package\.json''',
+  '''test/.*''',
+]
+regexes = [
+  '''(?i)(hmacAccessKey|hmacSecretKey|passwordPublicKey|prodSecret|vinKey|vinIv)''',
+  '''super-secret-password''',
+  '''secret-key''',
+  '''vin-key''',
+  '''vin-iv''',
+  '''hmac''',
+]
