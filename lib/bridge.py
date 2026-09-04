@@ -25,10 +25,43 @@ def ensure_runtime_dependencies():
     if not os.path.exists(python_exe):
         return
     import subprocess
-    subprocess.check_call([python_exe, '-m', 'pip', 'install', '--quiet', 'zeekr-ev-api'])
+    # Pinned install from requirements.txt (single source of truth).
+    # Falls back to a pinned version if requirements.txt is missing.
+    req_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'requirements.txt')
+    target = ['-r', req_file] if os.path.exists(req_file) else ['zeekr-ev-api==0.1.15']
+    subprocess.check_call([python_exe, '-m', 'pip', 'install', '--quiet', '--disable-pip-version-check'] + target, timeout=180)
 
 
 ensure_runtime_dependencies()
+
+
+def get_first(*sources, keys, default=None):
+    """Explicit lookup across dicts in priority order. No deep-recursive guessing."""
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        for key in keys:
+            value = source.get(key)
+            if value is not None and value != '':
+                return value
+    return default
+
+
+def coerce_number(value):
+    if value is None or value == '':
+        return None
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, (int, float)):
+        return value
+    if isinstance(value, str):
+        cleaned = value.strip().replace(',', '.').rstrip('%')
+        try:
+            num = float(cleaned)
+            return int(num) if num.is_integer() else num
+        except ValueError:
+            return None
+    return None
 
 
 def find_value(payload, keys):
@@ -74,9 +107,9 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     else:
         vehicle_dict = {}
 
-    status_payload = status or {}
-    charging_payload = charging_status or {}
-    remote_payload = remote_state or {}
+    status_payload = status if isinstance(status, dict) else {}
+    charging_payload = charging_status if isinstance(charging_status, dict) else {}
+    remote_payload = remote_state if isinstance(remote_state, dict) else {}
     combined_payload = {
         'vehicle': vehicle_dict,
         'status': status_payload,
@@ -84,21 +117,57 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'remote': remote_payload,
     }
 
-    name = find_value(combined_payload, ['name', 'vehicleName', 'displayName', 'modelName']) or 'Vehicle'
-    vin = find_value(combined_payload, ['vin', 'VIN', 'vehicleId', 'id', 'vehicle_id']) or ''
-    battery = find_value(combined_payload, ['batteryLevel', 'battery_level', 'stateOfCharge', 'soc', 'battery'])
-    range_km = find_value(combined_payload, ['rangeKm', 'range_km', 'drivingRange', 'remainingRange', 'range', 'distanceToEmpty'])
-    odometer = find_value(combined_payload, ['odometerKm', 'odometer_km', 'mileage', 'odometer', 'odometerValue'])
-    charge_power = find_value(combined_payload, ['chargePower', 'chargingPower', 'power', 'chargingPowerKw'])
-    current_speed = find_value(combined_payload, ['speed', 'currentSpeed', 'vehicleSpeed', 'travelSpeed'])
-    plugged_in = find_value(combined_payload, ['pluggedIn', 'isPluggedIn', 'plugged', 'chargingCableConnected'])
-    charging = find_value(combined_payload, ['isCharging', 'chargingStatus', 'charging', 'is_charging', 'chargeStatus'])
-    temperature = find_value(combined_payload, ['insideTemperature', 'inside_temp', 'temperature', 'cabinTemperature'])
-    charging_state = find_value(combined_payload, ['chargingState', 'chargeState', 'chargingStatus', 'chargeStatus'])
-    lock_state = find_value(combined_payload, ['lockState', 'doorLockStatus', 'lock_status', 'lockStatus'])
-    is_locked = find_value(combined_payload, ['isLocked', 'locked', 'is_locked', 'vehicleLocked', 'lockState'])
-    climate_on = find_value(combined_payload, ['climateOn', 'climate', 'airConditioning', 'hvacOn'])
-    last_updated = find_value(combined_payload, ['lastUpdated', 'updatedAt', 'timestamp', 'updateTime', 'time'])
+    # Explicit priority: vehicle -> status -> charging -> remote. No blind deep-scan
+    # for generic keys like 'range'/'power'/'id' anymore (false-positive source).
+    name = get_first(vehicle_dict, status_payload, charging_payload, remote_payload,
+                     keys=['vehicleName', 'displayName', 'name', 'modelName'], default='Vehicle')
+    vin = get_first(vehicle_dict, status_payload,
+                    keys=['vin', 'VIN', 'vehicleId', 'vehicle_id'], default='') or ''
+    battery = coerce_number(get_first(vehicle_dict, status_payload, charging_payload,
+                                      keys=['batteryLevel', 'battery_level', 'stateOfCharge', 'soc']))
+    range_km = coerce_number(get_first(vehicle_dict, status_payload,
+                                       keys=['rangeKm', 'range_km', 'drivingRange', 'remainingRange', 'distanceToEmpty']))
+    odometer = coerce_number(get_first(vehicle_dict, status_payload,
+                                       keys=['odometerKm', 'odometer_km', 'mileage', 'odometerValue']))
+    charge_power = coerce_number(get_first(charging_payload, status_payload,
+                                           keys=['chargePower', 'chargingPower', 'chargingPowerKw']))
+    current_speed = coerce_number(get_first(vehicle_dict, status_payload,
+                                            keys=['currentSpeed', 'vehicleSpeed', 'travelSpeed', 'speed']))
+    plugged_in = get_first(charging_payload, status_payload, vehicle_dict,
+                           keys=['pluggedIn', 'isPluggedIn', 'chargingCableConnected'])
+    charging = get_first(charging_payload, status_payload,
+                         keys=['isCharging', 'is_charging', 'charging'])
+    temperature = coerce_number(get_first(status_payload, vehicle_dict,
+                                          keys=['insideTemperature', 'inside_temp', 'cabinTemperature', 'temperature']))
+    charging_state = get_first(charging_payload, status_payload,
+                               keys=['chargingState', 'chargeState', 'chargeStatus'])
+    if not isinstance(charging_state, str):
+        charging_state = ''
+    lock_state = get_first(status_payload, remote_payload, vehicle_dict,
+                           keys=['lockState', 'doorLockStatus', 'lock_status', 'lockStatus'])
+    if not isinstance(lock_state, str):
+        lock_state = str(lock_state) if lock_state is not None else ''
+    is_locked = get_first(status_payload, remote_payload, vehicle_dict,
+                          keys=['isLocked', 'is_locked', 'vehicleLocked', 'locked'])
+    # 'locked' string handling: only exact 'locked' => True, 'unlocked' => False.
+    if isinstance(is_locked, str) and is_locked.strip().lower() in {'locked', 'unlocked'}:
+        is_locked_bool = is_locked.strip().lower() == 'locked'
+    elif lock_state and not isinstance(is_locked, bool) and is_locked is None:
+        is_locked_bool = lock_state.strip().lower() == 'locked'
+    else:
+        is_locked_bool = coerce_bool(is_locked)
+    climate_on = get_first(remote_payload, status_payload,
+                           keys=['climateOn', 'hvacOn', 'airConditioning'])
+    last_updated = get_first(vehicle_dict, status_payload, charging_payload,
+                             keys=['lastUpdated', 'updatedAt', 'updateTime'])
+    if not isinstance(last_updated, str):
+        last_updated = str(last_updated) if last_updated is not None else ''
+
+    # Charging bool: ignore dict payloads (old code: bool({}) == True bug).
+    if isinstance(charging, dict):
+        charging_bool = False
+    else:
+        charging_bool = coerce_bool(charging)
 
     return {
         'name': name,
@@ -109,11 +178,11 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'chargePower': charge_power,
         'currentSpeed': current_speed,
         'pluggedIn': coerce_bool(plugged_in),
-        'isCharging': coerce_bool(charging),
+        'isCharging': charging_bool,
         'temperature': temperature,
         'chargingState': charging_state,
         'lockState': lock_state,
-        'isLocked': coerce_bool(is_locked),
+        'isLocked': is_locked_bool,
         'climateOn': coerce_bool(climate_on),
         'lastUpdated': last_updated,
         'status': status_payload,
@@ -123,9 +192,29 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     }
 
 
-def main() -> int:
+def load_payload() -> tuple[str, dict]:
     action = sys.argv[1] if len(sys.argv) > 1 else 'vehicles'
-    payload = json.loads(sys.argv[2]) if len(sys.argv) > 2 else {}
+    # New path: JSON via stdin (avoids ARG_MAX + leaking secrets in ps).
+    # Old path (argv[2]) kept for backward compatibility with tests.
+    raw = ''
+    if len(sys.argv) > 2:
+        raw = sys.argv[2]
+    elif not sys.stdin.isatty():
+        try:
+            raw = sys.stdin.read() or ''
+        except Exception:
+            raw = ''
+    if not raw.strip():
+        return action, {}
+    try:
+        return action, json.loads(raw)
+    except json.JSONDecodeError:
+        print(json.dumps({"error": "Invalid JSON payload", "vehicles": [], "connection": False}))
+        raise SystemExit(0)
+
+
+def main() -> int:
+    action, payload = load_payload()
 
     username = payload.get('username') or os.getenv('ZEEKR_USERNAME') or ''
     password = payload.get('password') or os.getenv('ZEEKR_PASSWORD') or ''

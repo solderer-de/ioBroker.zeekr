@@ -38,7 +38,7 @@
     "dataSource": "poll",
     "materialize": true,
     "adminUI": {
-      "config": "materialize"
+      "config": "json"
     },
     "type": "general",
     "compact": true,
@@ -70,7 +70,16 @@
     "pythonBinary": "",
     "alertWebhook": "",
     "debug": false
-  },  "objects": [],
+  },
+  "protectedNative": [
+    "password",
+    "hmacAccessKey",
+    "hmacSecretKey",
+    "passwordPublicKey",
+    "prodSecret",
+    "vinKey",
+    "vinIv"
+  ],  "objects": [],
   "instanceObjects": [
     {
       "_id": "info",

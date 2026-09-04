@@ -50,11 +50,11 @@ test('ensureBaseObjects creates the root info and vehicles channels', async () =
   assert.ok(adapter._objects.has('vehicles'));
 });
 
-test('config hashes include the Zeekr secrets', () => {
+test('config hashes do not leak secrets in plain text', () => {
   const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
   adapter.config = {
     username: 'demo',
-    password: 'secret',
+    password: 'super-secret-password',
     countryCode: 'DE',
     hmacAccessKey: 'hmac',
     hmacSecretKey: 'secret-key',
@@ -64,8 +64,47 @@ test('config hashes include the Zeekr secrets', () => {
     vinIv: 'vin-iv',
   };
   const hash = adapter.getConfigHash();
-  assert.match(hash, /hmacAccessKey/);
-  assert.match(hash, /vinIv/);
+  assert.equal(typeof hash, 'string');
+  assert.match(hash, /^[0-9a-f]{64}$/);
+  assert.doesNotMatch(hash, /super-secret-password/);
+  assert.doesNotMatch(hash, /secret-key/);
+});
+
+test('redactPayload hides secret fields', () => {
+  const { redactPayload } = require('../lib/adapter');
+  const out = redactPayload({ username: 'a', password: 'b', hmacSecretKey: 'c', other: 'd' });
+  assert.equal(out.password, '***');
+  assert.equal(out.hmacSecretKey, '***');
+  assert.equal(out.username, 'a');
+  assert.equal(out.other, 'd');
+});
+
+test('ensureBaseObjects does not expose secrets as states', async () => {
+  const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+  await adapter.ensureBaseObjects();
+  for (const secretId of ['info.hmacAccessKey', 'info.hmacSecretKey', 'info.prodSecret', 'info.vinKey', 'info.vinIv']) {
+    assert.ok(!adapter._objects.has(secretId), `${secretId} must not exist`);
+  }
+  assert.ok(adapter._objects.has('info.connection'));
+});
+
+test('resolveVinForDevice reads via getStateAsync', async () => {
+  const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+  await adapter.setStateAsync('vehicles.my_car.vin', 'VIN123', true);
+  assert.equal(await adapter.resolveVinForDevice('my_car'), 'VIN123');
+});
+
+test('sendCommand validates vin/command', async () => {
+  const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+  let sent = null;
+  adapter.sendTo = (from, cmd, msg, cb) => {
+    sent = msg;
+    if (typeof cb === 'function') {
+      cb(msg);
+    }
+  };
+  await adapter.onMessage({ command: 'sendCommand', message: {}, from: 'test', callback: () => {} });
+  assert.equal(sent.ok, false);
 });
 
 test('main entrypoint exports an adapter factory', () => {
