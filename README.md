@@ -230,6 +230,12 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.45
+
+- Repository compliance for the ioBroker listing (translations, license schema, encrypted secrets)
+- Simplified admin with Zugang/Keys/Erweitert tabs
+- Green CI on Ubuntu/Windows, secret scan, upstream dependency checks
+
 ### 0.1.44
 
 - EU key wizard with region preset, prod-secret candidates loop and error hints
