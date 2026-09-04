@@ -194,6 +194,10 @@
         <input id="debug" type="checkbox" />
         <label for="debug">Enable debug logging</label>
       </div>
+      <div class="checkbox-row">
+        <input id="mockMode" type="checkbox" />
+        <label for="mockMode">Mock-Modus (ohne echten Account testen)</label>
+      </div>
       <div class="hint"><strong>EU-Konten (com.zeekr.overseas, DE/DK/SE/NL): Region EU wählen, nicht EM.</strong> 0001 Invalid access key = fast immer falsche Region. 079025 = prod_secret falsch (Kandidaten unten + ggf. Frida). X-VIN-Fehler = VIN-Key falsch (Legacy 1.5.5 oder Frida). App ≤3.0.3 statisch ok, ab 3.0.6 EU sind prod+VIN nur per Frida aus laufender App holbar.</div>
       <div class="grid">
         <div class="field">
@@ -244,6 +248,7 @@
         $('#extractRegion').val(currentSettings.extractRegion || 'EM');
         $('#autoExtractSecrets').prop('checked', !!currentSettings.autoExtractSecrets);
         $('#debug').prop('checked', !!currentSettings.debug);
+        $('#mockMode').prop('checked', !!currentSettings.mockMode);
         if (onChangeHandler) {
           onChangeHandler(false);
         }
@@ -271,7 +276,8 @@
           runtimeSecretsJsonPath: $('#runtimeSecretsJsonPath').val(),
           extractRegion: $('#extractRegion').val(),
           autoExtractSecrets: $('#autoExtractSecrets').is(':checked'),
-          debug: $('#debug').is(':checked')
+          debug: $('#debug').is(':checked'),
+          mockMode: $('#mockMode').is(':checked')
         };
         currentSettings = settings;
         if (callback) {

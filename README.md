@@ -213,9 +213,11 @@ The command is routed through the Python bridge and forwarded to the underlying 
 
 ## Roadmap
 
-- expose additional datapoints from the Zeekr API
-- add controls for charging and climate operations
-- improve live validation against a real Zeekr account
+- [x] erweiterte Datenpunkte (VTM/Reifendruck/GPS/12V, Lade-Limit, Lade-/Travel-Pläne, letzte Trips)
+- [x] typisierte Controls (Lock/Unlock, Klima Start/Stopp, Charge Start/Stopp via RCS, Charge-/Travel-Plan)
+- [x] Live-Validierung ohne Account (Mock-Modus + `testConnection`-Message)
+- [ ] Live-Validierung gegen echten Account (Command-Defaults pro Modell verifizieren)
+- [ ] weitere Datenpunkte nach Bedarf
 
 ## Disclaimer
 

@@ -72,7 +72,8 @@
     "vehicleFilter": "",
     "pythonBinary": "",
     "alertWebhook": "",
-    "debug": false
+    "debug": false,
+    "mockMode": false
   },
   "protectedNative": [
     "password",

@@ -99,7 +99,50 @@ def coerce_bool(value):
     return bool(value)
 
 
-def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_state=None):
+MOCK_VEHICLES = [
+    {
+        'name': 'Mock Zeekr 001',
+        'vin': 'MOCKVIN1234567890',
+        'batteryLevel': 78,
+        'rangeKm': 420,
+        'odometerKm': 12345,
+        'chargePower': 11,
+        'currentSpeed': 0,
+        'pluggedIn': True,
+        'isCharging': True,
+        'temperature': 21.5,
+        'chargingState': 'charging',
+        'lockState': 'locked',
+        'isLocked': True,
+        'climateOn': False,
+        'lastUpdated': '2026-01-01T00:00:00Z',
+        'chargingLimit': 90,
+        'tirePressureFl': 2.5,
+        'tirePressureFr': 2.5,
+        'tirePressureRl': 2.4,
+        'tirePressureRr': 2.4,
+        'latitude': 52.52,
+        'longitude': 13.405,
+        'battery12v': 14.1,
+        'chargePlan': {'enabled': False},
+        'travelPlan': {'enabled': False},
+        'lastTripDistanceKm': 42.5,
+        'status': {'mock': True},
+        'chargingStatus': {'mock': True},
+        'remoteControlState': {'mock': True},
+        'vtmStatus': {'mock': True},
+        'chargingLimitRaw': {'mock': True},
+        'chargePlanRaw': {'mock': True},
+        'travelPlanRaw': {'mock': True},
+        'journeySummary': {'mock': True},
+        'raw': {'mock': True},
+    }
+]
+
+
+def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_state=None,
+                      vtm_status=None, charging_limit=None, charge_plan=None,
+                      travel_plan=None, journey_summary=None):
     if hasattr(vehicle_info, '__dict__'):
         vehicle_dict = {key: getattr(vehicle_info, key) for key in dir(vehicle_info) if not key.startswith('_')}
     elif isinstance(vehicle_info, dict):
@@ -110,11 +153,21 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     status_payload = status if isinstance(status, dict) else {}
     charging_payload = charging_status if isinstance(charging_status, dict) else {}
     remote_payload = remote_state if isinstance(remote_state, dict) else {}
+    vtm_payload = vtm_status if isinstance(vtm_status, dict) else {}
+    limit_payload = charging_limit if isinstance(charging_limit, dict) else {}
+    charge_plan_payload = charge_plan if isinstance(charge_plan, dict) else {}
+    travel_plan_payload = travel_plan if isinstance(travel_plan, dict) else {}
+    journey_payload = journey_summary if isinstance(journey_summary, dict) else {}
     combined_payload = {
         'vehicle': vehicle_dict,
         'status': status_payload,
         'charging': charging_payload,
         'remote': remote_payload,
+        'vtm': vtm_payload,
+        'limit': limit_payload,
+        'chargePlan': charge_plan_payload,
+        'travelPlan': travel_plan_payload,
+        'journey': journey_payload,
     }
 
     # Explicit priority: vehicle -> status -> charging -> remote. No blind deep-scan
@@ -169,6 +222,23 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     else:
         charging_bool = coerce_bool(charging)
 
+    # --- Roadmap: erweiterte Datenpunkte (alles optional, None wenn fehlt) ---
+    charging_limit = coerce_number(get_first(
+        limit_payload, charging_payload, status_payload,
+        keys=['chargingLimit', 'chargeLimit', 'socLimit', 'targetSoc', 'maxSoc', 'limitSoc']))
+    tire_fl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFl', 'tyrePressureFl', 'flTirePressure', 'tireFl']))
+    tire_fr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFr', 'tyrePressureFr', 'frTirePressure', 'tireFr']))
+    tire_rl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRl', 'tyrePressureRl', 'rlTirePressure', 'tireRl']))
+    tire_rr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRr', 'tyrePressureRr', 'rrTirePressure', 'tireRr']))
+    latitude = coerce_number(get_first(vtm_payload, status_payload, vehicle_dict, keys=['latitude', 'lat', 'vehicleLat']))
+    longitude = coerce_number(get_first(vtm_payload, status_payload, vehicle_dict, keys=['longitude', 'lon', 'lng', 'vehicleLon']))
+    battery_12v = coerce_number(get_first(vtm_payload, status_payload, keys=['battery12v', 'voltage12v', 'lowVoltageBattery', 'auxBattery']))
+    last_trip = coerce_number(get_first(journey_payload, keys=['lastTripDistanceKm', 'lastTripDistance', 'lastDistance']))
+    if last_trip is None:
+        trips = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else None
+        if trips:
+            last_trip = coerce_number((trips[0] or {}).get('distance') if isinstance(trips[0], dict) else None)
+
     return {
         'name': name,
         'vin': vin,
@@ -185,9 +255,25 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'isLocked': is_locked_bool,
         'climateOn': coerce_bool(climate_on),
         'lastUpdated': last_updated,
+        'chargingLimit': charging_limit,
+        'tirePressureFl': tire_fl,
+        'tirePressureFr': tire_fr,
+        'tirePressureRl': tire_rl,
+        'tirePressureRr': tire_rr,
+        'latitude': latitude,
+        'longitude': longitude,
+        'battery12v': battery_12v,
+        'chargePlan': charge_plan_payload,
+        'travelPlan': travel_plan_payload,
+        'lastTripDistanceKm': last_trip,
         'status': status_payload,
         'chargingStatus': charging_payload,
         'remoteControlState': remote_payload,
+        'vtmStatus': vtm_payload,
+        'chargingLimitRaw': limit_payload,
+        'chargePlanRaw': charge_plan_payload,
+        'travelPlanRaw': travel_plan_payload,
+        'journeySummary': journey_payload,
         'raw': combined_payload,
     }
 
@@ -244,6 +330,18 @@ def main() -> int:
         print(json.dumps({"error": "Missing Zeekr credentials", "vehicles": [], "connection": False}))
         return 0
 
+    mock_mode = bool(payload.get('mockMode')) or username == 'mock' or os.getenv('ZEEKR_MOCK') == '1'
+    if mock_mode:
+        if action == 'test_connection':
+            print(json.dumps({"ok": True, "mock": True, "vehicleCount": len(MOCK_VEHICLES)}))
+            return 0
+        if action in ('vehicles', 'command', 'set_charge_plan', 'set_travel_plan'):
+            if action == 'vehicles':
+                print(json.dumps({"vehicles": MOCK_VEHICLES, "mock": True}))
+                return 0
+            print(json.dumps({"ok": True, "mock": True}))
+            return 0
+
     try:
         from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
     except ImportError:
@@ -278,6 +376,13 @@ def main() -> int:
                 raise
         if client is None:
             raise last_login_error or RuntimeError('Login failed')
+        if action == 'test_connection':
+            try:
+                count = len(client.get_vehicle_list())
+            except Exception:
+                count = -1
+            print(json.dumps({"ok": True, "vehicleCount": count}))
+            return 0
         if action == 'command':
             vin = payload.get('vin') or ''
             command = payload.get('command') or ''
@@ -290,12 +395,45 @@ def main() -> int:
             ok = vehicle.do_remote_control(command, service_id, setting)
             print(json.dumps({"ok": ok}))
             return 0
+        if action in ('set_charge_plan', 'set_travel_plan'):
+            vin = payload.get('vin') or ''
+            vehicle = next((item for item in client.get_vehicle_list() if getattr(item, 'vin', None) == vin), None)
+            if vehicle is None:
+                print(json.dumps({"error": "Vehicle not found", "ok": False}))
+                return 0
+            try:
+                if action == 'set_charge_plan':
+                    ok = vehicle.set_charge_plan(
+                        start_time=payload.get('startTime') or '',
+                        end_time=payload.get('endTime') or '',
+                        command=payload.get('planCommand') or payload.get('command') or 'start',
+                        bc_cycle_active=bool(payload.get('bcCycleActive')),
+                        bc_temp_active=bool(payload.get('bcTempActive')),
+                    )
+                else:
+                    ok = vehicle.set_travel_plan(
+                        command=payload.get('planCommand') or payload.get('command') or 'start',
+                        start_time=payload.get('startTime') or '',
+                        scheduled_time=payload.get('scheduledTime') or '',
+                        ac_preconditioning=bool(payload.get('acPreconditioning', True)),
+                        steering_wheel_heating=bool(payload.get('steeringWheelHeating')),
+                    )
+            except TypeError as exc:
+                print(json.dumps({"error": f"Plan API mismatch (ev-api update?): {exc}", "ok": False}))
+                return 0
+            print(json.dumps({"ok": bool(ok)}))
+            return 0
         vehicles = client.get_vehicle_list()
         normalized = []
         for vehicle in vehicles:
             status = {}
             charging_status = {}
             remote_state = {}
+            vtm_status = {}
+            charging_limit = {}
+            charge_plan = {}
+            travel_plan = {}
+            journey = {}
             try:
                 status = vehicle.get_status() or {}
             except Exception:  # pragma: no cover - bridge should not crash on one vehicle
@@ -308,7 +446,29 @@ def main() -> int:
                 remote_state = vehicle.get_remote_control_state() or {}
             except Exception:
                 remote_state = {}
-            normalized.append(normalize_vehicle(vehicle.data or {}, status, charging_status, remote_state))
+            try:
+                vtm_status = vehicle.get_vtm_status() or {}
+            except Exception:
+                vtm_status = {}
+            try:
+                charging_limit = vehicle.get_charging_limit() or {}
+            except Exception:
+                charging_limit = {}
+            try:
+                charge_plan = vehicle.get_charge_plan() or {}
+            except Exception:
+                charge_plan = {}
+            try:
+                travel_plan = vehicle.get_travel_plan() or {}
+            except Exception:
+                travel_plan = {}
+            try:
+                journey = vehicle.get_journey_log(page_size=1, current_page=1) or {}
+            except Exception:
+                journey = {}
+            normalized.append(normalize_vehicle(
+                vehicle.data or {}, status, charging_status, remote_state,
+                vtm_status, charging_limit, charge_plan, travel_plan, journey))
         print(json.dumps({"vehicles": normalized}))
         return 0
     except ZeekrException as exc:
