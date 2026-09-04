@@ -230,6 +230,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.46
+
+- Correct Zeekr logo icon (re-rendered from SVG)
+
 ### 0.1.45
 
 - Repository compliance for the ioBroker listing (translations, license schema, encrypted secrets)

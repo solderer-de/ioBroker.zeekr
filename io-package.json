@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.45",
+    "version": "0.1.46",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.46": {
+        "en": "Correct Zeekr logo icon.",
+        "de": "Korrektes Zeekr-Logo als Icon.",
+        "ru": "Правильный значок Zeekr.",
+        "pt": "Ícone Zeekr correto.",
+        "nl": "Correct Zeekr-pictogram.",
+        "fr": "Icône Zeekr correcte.",
+        "it": "Icona Zeekr corretta.",
+        "es": "Icono de Zeekr correcto.",
+        "pl": "Poprawna ikona Zeekr.",
+        "uk": "Правильний значок Zeekr.",
+        "zh-cn": "正确的Zeekr图标。"
+      },
       "0.1.45": {
         "en": "Repository compliance, simplified admin and green CI.",
         "de": "Repository-Konformität, vereinfachtes Admin und grüne CI.",
