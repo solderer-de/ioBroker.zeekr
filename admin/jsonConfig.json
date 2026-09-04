@@ -1,163 +1,145 @@
 {
   "i18n": false,
-  "type": "panel",
+  "type": "tabs",
   "items": {
-    "_account": {
-      "type": "header",
-      "text": "1) Zugang — zuerst ausfüllen",
-      "size": 3
+    "access": {
+      "type": "panel",
+      "label": "Zugang",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "text": "Zeekr-Account eintragen. EU-Konten (com.zeekr.overseas) brauchen Region EU. Details stehen im README.",
+          "sm": 12
+        },
+        "username": {
+          "type": "text",
+          "label": "Benutzername (E-Mail)",
+          "help": "Tipp: Zweitaccount in der Zeekr-App fürs Auto freigeben (Fehler 079021 vermeiden).",
+          "sm": 6
+        },
+        "password": { "type": "password", "label": "Passwort", "sm": 6 },
+        "countryCode": {
+          "type": "select",
+          "label": "Land",
+          "default": "AU",
+          "options": [
+            { "label": "DE – Deutschland (EU)", "value": "DE" },
+            { "label": "DK – Dänemark (EU)", "value": "DK" },
+            { "label": "SE – Schweden (EU)", "value": "SE" },
+            { "label": "NL – Niederlande (EU)", "value": "NL" },
+            { "label": "EU – sonstiges Europa", "value": "EU" },
+            { "label": "AU – Australien (EM)", "value": "AU" },
+            { "label": "SG – Singapur (EM/SEA)", "value": "SG" },
+            { "label": "CN – China", "value": "CN" }
+          ],
+          "sm": 6
+        },
+        "extractRegion": {
+          "type": "select",
+          "label": "Region",
+          "help": "EU-Konten brauchen EU. Bei „Invalid access key“ ist die Region fast immer falsch.",
+          "default": "EM",
+          "options": [
+            { "label": "EM – Emerging Markets", "value": "EM" },
+            { "label": "EU – Europa", "value": "EU" },
+            { "label": "SEA – Südostasien", "value": "SEA" },
+            { "label": "CN – China", "value": "CN" }
+          ],
+          "sm": 6
+        },
+        "autoExtractSecrets": {
+          "type": "checkbox",
+          "label": "Fehlende Keys beim Start automatisch auslesen",
+          "sm": 12
+        },
+        "apkBasePath": {
+          "type": "text",
+          "label": "APK base.apk (Pfad am ioBroker-Host)",
+          "help": "z.B. /opt/iobroker/iobroker-data/zeekr/base.apk",
+          "sm": 6
+        },
+        "apkArm64Path": {
+          "type": "text",
+          "label": "APK split_config.arm64_v8a.apk (Pfad)",
+          "help": "Enthält die HMAC-Keys. Nicht die xxhdpi-Datei nehmen.",
+          "sm": 6
+        },
+        "secretsJsonPath": {
+          "type": "text",
+          "label": "Oder: zeekr_secrets.json Pfad (statt APKs)",
+          "sm": 12
+        }
+      }
     },
-    "username": {
-      "type": "text",
-      "label": "Zeekr Benutzername (E-Mail)",
-      "help": "Zeekr-Account. Tipp: Zweitaccount in der Zeekr-App fürs Auto freigeben, sonst fliegt die App-Session raus (Fehler 079021).",
-      "sm": 6
+    "keys": {
+      "type": "panel",
+      "label": "Keys",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "text": "Werden per Auto-Extraktion gefüllt. Nur von Hand eintragen, wenn die Extraktion nicht möglich ist.",
+          "sm": 12
+        },
+        "hmacAccessKey": { "type": "password", "label": "HMAC Access Key", "sm": 6 },
+        "hmacSecretKey": { "type": "password", "label": "HMAC Secret Key", "sm": 6 },
+        "passwordPublicKey": { "type": "password", "label": "Password Public Key", "sm": 6 },
+        "prodSecret": { "type": "password", "label": "Prod Secret", "sm": 6 },
+        "prodSecretCandidates": {
+          "type": "text",
+          "label": "Prod-Secret Kandidaten (kommagetrennt)",
+          "help": "Falls mehrere in zeekr_secrets.json stehen: alle hierher, werden durchprobiert.",
+          "sm": 12
+        },
+        "vinKey": { "type": "password", "label": "VIN Key", "sm": 6 },
+        "vinIv": { "type": "password", "label": "VIN IV", "sm": 6 }
+      }
     },
-    "password": {
-      "type": "password",
-      "label": "Zeekr Passwort",
-      "sm": 6
-    },
-    "countryCode": {
-      "type": "select",
-      "label": "Land (steuert Region-Vorschlag)",
-      "help": "DE / DK / SE / NL / EU-Länder → Region EU + Paket com.zeekr.overseas. AU / SG / SEA → Region EM + com.zeekr.global.",
-      "default": "AU",
-      "options": [
-        { "label": "DE – Deutschland (EU)", "value": "DE" },
-        { "label": "DK – Dänemark (EU)", "value": "DK" },
-        { "label": "SE – Schweden (EU)", "value": "SE" },
-        { "label": "NL – Niederlande (EU)", "value": "NL" },
-        { "label": "EU – sonstiges Europa", "value": "EU" },
-        { "label": "AU – Australien (EM)", "value": "AU" },
-        { "label": "SG – Singapur (EM/SEA)", "value": "SG" },
-        { "label": "CN – China", "value": "CN" }
-      ],
-      "sm": 6
-    },
-    "extractRegion": {
-      "type": "select",
-      "label": "Region für HMAC-Keys",
-      "help": "WICHTIG: Nur HMAC Access/Secret hängen von der Region ab. EU-Konten (overseas) brauchen EU, nicht EM-Default. Bei „0001 Invalid access key“ ist fast immer die Region falsch. Adapter testet EU/EM/SEA automatisch beim Login.",
-      "default": "EM",
-      "options": [
-        { "label": "EM – Emerging Markets (Default)", "value": "EM" },
-        { "label": "EU – Europa (overseas-Konten)", "value": "EU" },
-        { "label": "SEA – Südostasien", "value": "SEA" },
-        { "label": "CN – China", "value": "CN" }
-      ],
-      "sm": 6
-    },
-    "pollingInterval": {
-      "type": "number",
-      "label": "Abfrageintervall (Sekunden)",
-      "default": 300,
-      "min": 30,
-      "step": 30,
-      "sm": 6
-    },
-    "vehicleFilter": {
-      "type": "text",
-      "label": "Fahrzeug-Filter (optional)",
-      "help": "Teilstring aus Name oder VIN, z.B. 7X. Leer = alle Fahrzeuge.",
-      "sm": 6
-    },
-    "_keys": {
-      "type": "header",
-      "text": "2) Secrets — 6 Werte, werden automatisch gefüllt wenn möglich",
-      "size": 3
-    },
-    "_keysHint": {
-      "type": "staticText",
-      "text": "HMAC Access/Secret = API-Signatur (regionsabhängig). Passwort-Public-Key + Prod-Secret = Login-Signatur. VIN Key/IV = VIN-Verschlüsselung. Alle 6 kommen aus dem APK-Extractor. Ab App 3.0.x EU (overseas) sind Prod-Secret + VIN nur noch per Frida aus der laufenden App holbar — siehe Key-Hilfe unten.",
-      "sm": 12
-    },
-    "hmacAccessKey": { "type": "password", "label": "HMAC Access Key", "sm": 6 },
-    "hmacSecretKey": { "type": "password", "label": "HMAC Secret Key", "sm": 6 },
-    "passwordPublicKey": { "type": "password", "label": "Password Public Key (RSA)", "sm": 6 },
-    "prodSecret": {
-      "type": "password",
-      "label": "Prod Secret (primär)",
-      "help": "Bei 3.0.3 gibt es mehrere Kandidaten. Alle Kandidaten zusätzlich unten eintragen, Adapter probiert sie der Reihe nach.",
-      "sm": 6
-    },
-    "prodSecretCandidates": {
-      "type": "text",
-      "label": "Prod-Secret Kandidaten (kommagetrennt, optional)",
-      "help": "Aus zeekr_secrets.json: alle prod_secret_candidates hierher kopieren. Wird bei 079025 Signature-Fehler automatisch durchprobiert.",
-      "sm": 12
-    },
-    "vinKey": { "type": "password", "label": "VIN Key", "sm": 6 },
-    "vinIv": { "type": "password", "label": "VIN IV", "sm": 6 },
-    "_keyHelp": {
-      "type": "header",
-      "text": "3) Key-Beschaffung — so geht's (bitte lesen)",
-      "size": 3
-    },
-    "_keyHelpText": {
-      "type": "staticText",
-      "text": "Weg A (App ≤3.0.3, empfohlen für EU): Zeekr-App am Handy installieren (EU: com.zeekr.overseas, sonst com.zeekr.global). Per ADB pullen: adb shell pm path <paket> → base.apk + split_config.arm64_v8a.apk (nicht xxhdpi!) auf den ioBroker-Host nach /opt/iobroker/iobroker-data/zeekr/ kopieren, unten eintragen, Auto-Extraktion einschalten, Region EU für EU-Konten. Weg B (JSON vorhanden): zeekr_secrets.json-Pfad unten eintragen, fertig. Weg C (App ≥3.0.6 EU / 1.6 global): statisch unvollständig (HMAC/VIN fehlen). Dann zusätzlich Legacy-APK 1.5.5 für VIN (nur wenn alte App) ODER Frida-Dump aus laufender App (prod_secret+vin_key+iv) als Runtime-JSON importieren. Details + Emulator-Anleitung: mescon/zeekr-7x-home-assistant.",
-      "sm": 12
-    },
-    "autoExtractSecrets": {
-      "type": "checkbox",
-      "label": "Fehlende Secrets beim Start automatisch extrahieren",
-      "help": "Braucht APK-Pfade oder Secrets-JSON unten. Legt venv selbst an (capstone/pyelftools gepinnt).",
-      "sm": 12
-    },
-    "apkBasePath": {
-      "type": "text",
-      "label": "APK base.apk (absoluter Pfad am ioBroker-Host)",
-      "help": "z.B. /opt/iobroker/iobroker-data/zeekr/base.apk",
-      "sm": 6
-    },
-    "apkArm64Path": {
-      "type": "text",
-      "label": "APK split_config.arm64_v8a.apk (absoluter Pfad)",
-      "help": "Enthält lib/arm64-v8a/libenv.so mit den HMAC-Keys. Fehler „libenv.so not found“ = falsches Split erwischt.",
-      "sm": 6
-    },
-    "apkLegacyPath": {
-      "type": "text",
-      "label": "Legacy-APK 1.5.5 (optional, nur für VIN Key/IV)",
-      "help": "Nur wenn aktuelle APK ≥1.5.7 und VIN fehlt: global-1.5.5-APK (z.B. APKPure) hierher, Adapter merged vin_key/iv daraus. Ab overseas 3.0.6 EU nicht mehr gültig → dann Frida nötig.",
-      "sm": 6
-    },
-    "secretsJsonPath": {
-      "type": "text",
-      "label": "zeekr_secrets.json Pfad (optional, überspringt APK)",
-      "sm": 6
-    },
-    "runtimeSecretsJsonPath": {
-      "type": "text",
-      "label": "Runtime-JSON (Frida) Pfad (optional, für App 3.x)",
-      "help": "JSON aus frida/zeekr_runtime_keys_3x.js (prod_secret, vin_key, vin_iv). Überschreibt APK-Werte für diese 3 Felder.",
-      "sm": 6
-    },
-    "_errors": {
-      "type": "header",
-      "text": "4) Fehler-Hinweise (steht auch unter info.lastErrorHint)",
-      "size": 3
-    },
-    "_errorsText": {
-      "type": "staticText",
-      "text": "0001 Invalid access key → Region falsch (EU statt EM probieren) oder HMAC aus falscher App-Version. 079025 Signature failed → prod_secret falsch/runtime-only (Kandidaten-Liste + Frida). Decrypt X-VIN failed → VIN Key/IV falsch (Legacy 1.5.5 oder Frida). 079021 Session-Konflikt → Zweitaccount nutzen. HMAC NOT FOUND (1.6) → neues Tabellenformat, Upstream-Issue #12. capstone required (Windows) → Adapter-Venv nutzen, pythonBinary leer lassen.",
-      "sm": 12
-    },
-    "_adv": { "type": "header", "text": "5) Erweitert", "size": 3 },
-    "pythonBinary": {
-      "type": "text",
-      "label": "Python Binary (optional)",
-      "help": "Leer lassen = auto (Adapter-Venv). Nur setzen wenn System-Python Probleme macht.",
-      "sm": 6
-    },
-    "alertWebhook": { "type": "text", "label": "Alert-Webhook https:// (optional)", "sm": 6 },
-    "debug": { "type": "checkbox", "label": "Debug-Logging (Secrets werden maskiert)", "sm": 12 },
-    "mockMode": {
-      "type": "checkbox",
-      "label": "Mock-Modus (ohne echten Account testen)",
-      "help": "Zeigt ein Mock-Fahrzeug mit allen neuen States/Buttons. Für Live-Validierung ohne Account + für testConnection.",
-      "sm": 12
+    "advanced": {
+      "type": "panel",
+      "label": "Erweitert",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "text": "Nur bei Problemen nötig. Fehlerhinweise stehen live unter info.lastErrorHint.",
+          "sm": 12
+        },
+        "pollingInterval": {
+          "type": "number",
+          "label": "Abfrageintervall (Sekunden)",
+          "default": 300,
+          "min": 30,
+          "step": 30,
+          "sm": 6
+        },
+        "vehicleFilter": {
+          "type": "text",
+          "label": "Fahrzeug-Filter",
+          "help": "Teilstring aus Name oder VIN. Leer = alle.",
+          "sm": 6
+        },
+        "apkLegacyPath": {
+          "type": "text",
+          "label": "Legacy-APK 1.5.5 (nur VIN, alte Apps)",
+          "sm": 6
+        },
+        "runtimeSecretsJsonPath": {
+          "type": "text",
+          "label": "Runtime-JSON aus Frida (nur App 3.x)",
+          "sm": 6
+        },
+        "pythonBinary": {
+          "type": "text",
+          "label": "Python-Programm (leer = automatisch)",
+          "sm": 6
+        },
+        "alertWebhook": { "type": "text", "label": "Alert-Webhook https://", "sm": 6 },
+        "debug": { "type": "checkbox", "label": "Debug-Logging", "sm": 6 },
+        "mockMode": {
+          "type": "checkbox",
+          "label": "Mock-Modus (Test ohne echten Account)",
+          "sm": 6
+        }
+      }
     }
   }
 }

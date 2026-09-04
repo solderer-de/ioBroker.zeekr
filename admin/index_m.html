@@ -106,6 +106,7 @@
           <p class="subtitle">Configure the Zeekr account connection and the vehicles you want to monitor.</p>
         </div>
       </div>
+      <div class="hint"><strong>Nur Zugang + Region + APKs ausfüllen, Rest geht automatisch.</strong> EU-Konten (com.zeekr.overseas): Region EU. Details im README, Fehlerhinweise live unter info.lastErrorHint.</div>
       <div class="grid">
         <div class="field">
           <label for="username">Zeekr username</label>
@@ -156,6 +157,7 @@
           <input id="pollingInterval" type="number" min="30" step="30" />
         </div>
       </div>
+      <h3 style="margin: 8px 0 12px 0;">Erweitert (nur bei Problemen nötig)</h3>
       <div class="grid">
         <div class="field">
           <label for="vehicleFilter">Vehicle filter (optional; only exposes matching vehicles)</label>
@@ -198,7 +200,7 @@
         <input id="mockMode" type="checkbox" />
         <label for="mockMode">Mock-Modus (ohne echten Account testen)</label>
       </div>
-      <div class="hint"><strong>EU-Konten (com.zeekr.overseas, DE/DK/SE/NL): Region EU wählen, nicht EM.</strong> 0001 Invalid access key = fast immer falsche Region. 079025 = prod_secret falsch (Kandidaten unten + ggf. Frida). X-VIN-Fehler = VIN-Key falsch (Legacy 1.5.5 oder Frida). App ≤3.0.3 statisch ok, ab 3.0.6 EU sind prod+VIN nur per Frida aus laufender App holbar.</div>
+      <div class="hint"><strong>EU-Konten (com.zeekr.overseas, DE/DK/SE/NL): Region EU wählen, nicht EM.</strong> 0001 Invalid access key = fast immer falsche Region. 079025 = prod_secret falsch (Kandidaten unten + ggf. Frida). X-VIN-Fehler = VIN-Key falsch (Legacy 1.5.5 oder Frida). App ≤3.0.3 statisch ok, ab 3.0.6 EU sind prod+VIN nur per Frida aus laufender App holbar. Lange Anleitung im README.</div>
       <div class="grid">
         <div class="field">
           <label for="prodSecretCandidates">Prod-Secret Kandidaten (kommagetrennt)</label>
