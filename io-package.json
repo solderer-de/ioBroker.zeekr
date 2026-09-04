@@ -2,36 +2,51 @@
   "common": {
     "name": "zeekr",
     "version": "0.1.44",
-    "title": "Zeekr",
     "titleLang": {
       "en": "Zeekr",
-      "de": "Zeekr"
+      "de": "Zeekr",
+      "ru": "Zeekr",
+      "pt": "Zeekr",
+      "nl": "Zeekr",
+      "fr": "Zeekr",
+      "it": "Zeekr",
+      "es": "Zeekr",
+      "pl": "Zeekr",
+      "uk": "Zeekr",
+      "zh-cn": "Zeekr"
     },
     "desc": {
       "en": "Connects Zeekr electric vehicles to ioBroker and exposes vehicle status, charging state, and control data as datapoints.",
-      "de": "Verbindet Zeekr-Fahrzeuge mit ioBroker und stellt Fahrzeugstatus, Ladezustand und Steuerdaten als Datenpunkte bereit."
+      "de": "Verbindet Zeekr-Fahrzeuge mit ioBroker und stellt Fahrzeugstatus, Ladezustand und Steuerdaten als Datenpunkte bereit.",
+      "ru": "Подключает электромобили Zeekr к ioBroker и предоставляет статус автомобиля, состояние зарядки и данные управления.",
+      "pt": "Liga veículos elétricos Zeekr ao ioBroker e expõe o estado do veículo, o estado de carregamento e os dados de controlo.",
+      "nl": "Verbindt Zeekr elektrische voertuigen met ioBroker en biedt voertuigstatus, laadstatus en besturingsgegevens.",
+      "fr": "Connecte les véhicules électriques Zeekr à ioBroker et expose l'état du véhicule, l'état de charge et les données de contrôle.",
+      "it": "Collega i veicoli elettrici Zeekr a ioBroker ed espone stato del veicolo, stato di ricarica e dati di controllo.",
+      "es": "Conecta los vehículos eléctricos Zeekr a ioBroker y expone el estado del vehículo, el estado de carga y los datos de control.",
+      "pl": "Łączy pojazdy elektryczne Zeekr z ioBroker i udostępnia status pojazdu, stan ładowania oraz dane sterujące.",
+      "uk": "Підключає електромобілі Zeekr до ioBroker і надає статус автомобіля, стан заряджання та дані керування.",
+      "zh-cn": "将Zeekr电动汽车连接到ioBroker，并将车辆状态、充电状态和控制数据公开为数据点。"
     },
     "authors": [
       "Fryyyyy"
     ],
-    "license": "MIT",
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "mode": "daemon",
-    "icon": "admin/zeekr.svg",
+    "icon": "zeekr.png",
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/solderer-de/ioBroker.zeekr/main/admin/zeekr.svg",
+    "extIcon": "https://raw.githubusercontent.com/solderer-de/ioBroker.zeekr/main/admin/zeekr.png",
     "readme": "https://github.com/solderer-de/ioBroker.zeekr/blob/main/README.md",
     "licenseInformation": {
       "license": "MIT",
-      "link": "https://github.com/solderer-de/ioBroker.zeekr/blob/main/LICENSE"
+      "type": "free",
+      "link": "https://opensource.org/licenses/MIT"
     },
     "keywords": [
       "zeekr",
       "ev",
       "vehicle",
-      "car",
-      "iobroker"
+      "car"
     ],
     "tier": 2,
     "connectionType": "cloud",
@@ -40,7 +55,7 @@
       "config": "json"
     },
     "type": "vehicle",
-    "compact": true,
+    "compact": false,
     "messagebox": true,
     "singleton": false,
     "os": [
@@ -50,17 +65,27 @@
     ],
     "dependencies": [
       {
-        "js-controller": ">=5.0.0"
-      },
-      {
-        "admin": ">=6.0.0"
+        "js-controller": ">=6.0.11"
       }
     ],
-    "serviceName": "zeekr",
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.20"
+      }
+    ],
     "news": {
       "0.1.44": {
-        "en": "EU key wizard with region preset, prod-secret candidates loop and error hints; typed charging/climate controls; mock mode with testConnection.",
-        "de": "EU-Key-Wizard mit Regions-Vorschlag, Prod-Secret-Kandidaten und Fehlerhinweisen; typisierte Lade-/Klima-Buttons; Mock-Modus mit testConnection."
+        "en": "EU key wizard, typed charging/climate controls and mock mode.",
+        "de": "EU-Key-Wizard, typisierte Lade-/Klima-Buttons und Mock-Modus.",
+        "ru": "Мастер ключей EU, кнопки зарядки/климата и mock-режим.",
+        "pt": "Assistente de chaves EU, botões de carregamento/clima e modo mock.",
+        "nl": "EU-key-wizard, knoppen voor laden/klimaat en mock-modus.",
+        "fr": "Assistant de clés EU, boutons charge/climat et mode mock.",
+        "it": "Procedura guidata chiavi EU, pulsanti ricarica/clima e modalità mock.",
+        "es": "Asistente de claves EU, botones de carga/clima y modo mock.",
+        "pl": "Kreator kluczy EU, przyciski ładowania/klimy i tryb mock.",
+        "uk": "Майстер ключів EU, кнопки заряджання/клімату та mock-режим.",
+        "zh-cn": "EU密钥向导、充电/空调按钮和模拟模式。"
       }
     }
   },

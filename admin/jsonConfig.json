@@ -9,30 +9,74 @@
         "_hint": {
           "type": "staticText",
           "text": "Zeekr-Account eintragen. EU-Konten (com.zeekr.overseas) brauchen Region EU. Details stehen im README.",
-          "sm": 12
+          "sm": 12,
+          "xs": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "username": {
           "type": "text",
           "label": "Benutzername (E-Mail)",
           "help": "Tipp: Zweitaccount in der Zeekr-App fürs Auto freigeben (Fehler 079021 vermeiden).",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
-        "password": { "type": "password", "label": "Passwort", "sm": 6 },
+        "password": {
+          "type": "password",
+          "label": "Passwort",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
         "countryCode": {
           "type": "select",
           "label": "Land",
           "default": "AU",
           "options": [
-            { "label": "DE – Deutschland (EU)", "value": "DE" },
-            { "label": "DK – Dänemark (EU)", "value": "DK" },
-            { "label": "SE – Schweden (EU)", "value": "SE" },
-            { "label": "NL – Niederlande (EU)", "value": "NL" },
-            { "label": "EU – sonstiges Europa", "value": "EU" },
-            { "label": "AU – Australien (EM)", "value": "AU" },
-            { "label": "SG – Singapur (EM/SEA)", "value": "SG" },
-            { "label": "CN – China", "value": "CN" }
+            {
+              "label": "DE – Deutschland (EU)",
+              "value": "DE"
+            },
+            {
+              "label": "DK – Dänemark (EU)",
+              "value": "DK"
+            },
+            {
+              "label": "SE – Schweden (EU)",
+              "value": "SE"
+            },
+            {
+              "label": "NL – Niederlande (EU)",
+              "value": "NL"
+            },
+            {
+              "label": "EU – sonstiges Europa",
+              "value": "EU"
+            },
+            {
+              "label": "AU – Australien (EM)",
+              "value": "AU"
+            },
+            {
+              "label": "SG – Singapur (EM/SEA)",
+              "value": "SG"
+            },
+            {
+              "label": "CN – China",
+              "value": "CN"
+            }
           ],
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "extractRegion": {
           "type": "select",
@@ -40,34 +84,66 @@
           "help": "EU-Konten brauchen EU. Bei „Invalid access key“ ist die Region fast immer falsch.",
           "default": "EM",
           "options": [
-            { "label": "EM – Emerging Markets", "value": "EM" },
-            { "label": "EU – Europa", "value": "EU" },
-            { "label": "SEA – Südostasien", "value": "SEA" },
-            { "label": "CN – China", "value": "CN" }
+            {
+              "label": "EM – Emerging Markets",
+              "value": "EM"
+            },
+            {
+              "label": "EU – Europa",
+              "value": "EU"
+            },
+            {
+              "label": "SEA – Südostasien",
+              "value": "SEA"
+            },
+            {
+              "label": "CN – China",
+              "value": "CN"
+            }
           ],
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "autoExtractSecrets": {
           "type": "checkbox",
           "label": "Fehlende Keys beim Start automatisch auslesen",
-          "sm": 12
+          "sm": 12,
+          "xs": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "apkBasePath": {
           "type": "text",
           "label": "APK base.apk (Pfad am ioBroker-Host)",
           "help": "z.B. /opt/iobroker/iobroker-data/zeekr/base.apk",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "apkArm64Path": {
           "type": "text",
           "label": "APK split_config.arm64_v8a.apk (Pfad)",
           "help": "Enthält die HMAC-Keys. Nicht die xxhdpi-Datei nehmen.",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "secretsJsonPath": {
           "type": "text",
           "label": "Oder: zeekr_secrets.json Pfad (statt APKs)",
-          "sm": 12
+          "sm": 12,
+          "xs": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         }
       }
     },
@@ -78,20 +154,76 @@
         "_hint": {
           "type": "staticText",
           "text": "Werden per Auto-Extraktion gefüllt. Nur von Hand eintragen, wenn die Extraktion nicht möglich ist.",
-          "sm": 12
+          "sm": 12,
+          "xs": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
-        "hmacAccessKey": { "type": "password", "label": "HMAC Access Key", "sm": 6 },
-        "hmacSecretKey": { "type": "password", "label": "HMAC Secret Key", "sm": 6 },
-        "passwordPublicKey": { "type": "password", "label": "Password Public Key", "sm": 6 },
-        "prodSecret": { "type": "password", "label": "Prod Secret", "sm": 6 },
+        "hmacAccessKey": {
+          "type": "password",
+          "label": "HMAC Access Key",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "hmacSecretKey": {
+          "type": "password",
+          "label": "HMAC Secret Key",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "passwordPublicKey": {
+          "type": "password",
+          "label": "Password Public Key",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "prodSecret": {
+          "type": "password",
+          "label": "Prod Secret",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
         "prodSecretCandidates": {
           "type": "text",
           "label": "Prod-Secret Kandidaten (kommagetrennt)",
           "help": "Falls mehrere in zeekr_secrets.json stehen: alle hierher, werden durchprobiert.",
-          "sm": 12
+          "sm": 12,
+          "xs": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
-        "vinKey": { "type": "password", "label": "VIN Key", "sm": 6 },
-        "vinIv": { "type": "password", "label": "VIN IV", "sm": 6 }
+        "vinKey": {
+          "type": "password",
+          "label": "VIN Key",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "vinIv": {
+          "type": "password",
+          "label": "VIN IV",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        }
       }
     },
     "advanced": {
@@ -101,7 +233,11 @@
         "_hint": {
           "type": "staticText",
           "text": "Nur bei Problemen nötig. Fehlerhinweise stehen live unter info.lastErrorHint.",
-          "sm": 12
+          "sm": 12,
+          "xs": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "pollingInterval": {
           "type": "number",
@@ -109,35 +245,75 @@
           "default": 300,
           "min": 30,
           "step": 30,
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "vehicleFilter": {
           "type": "text",
           "label": "Fahrzeug-Filter",
           "help": "Teilstring aus Name oder VIN. Leer = alle.",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "apkLegacyPath": {
           "type": "text",
           "label": "Legacy-APK 1.5.5 (nur VIN, alte Apps)",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "runtimeSecretsJsonPath": {
           "type": "text",
           "label": "Runtime-JSON aus Frida (nur App 3.x)",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "pythonBinary": {
           "type": "text",
           "label": "Python-Programm (leer = automatisch)",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
-        "alertWebhook": { "type": "text", "label": "Alert-Webhook https://", "sm": 6 },
-        "debug": { "type": "checkbox", "label": "Debug-Logging", "sm": 6 },
+        "alertWebhook": {
+          "type": "text",
+          "label": "Alert-Webhook https://",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "debug": {
+          "type": "checkbox",
+          "label": "Debug-Logging",
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
         "mockMode": {
           "type": "checkbox",
           "label": "Mock-Modus (Test ohne echten Account)",
-          "sm": 6
+          "sm": 6,
+          "xs": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         }
       }
     }

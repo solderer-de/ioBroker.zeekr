@@ -227,3 +227,20 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - The adapter talks to undocumented Zeekr APIs and derives keys from the official Android app (see `wysie/zeekr_key_extractor`). Reverse engineering and API use may violate Zeekr's terms and local law; check before use.
 - Never commit APKs, `zeekr_secrets.json`, credentials, or tokens. Secrets belong in ioBroker `protectedNative`, never in git, logs, or states (enforced by CI secret scan).
 - No APKs or keys are shipped in this repository.
+
+## Changelog
+
+### 0.1.44
+
+- EU key wizard with region preset, prod-secret candidates loop and error hints
+- Typed charging/climate controls (lock, climate, RCS charge) and charge/travel plans
+- Mock mode with testConnection for validation without a real account
+- ioBroker repository compliance (vehicle type, news, encrypted secrets)
+
+See [GitHub releases](https://github.com/solderer-de/ioBroker.zeekr/releases) for the full history. Releases are created automatically with release-please.
+
+## License
+
+Copyright (c) 2026 solderer-de
+
+MIT — see [LICENSE](LICENSE). This is an unofficial community project, not affiliated with Zeekr or Geely.
