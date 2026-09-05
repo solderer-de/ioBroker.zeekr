@@ -1,0 +1,17 @@
+# Enforce LF line endings (prettier requires LF; Windows checkouts must not use CRLF)
+* text=auto
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.json5 text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+*.svg text eol=lf
+*.html text eol=lf
+*.png binary
+*.apk binary
