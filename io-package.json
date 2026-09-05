@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.47",
+    "version": "0.1.48",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.48": {
+        "en": "ESLint, admin translations, dependabot automerge.",
+        "de": "ESLint, Admin-Übersetzungen, Dependabot-Automerge.",
+        "ru": "ESLint, переводы админки, автомердж dependabot.",
+        "pt": "ESLint, traduções do admin, automerge do dependabot.",
+        "nl": "ESLint, adminvertalingen, dependabot-automerge.",
+        "fr": "ESLint, traductions admin, fusion auto dependabot.",
+        "it": "ESLint, traduzioni admin, automerge dependabot.",
+        "es": "ESLint, traducciones del admin, fusión auto de dependabot.",
+        "pl": "ESLint, tłumaczenia panelu, automerge dependabota.",
+        "uk": "ESLint, переклади адмінки, автомердж dependabot.",
+        "zh-cn": "ESLint、管理界面翻译、dependabot自动合并。"
+      },
       "0.1.47": {
         "en": "Repository listing fixes.",
         "de": "Korrekturen für das Repository-Listing.",

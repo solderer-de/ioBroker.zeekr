@@ -230,6 +230,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.48
+
+- Shared ESLint config, admin translations for all languages, dependabot automerge
+
 ### 0.1.47
 
 - Repository listing fixes (news cleanup, dependabot limits)
