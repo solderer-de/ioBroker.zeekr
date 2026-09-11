@@ -54,7 +54,7 @@ jobs:
           echo "iobroker url https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME} zeekr --host iobroker --debug" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.event.release.tag_name || github.ref_name }}
           name: ${{ github.event.release.tag_name || github.ref_name }}
