@@ -235,6 +235,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.50
+
+- Valid lock role, leaner CI, correct authors and credits
+
 ### 0.1.49
 
 - Valid lock role (`sensor.lock`), leaner CI (single test workflow)
