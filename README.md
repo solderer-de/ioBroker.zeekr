@@ -228,6 +228,11 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - Never commit APKs, `zeekr_secrets.json`, credentials, or tokens. Secrets belong in ioBroker `protectedNative`, never in git, logs, or states (enforced by CI secret scan).
 - No APKs or keys are shipped in this repository.
 
+## Credits
+
+- [Fryyyyy](https://github.com/Fryyyyy) for the [Zeekr EV API](https://github.com/Fryyyyy/zeekr_ev_api) and the [Zeekr Home Assistant integration](https://github.com/Fryyyyy/zeekr_homeassistant)
+- [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
+
 ## Changelog
 
 ### 0.1.49
@@ -263,6 +268,6 @@ See [GitHub releases](https://github.com/solderer-de/ioBroker.zeekr/releases) fo
 
 ## License
 
-Copyright (c) 2026 solderer-de
+Copyright (c) 2026 solderer-de <npm@schoebel-online.net>
 
 MIT — see [LICENSE](LICENSE). This is an unofficial community project, not affiliated with Zeekr or Geely.

@@ -29,7 +29,7 @@
       "zh-cn": "将Zeekr电动汽车连接到ioBroker，并将车辆状态、充电状态和控制数据公开为数据点。"
     },
     "authors": [
-      "Fryyyyy"
+      "solderer-de <npm@schoebel-online.net>"
     ],
     "platform": "Javascript/Node.js",
     "mode": "daemon",
