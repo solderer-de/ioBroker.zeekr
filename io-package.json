@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.49",
+    "version": "0.1.50",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.50": {
+        "en": "Valid roles, leaner CI, correct authors.",
+        "de": "Gültige Rollen, schlankere CI, korrekte Autoren.",
+        "ru": "Корректные роли, компактнее CI, верные авторы.",
+        "pt": "Papéis válidos, CI mais enxuto, autores corretos.",
+        "nl": "Geldige rollen, slankere CI, correcte auteurs.",
+        "fr": "Rôles valides, CI allégée, auteurs corrects.",
+        "it": "Ruoli validi, CI più snella, autori corretti.",
+        "es": "Roles válidos, CI más ligera, autores correctos.",
+        "pl": "Poprawne role, lżejsze CI, poprawni autorzy.",
+        "uk": "Коректні ролі, компактніше CI, правильні автори.",
+        "zh-cn": "有效的角色，更精简的CI，正确的作者。"
+      },
       "0.1.49": {
         "en": "Valid lock role, leaner CI.",
         "de": "Gültige Lock-Rolle, schlankere CI.",
