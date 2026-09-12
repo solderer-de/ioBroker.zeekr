@@ -17,38 +17,23 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Run tests
         run: npm test
       - name: Create release archive
+        # Single tarball for manual Admin-UI upload. URL installs use the
+        # codeload tarball directly (see README), no extra helper files.
         run: |
           mkdir -p dist
           TAG_NAME="${{ github.event.release.tag_name || github.ref_name }}"
-          npm pack --pack-destination dist
-          PACKED_ARCHIVE=$(find dist -maxdepth 1 -type f -name 'iobroker*.tgz' | head -n 1)
-          if [ -z "$PACKED_ARCHIVE" ]; then
-            echo "No packed archive was produced by npm pack" >&2
-            exit 1
-          fi
-          cp "$PACKED_ARCHIVE" "dist/iobroker.zeekr-${TAG_NAME}.tgz"
           tar -czf "dist/iobroker.zeekr-${TAG_NAME}.tar.gz" \
             --exclude=.git \
             --exclude=node_modules \
             --exclude=.venv \
             --exclude=dist \
             .
-          printf 'https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/%s\n' "$TAG_NAME" > dist/install-url.txt
-          cat > dist/install-command.txt <<EOF
-          iobroker url https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME} zeekr --host iobroker --debug
-          EOF
-          cat > dist/install-command.sh <<EOF
-          #!/usr/bin/env bash
-          set -euo pipefail
-          iobroker url "https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME}" zeekr --host iobroker --debug
-          EOF
-          chmod +x dist/install-command.sh
           echo "Install via ioBroker:" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`bash" >> "$GITHUB_STEP_SUMMARY"
           echo "iobroker url https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/${TAG_NAME} zeekr --host iobroker --debug" >> "$GITHUB_STEP_SUMMARY"
@@ -60,8 +45,4 @@ jobs:
           name: ${{ github.event.release.tag_name || github.ref_name }}
           generate_release_notes: true
           files: |
-            dist/iobroker.zeekr-${{ github.event.release.tag_name || github.ref_name }}.tgz
             dist/iobroker.zeekr-${{ github.event.release.tag_name || github.ref_name }}.tar.gz
-            dist/install-url.txt
-            dist/install-command.txt
-            dist/install-command.sh
