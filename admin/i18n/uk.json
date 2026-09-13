@@ -42,11 +42,11 @@
   "Battery capacity (kWh)": "Ємність батареї (кВт·год)",
   "Charging efficiency (%)": "ККД заряджання (%)",
   "Default price per kWh": "Ціна за замовчуванням за кВт·год",
-  "Tariffs JSON (chargers + time windows)": "Тарифи JSON",
-  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Tariffs JSON (chargers + time windows)": "Тарифи JSON (станції + вікна)",
   "Home latitude": "Широта дому",
   "Home longitude": "Довгота дому",
   "Home radius (m)": "Радіус дому (м)",
   "Smart charging (cheapest window)": "Розумне заряджання (дешеве вікно)",
-  "Departure time (HH:MM)": "Час виїзду (ГГ:ХХ)"
+  "Departure time (HH:MM)": "Час виїзду (ГГ:ХХ)",
+  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Приклад із місцем і вікном часу: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
 }

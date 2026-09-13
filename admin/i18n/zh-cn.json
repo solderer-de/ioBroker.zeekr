@@ -42,11 +42,11 @@
   "Battery capacity (kWh)": "电池容量（kWh）",
   "Charging efficiency (%)": "充电效率（%）",
   "Default price per kWh": "默认每kWh价格",
-  "Tariffs JSON (chargers + time windows)": "电价JSON",
-  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Tariffs JSON (chargers + time windows)": "电价JSON（充电桩+时段）",
   "Home latitude": "家庭纬度",
   "Home longitude": "家庭经度",
   "Home radius (m)": "家庭半径（米）",
   "Smart charging (cheapest window)": "智能充电（最便宜时段）",
-  "Departure time (HH:MM)": "出发时间（HH:MM）"
+  "Departure time (HH:MM)": "出发时间（HH:MM）",
+  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "包含地点和时间窗口的示例：[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
 }

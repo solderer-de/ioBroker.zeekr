@@ -43,10 +43,10 @@
   "Charging efficiency (%)": "Ladewirkungsgrad (%)",
   "Default price per kWh": "Standardpreis pro kWh",
   "Tariffs JSON (chargers + time windows)": "Tarife JSON (Säulen + Zeitfenster)",
-  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
   "Home latitude": "Breitengrad Zuhause",
   "Home longitude": "Längengrad Zuhause",
   "Home radius (m)": "Radius Zuhause (m)",
   "Smart charging (cheapest window)": "Smart Charging (günstigstes Fenster)",
-  "Departure time (HH:MM)": "Abfahrtszeit (HH:MM)"
+  "Departure time (HH:MM)": "Abfahrtszeit (HH:MM)",
+  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Beispiel mit Ort und Zeitfenster: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
 }

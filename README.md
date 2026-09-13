@@ -168,19 +168,19 @@ The command is routed through the Python bridge and forwarded to the underlying 
 
 ## Roadmap
 
-- [x] erweiterte Datenpunkte (VTM/Reifendruck/GPS/12V, Lade-Limit, Lade-/Travel-Pläne, letzte Trips)
-- [x] typisierte Controls (Lock/Unlock, Klima Start/Stopp, Charge Start/Stopp via RCS, Charge-/Travel-Plan)
-- [x] Live-Validierung ohne Account (Mock-Modus + `testConnection`-Message)
-- [ ] Live-Validierung gegen echten Account (Command-Defaults pro Modell verifizieren)
-- [ ] weitere Datenpunkte nach Bedarf
+- [x] extended datapoints (VTM/tire pressure/GPS/12V, charge limit, charge/travel plans, recent trips)
+- [x] typed controls (lock/unlock, climate start/stop, charge start/stop via RCS, charge/travel plan)
+- [x] live validation without account (mock mode + `testConnection` message)
+- [ ] live validation against a real account (verify command defaults per model)
+- [ ] more datapoints as needed
 
-## Live-Validierung am echten Auto (Checkliste)
+## Live validation with a real car (checklist)
 
-1. Mock-Modus ausschalten, Zugang + Keys eintragen, `testConnection`-Message prüfen (`ok: true`).
-2. Lesend prüfen: Batterie, Reichweite, Türen/Kofferraum (auf/zu testen), GPS, Lade-Limit.
-3. Je Button einmal schalten und `control.lastResult` prüfen: Lock/Unlock, Klima Start/Stopp, Charge Start/Stopp, Fenster, Sonnenschutz, Licht/Hupe.
-4. Lade-Limit auf z.B. 80 setzen und `status.chargingLimit` gegenprüfen.
-5. Ergebnisse als Issue melden (Modell, App-Version, Region), damit Defaults nachgeschärft werden.
+1. Turn off mock mode, enter account + keys, check the `testConnection` message (`ok: true`).
+2. Verify readings: battery, range, doors/trunk (test open/close), GPS, charge limit.
+3. Toggle each button once and check `control.lastResult`: lock/unlock, climate start/stop, charge start/stop, windows, sunshade, lights/horn.
+4. Set the charge limit to e.g. 80 and cross-check `status.chargingLimit`.
+5. Report results as an issue (model, app version, region) so defaults can be refined.
 
 ## Disclaimer
 
