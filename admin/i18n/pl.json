@@ -42,11 +42,11 @@
   "Battery capacity (kWh)": "Pojemność baterii (kWh)",
   "Charging efficiency (%)": "Sprawność ładowania (%)",
   "Default price per kWh": "Domyślna cena za kWh",
-  "Tariffs JSON (chargers + time windows)": "Taryfy JSON",
-  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Tariffs JSON (chargers + time windows)": "Taryfy JSON (stacje + okna)",
   "Home latitude": "Szerokość domu",
   "Home longitude": "Długość domu",
   "Home radius (m)": "Promień domu (m)",
   "Smart charging (cheapest window)": "Inteligentne ładowanie (tanie okno)",
-  "Departure time (HH:MM)": "Godzina odjazdu (HH:MM)"
+  "Departure time (HH:MM)": "Godzina odjazdu (HH:MM)",
+  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Przykład z lokalizacją i oknem czasu: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
 }
