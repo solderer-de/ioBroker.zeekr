@@ -389,3 +389,116 @@ test('importApk rejects missing files', async () => {
         /not found or not readable/,
     );
 });
+
+test('chargeLimit write clamps and sends RCS soc command', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await adapter.setStateAsync('vehicles.my_car.vin', 'VIN123', true);
+    let bridged = null;
+    adapter.runBridge = async (action, payload) => {
+        bridged = { action, payload };
+        return { ok: true };
+    };
+    await adapter.onMessage({
+        command: 'stateChange',
+        message: { id: 'vehicles.my_car.control.chargeLimit', value: 87 },
+        from: 'test',
+        callback: () => {},
+    });
+    assert.equal(bridged.action, 'command');
+    assert.equal(bridged.payload.serviceId, 'RCS');
+    assert.deepEqual(bridged.payload.setting.serviceParameters[0], { key: 'soc', value: '850' });
+});
+
+test('climateStart uses temp and duration states', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await adapter.setStateAsync('vehicles.my_car.vin', 'VIN123', true);
+    await adapter.setStateAsync('vehicles.my_car.control.climateTemp', 22, true);
+    await adapter.setStateAsync('vehicles.my_car.control.climateDuration', 30, true);
+    let bridged = null;
+    adapter.runBridge = async (action, payload) => {
+        bridged = { action, payload };
+        return { ok: true };
+    };
+    await adapter.onMessage({
+        command: 'stateChange',
+        message: { id: 'vehicles.my_car.control.climateStart', value: true },
+        from: 'test',
+        callback: () => {},
+    });
+    assert.equal(bridged.payload.serviceId, 'ZAF');
+    const params = Object.fromEntries(bridged.payload.setting.serviceParameters.map(p => [p.key, p.value]));
+    assert.equal(params['AC.temp'], '22');
+    assert.equal(params['AC.duration'], '30');
+});
+
+test('adaptive polling is faster when active', () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.pollingInterval = 300;
+    adapter._lastActivePoll = false;
+    assert.equal(adapter.getEffectivePollingInterval(), 300);
+    adapter._lastActivePoll = true;
+    assert.equal(adapter.getEffectivePollingInterval(), 60);
+    adapter.pollingInterval = 45;
+    assert.equal(adapter.getEffectivePollingInterval(), 45);
+});
+
+test('sentry alerts on charge stop and open doors', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const alerts = [];
+    adapter.maybeTriggerAlert = msg => alerts.push(msg);
+    adapter._lastVehicleSnapshot = new Map([
+        [
+            'VIN1',
+            {
+                isCharging: true,
+                pluggedIn: true,
+                batteryLevel: 50,
+                chargingLimit: 90,
+                doors: {
+                    doorOpenStatusDriver: false,
+                    doorOpenStatusPassenger: false,
+                    doorOpenStatusDriverRear: false,
+                    doorOpenStatusPassengerRear: false,
+                    trunkOpenStatus: false,
+                },
+            },
+        ],
+    ]);
+    await adapter.checkSentryEvents([
+        {
+            vin: 'VIN1',
+            isCharging: false,
+            pluggedIn: true,
+            batteryLevel: 51,
+            chargingLimit: 90,
+            doorOpen: { trunkOpenStatus: true },
+        },
+    ]);
+    assert.equal(alerts.length, 2);
+    assert.match(alerts[0], /Charging stopped/);
+    assert.match(alerts[1], /trunkOpenStatus/);
+});
+
+test('bridge scales soc charging limit and parses doors', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util, json, pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+p = m.normalize_vehicle({'vin': 'X'}, {'additionalVehicleStatus': {'drivingSafetyStatus': {'doorOpenStatusDriver': '1', 'trunkOpenStatus': '0'}}}, {'isCharging': False}, {}, {}, {'soc': 800}, {}, {}, {'trips': [{'distance': 10}], 'total': 3})
+print(json.dumps(p))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+    assert.equal(result.status, 0, result.stderr.toString());
+    const p = JSON.parse(result.stdout.toString());
+    assert.equal(p.chargingLimit, 80);
+    assert.equal(p.doorOpen.doorOpenStatusDriver, true);
+    assert.equal(p.doorOpen.trunkOpenStatus, false);
+    assert.equal(p.tripCount, 3);
+});

@@ -115,10 +115,13 @@ The adapter exposes the following configuration fields:
 
 The adapter creates a vehicle channel for each discovered vehicle with the following subchannels:
 
-- `status`: battery, range, odometer, charging power, speed, plug state, charging state, lock state, climate state, and timestamps
-- `control`: command payload, service ID, send button, last command, and last result
+- `status`: battery, range, odometer, charging power, speed, plug state, charging state, lock state, climate state, charge limit, tire pressures, GPS, 12V battery, central locking, doors/trunk open states, consumption, engine/maintenance states, and timestamps
+- `control`: command payload, service ID, send button, typed buttons (lock, climate, charge, windows, sunshade, lights), writable charge limit, climate temp/duration, charge/travel plan inputs, last command, and last result
+- `trips`: trip count, last trip distance, and trip list (logbook)
 - `raw`: raw payloads from the bridge
 - `details`: additional metadata such as model information
+
+Polling is adaptive: charging or driving vehicles are polled every 60s (min 30s), idle ones at the configured interval. Unexpected charging stops and newly opened doors trigger the alert webhook (rate-limited).
 
 The adapter also exposes root states under `info` for connection status, health, errors, logs, and the last successful update.
 
@@ -147,6 +150,14 @@ The command is routed through the Python bridge and forwarded to the underlying 
 - [x] Live-Validierung ohne Account (Mock-Modus + `testConnection`-Message)
 - [ ] Live-Validierung gegen echten Account (Command-Defaults pro Modell verifizieren)
 - [ ] weitere Datenpunkte nach Bedarf
+
+## Live-Validierung am echten Auto (Checkliste)
+
+1. Mock-Modus ausschalten, Zugang + Keys eintragen, `testConnection`-Message prüfen (`ok: true`).
+2. Lesend prüfen: Batterie, Reichweite, Türen/Kofferraum (auf/zu testen), GPS, Lade-Limit.
+3. Je Button einmal schalten und `control.lastResult` prüfen: Lock/Unlock, Klima Start/Stopp, Charge Start/Stopp, Fenster, Sonnenschutz, Licht/Hupe.
+4. Lade-Limit auf z.B. 80 setzen und `status.chargingLimit` gegenprüfen.
+5. Ergebnisse als Issue melden (Modell, App-Version, Region), damit Defaults nachgeschärft werden.
 
 ## Disclaimer
 
