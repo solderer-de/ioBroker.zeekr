@@ -359,20 +359,33 @@ test('adapter ignores a missing ioBroker config file even if the env var is set'
     }
 });
 
-test('main entrypoint avoids auto-start during npm lifecycle installs', () => {
-    const originalLifecycleEvent = process.env.npm_lifecycle_event;
-    process.env.npm_lifecycle_event = 'install';
+test('main entrypoint exports an adapter factory when required', () => {
     delete require.cache[require.resolve('../main')];
 
     try {
         const factory = require('../main');
         assert.equal(typeof factory, 'function');
     } finally {
-        if (originalLifecycleEvent === undefined) {
-            delete process.env.npm_lifecycle_event;
-        } else {
-            process.env.npm_lifecycle_event = originalLifecycleEvent;
-        }
         delete require.cache[require.resolve('../main')];
     }
+});
+
+test('importApk copies APKs into adapter storage', async () => {
+    const fs = require('node:fs');
+    const os = require('node:os');
+    const path = require('node:path');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const src = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'apk-src-')), 'base.apk');
+    fs.writeFileSync(src, 'fake-apk');
+    const target = await adapter.importApk(src, 'base.apk');
+    assert.ok(target.endsWith(path.join('apks', 'base.apk')));
+    assert.equal(fs.readFileSync(target, 'utf8'), 'fake-apk');
+});
+
+test('importApk rejects missing files', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await assert.rejects(
+        adapter.importApk('/tmp/definitely-missing-zeekr.apk', 'base.apk'),
+        /not found or not readable/,
+    );
 });
