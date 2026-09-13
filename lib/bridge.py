@@ -129,6 +129,16 @@ MOCK_VEHICLES = [
         'lastTripDistanceKm': 42.5,
         'centralLockingStatus': 'locked',
         'windowPositionAvg': 0,
+        'doorOpen': {'doorOpenStatusDriver': False, 'doorOpenStatusPassenger': False,
+                     'doorOpenStatusDriverRear': False, 'doorOpenStatusPassengerRear': False,
+                     'trunkOpenStatus': False},
+        'avgPowerConsumption': 18.5,
+        'traveledDistanceKm': 120.3,
+        'engineStatus': 'off',
+        'maintenanceStatus': 'ok',
+        'maintenanceRaw': {'mock': True},
+        'tripCount': 1,
+        'tripList': [{'distance': 42.5}],
         'status': {'mock': True},
         'chargingStatus': {'mock': True},
         'remoteControlState': {'mock': True},
@@ -237,7 +247,10 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     # --- Roadmap: erweiterte Datenpunkte (alles optional, None wenn fehlt) ---
     charging_limit = coerce_number(get_first(
         limit_payload, charging_payload, status_payload,
-        keys=['chargingLimit', 'chargeLimit', 'socLimit', 'targetSoc', 'maxSoc', 'limitSoc']))
+        keys=['chargingLimit', 'chargeLimit', 'socLimit', 'targetSoc', 'maxSoc', 'limitSoc', 'soc']))
+    if charging_limit is not None and charging_limit > 100:
+        # API liefert SoC-Limit mal 10 (z.B. 800 -> 80 %).
+        charging_limit = charging_limit / 10.0
     tire_fl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFl', 'tyrePressureFl', 'flTirePressure', 'tireFl']))
     tire_fr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFr', 'tyrePressureFr', 'frTirePressure', 'tireFr']))
     tire_rl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRl', 'tyrePressureRl', 'rlTirePressure', 'tireRl']))
@@ -261,6 +274,44 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
             status_payload, vtm_payload, *nested_subs, keys=[win_key])))
     win_positions = [v for v in win_positions if v is not None]
     window_position_avg = sum(win_positions) / len(win_positions) if win_positions else None
+    # Türen/Kofferraum offen? Upstream-Felder aus drivingSafetyStatus/electricVehicleStatus.
+    door_open = {}
+    for door_key in ['doorOpenStatusDriver', 'doorOpenStatusPassenger',
+                     'doorOpenStatusDriverRear', 'doorOpenStatusPassengerRear',
+                     'trunkOpenStatus']:
+        raw_door = get_first(status_payload, vtm_payload, *nested_subs, keys=[door_key])
+        if raw_door is None:
+            door_open[door_key] = None
+        elif isinstance(raw_door, bool):
+            door_open[door_key] = raw_door
+        else:
+            door_open[door_key] = str(raw_door).strip().lower() in {'1', 'true', 'open', 'opened', 'yes', 'on'}
+    avg_consumption = coerce_number(get_first(
+        status_payload, vtm_payload, *nested_subs,
+        keys=['averPowerConsumption', 'avgPowerConsumption', 'powerConsumption',
+              'averageConsumption', 'consumption']))
+    traveled_distance = coerce_number(get_first(
+        status_payload, vtm_payload, vehicle_dict, *nested_subs,
+        keys=['traveledDistance', 'tripDistance', 'totalTripDistance']))
+    engine_status = get_first(status_payload, vtm_payload, *nested_subs,
+                              keys=['engineStatus', 'runningStatus'])
+    if not isinstance(engine_status, str):
+        engine_status = str(engine_status) if engine_status is not None else ''
+    maintenance = get_first(status_payload, vtm_payload, vehicle_dict, *nested_subs,
+                            keys=['maintenanceStatus', 'maintenance'])
+    if isinstance(maintenance, dict):
+        maintenance_raw = maintenance
+        maintenance = maintenance.get('status') or maintenance.get('state') or ''
+    else:
+        maintenance_raw = {}
+    if not isinstance(maintenance, str):
+        maintenance = str(maintenance) if maintenance is not None else ''
+    trip_list = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else []
+    trip_count = journey_payload.get('total') or journey_payload.get('count') or len(trip_list)
+    try:
+        trip_count = int(trip_count)
+    except (TypeError, ValueError):
+        trip_count = len(trip_list)
 
     return {
         'name': name,
@@ -291,6 +342,14 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'lastTripDistanceKm': last_trip,
         'centralLockingStatus': central_locking,
         'windowPositionAvg': window_position_avg,
+        'doorOpen': door_open,
+        'avgPowerConsumption': avg_consumption,
+        'traveledDistanceKm': traveled_distance,
+        'engineStatus': engine_status,
+        'maintenanceStatus': maintenance,
+        'maintenanceRaw': maintenance_raw,
+        'tripCount': trip_count,
+        'tripList': trip_list,
         'status': status_payload,
         'chargingStatus': charging_payload,
         'remoteControlState': remote_payload,
@@ -488,7 +547,7 @@ def main() -> int:
             except Exception:
                 travel_plan = {}
             try:
-                journey = vehicle.get_journey_log(page_size=1, current_page=1) or {}
+                journey = vehicle.get_journey_log(page_size=10, current_page=1) or {}
             except Exception:
                 journey = {}
             normalized.append(normalize_vehicle(
