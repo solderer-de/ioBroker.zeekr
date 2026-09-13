@@ -38,5 +38,15 @@
   "Python program (empty = auto)": "Programma Python (vuoto = auto)",
   "Alert webhook https://": "Webhook avvisi https://",
   "Debug logging": "Debug",
-  "Mock mode (test without account)": "Modalità mock (test senza account)"
+  "Mock mode (test without account)": "Modalità mock (test senza account)",
+  "Battery capacity (kWh)": "Capacità batteria (kWh)",
+  "Charging efficiency (%)": "Efficienza di ricarica (%)",
+  "Default price per kWh": "Prezzo predefinito per kWh",
+  "Tariffs JSON (chargers + time windows)": "Tariffe JSON",
+  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Home latitude": "Latitudine casa",
+  "Home longitude": "Longitudine casa",
+  "Home radius (m)": "Raggio casa (m)",
+  "Smart charging (cheapest window)": "Ricarica intelligente (fascia economica)",
+  "Departure time (HH:MM)": "Ora di partenza (HH:MM)"
 }

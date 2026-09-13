@@ -123,6 +123,29 @@ The adapter creates a vehicle channel for each discovered vehicle with the follo
 
 Polling is adaptive: charging or driving vehicles are polled every 60s (min 30s), idle ones at the configured interval. Unexpected charging stops and newly opened doors trigger the alert webhook (rate-limited).
 
+## Energy, costs and smart charging
+
+Each vehicle has an `energy` channel:
+
+- `sessionKwh`/`sessionCost`/`sessionTariff`/`sessionLossKwh`: last finished charging session. Charger-side energy covers battery gain **plus losses** (`charger = max(integrated power, gain / efficiency)`).
+- `monthKwh`/`monthCost`/`monthLossKwh`: running month totals (survive restarts, reset each month).
+- `standbyMonthKwh`/`standbyMonthCost`: vampire drain while parked, priced at the default tariff.
+- `lastSession`: full detail as JSON.
+
+Tariffs in the `tariffsJson` config decide the price per session by **location and time**, e.g. home night rate vs. public charger:
+
+```json
+[{"name":"home-night","lat":52.52,"lon":13.405,"radiusM":200,"pricePerKwh":0.25,"from":"22:00","to":"06:00"}]
+```
+
+Entries without location match everywhere; entries without `from`/`to` match any time. Without a match the default price applies. Set `batteryCapacityKwh` (default 100) and `chargingEfficiencyPct` (default 88) for correct loss math.
+
+`isHome` reflects the configured home zone. With `smartChargeEnabled` and a departure time, the adapter starts/pauses charging via `RCS` so the car charges in the cheapest matching window before departure (`smartCharge.state` shows `charge`/`wait`/`idle`).
+
+## History recommendation
+
+Log these states in InfluxDB/SQL for charts and long-term statistics: `status.batteryLevel`, `status.rangeKm`, `status.odometerKm`, `status.chargePower`, `energy.monthKwh`, `energy.monthCost`, `trips.count`.
+
 The adapter also exposes root states under `info` for connection status, health, errors, logs, and the last successful update.
 
 ## Commands

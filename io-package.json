@@ -164,7 +164,16 @@
     "pythonBinary": "",
     "alertWebhook": "",
     "debug": false,
-    "mockMode": false
+    "mockMode": false,
+    "batteryCapacityKwh": 100,
+    "chargingEfficiencyPct": 88,
+    "defaultPricePerKwh": 0.3,
+    "tariffsJson": "",
+    "homeLat": "",
+    "homeLon": "",
+    "homeRadiusM": 150,
+    "smartChargeEnabled": false,
+    "smartChargeDeparture": ""
   },
   "protectedNative": [
     "password",

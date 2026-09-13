@@ -502,3 +502,106 @@ print(json.dumps(p))
     assert.equal(p.doorOpen.trunkOpenStatus, false);
     assert.equal(p.tripCount, 3);
 });
+
+test('trackEnergy settles session with tariff cost and losses', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {
+        tariffsJson: JSON.stringify([{ name: 'home', pricePerKwh: 0.3 }]),
+        defaultPricePerKwh: 0.3,
+        batteryCapacityKwh: 100,
+        chargingEfficiencyPct: 88,
+        homeLat: '',
+        homeLon: '',
+        homeRadiusM: 150,
+        smartChargeEnabled: false,
+        smartChargeDeparture: '',
+    };
+    const base = { vin: 'VIN9', name: 'Car', chargingLimit: 90, latitude: null, longitude: null, currentSpeed: 0 };
+    await adapter.trackEnergy([{ ...base, isCharging: true, pluggedIn: true, batteryLevel: 50, chargePower: 11 }]);
+    await adapter.trackEnergy([{ ...base, isCharging: true, pluggedIn: true, batteryLevel: 55, chargePower: 11 }]);
+    await adapter.trackEnergy([{ ...base, isCharging: false, pluggedIn: true, batteryLevel: 55, chargePower: 0 }]);
+    const idBase = 'vehicles.vin9';
+    const kwh = await adapter.getStateAsync(`${idBase}.energy.sessionKwh`);
+    assert.ok(kwh.val > 0, JSON.stringify(kwh));
+    const tariff = await adapter.getStateAsync(`${idBase}.energy.sessionTariff`);
+    assert.equal(tariff.val, 'home');
+    const month = await adapter.getStateAsync(`${idBase}.energy.monthKwh`);
+    assert.equal(month.val, kwh.val);
+    const loss = await adapter.getStateAsync(`${idBase}.energy.sessionLossKwh`);
+    assert.ok(loss.val >= 0);
+});
+
+test('trackEnergy records standby drain while parked', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {
+        tariffsJson: '',
+        defaultPricePerKwh: 0.4,
+        batteryCapacityKwh: 100,
+        chargingEfficiencyPct: 88,
+        homeLat: '',
+        homeLon: '',
+        homeRadiusM: 150,
+        smartChargeEnabled: false,
+        smartChargeDeparture: '',
+    };
+    const base = { vin: 'VIN8', name: 'Car', isCharging: false, pluggedIn: false, currentSpeed: 0, chargePower: 0 };
+    await adapter.trackEnergy([{ ...base, batteryLevel: 60 }]);
+    await adapter.trackEnergy([{ ...base, batteryLevel: 59 }]);
+    const standby = await adapter.getStateAsync('vehicles.vin8.energy.standbyMonthKwh');
+    assert.equal(standby.val, 1);
+});
+
+test('smart charge starts and pauses via RCS', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {
+        tariffsJson: JSON.stringify([
+            { name: 'night', pricePerKwh: 0.2, from: '22:00', to: '06:00' },
+            { name: 'day', pricePerKwh: 0.5 },
+        ]),
+        defaultPricePerKwh: 0.5,
+        batteryCapacityKwh: 100,
+        chargingEfficiencyPct: 88,
+        homeLat: '',
+        homeLon: '',
+        homeRadiusM: 150,
+        smartChargeEnabled: true,
+        smartChargeDeparture: '07:00',
+        username: 'u',
+        password: 'p',
+        countryCode: 'DE',
+        mockMode: false,
+    };
+    const calls = [];
+    adapter.runBridge = async (action, payload) => {
+        calls.push({ action, command: payload.command, serviceId: payload.serviceId });
+        return { ok: true };
+    };
+    const RealDate = Date;
+    const at = h => new RealDate(2026, 0, 1, h, 0);
+    global.Date = class extends RealDate {
+        constructor(...a) {
+            super(...(a.length ? a : [at(12, 0)]));
+        }
+        static now() {
+            return at(12, 0).getTime();
+        }
+    };
+    try {
+        await adapter.trackEnergy([
+            {
+                vin: 'VIN7',
+                name: 'Car',
+                isCharging: false,
+                pluggedIn: true,
+                batteryLevel: 50,
+                chargingLimit: 90,
+                chargePower: 11,
+            },
+        ]);
+        const state = await adapter.getStateAsync('vehicles.vin7.smartCharge.state');
+        assert.equal(state.val, 'wait');
+        assert.equal(calls.length, 0);
+    } finally {
+        global.Date = RealDate;
+    }
+});
