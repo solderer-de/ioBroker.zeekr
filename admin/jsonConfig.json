@@ -281,6 +281,218 @@
           "lg": 6,
           "xl": 6,
           "label": "Mock mode (test without account)"
+        },
+        "batteryCapacityKwh": {
+          "type": "number",
+          "label": {
+            "en": "Battery capacity (kWh)",
+            "de": "Batteriekapazität (kWh)",
+            "ru": "Ёмкость батареи (кВт·ч)",
+            "pt": "Capacidade da bateria (kWh)",
+            "nl": "Accucapaciteit (kWh)",
+            "fr": "Capacité batterie (kWh)",
+            "it": "Capacità batteria (kWh)",
+            "es": "Capacidad de batería (kWh)",
+            "pl": "Pojemność baterii (kWh)",
+            "uk": "Ємність батареї (кВт·год)",
+            "zh-cn": "电池容量（kWh）"
+          },
+          "default": 100,
+          "min": 20,
+          "max": 250,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "chargingEfficiencyPct": {
+          "type": "number",
+          "label": {
+            "en": "Charging efficiency (%)",
+            "de": "Ladewirkungsgrad (%)",
+            "ru": "КПД зарядки (%)",
+            "pt": "Eficiência de carga (%)",
+            "nl": "Laadrendement (%)",
+            "fr": "Rendement de charge (%)",
+            "it": "Efficienza di ricarica (%)",
+            "es": "Eficiencia de carga (%)",
+            "pl": "Sprawność ładowania (%)",
+            "uk": "ККД заряджання (%)",
+            "zh-cn": "充电效率（%）"
+          },
+          "default": 88,
+          "min": 50,
+          "max": 100,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "defaultPricePerKwh": {
+          "type": "number",
+          "label": {
+            "en": "Default price per kWh",
+            "de": "Standardpreis pro kWh",
+            "ru": "Цена по умолчанию за кВт·ч",
+            "pt": "Preço padrão por kWh",
+            "nl": "Standaardprijs per kWh",
+            "fr": "Prix par défaut par kWh",
+            "it": "Prezzo predefinito per kWh",
+            "es": "Precio predeterminado por kWh",
+            "pl": "Domyślna cena za kWh",
+            "uk": "Ціна за замовчуванням за кВт·год",
+            "zh-cn": "默认每kWh价格"
+          },
+          "default": 0.3,
+          "min": 0,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "tariffsJson": {
+          "type": "text",
+          "label": {
+            "en": "Tariffs JSON (chargers + time windows)",
+            "de": "Tarife JSON (Säulen + Zeitfenster)",
+            "ru": "Тарифы JSON",
+            "pt": "Tarifas JSON",
+            "nl": "Tarieven JSON",
+            "fr": "Tarifs JSON",
+            "it": "Tariffe JSON",
+            "es": "Tarifas JSON",
+            "pl": "Taryfy JSON",
+            "uk": "Тарифи JSON",
+            "zh-cn": "电价JSON"
+          },
+          "help": {
+            "en": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "de": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "ru": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "pt": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "nl": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "fr": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "it": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "es": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "pl": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "uk": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+            "zh-cn": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
+          },
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "homeLat": {
+          "type": "text",
+          "label": {
+            "en": "Home latitude",
+            "de": "Breitengrad Zuhause",
+            "ru": "Широта дома",
+            "pt": "Latitude de casa",
+            "nl": "Breedtegraad thuis",
+            "fr": "Latitude domicile",
+            "it": "Latitudine casa",
+            "es": "Latitud de casa",
+            "pl": "Szerokość domu",
+            "uk": "Широта дому",
+            "zh-cn": "家庭纬度"
+          },
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "homeLon": {
+          "type": "text",
+          "label": {
+            "en": "Home longitude",
+            "de": "Längengrad Zuhause",
+            "ru": "Долгота дома",
+            "pt": "Longitude de casa",
+            "nl": "Lengtegraad thuis",
+            "fr": "Longitude domicile",
+            "it": "Longitudine casa",
+            "es": "Longitud de casa",
+            "pl": "Długość domu",
+            "uk": "Довгота дому",
+            "zh-cn": "家庭经度"
+          },
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "homeRadiusM": {
+          "type": "number",
+          "label": {
+            "en": "Home radius (m)",
+            "de": "Radius Zuhause (m)",
+            "ru": "Радиус дома (м)",
+            "pt": "Raio de casa (m)",
+            "nl": "Straal thuis (m)",
+            "fr": "Rayon domicile (m)",
+            "it": "Raggio casa (m)",
+            "es": "Radio de casa (m)",
+            "pl": "Promień domu (m)",
+            "uk": "Радіус дому (м)",
+            "zh-cn": "家庭半径（米）"
+          },
+          "default": 150,
+          "min": 20,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "smartChargeEnabled": {
+          "type": "checkbox",
+          "label": {
+            "en": "Smart charging (cheapest window)",
+            "de": "Smart Charging (günstigstes Fenster)",
+            "ru": "Умная зарядка (дешёвое окно)",
+            "pt": "Carga inteligente (janela barata)",
+            "nl": "Slim laden (goedkoopste venster)",
+            "fr": "Charge intelligente (créneau pas cher)",
+            "it": "Ricarica intelligente (fascia economica)",
+            "es": "Carga inteligente (ventana barata)",
+            "pl": "Inteligentne ładowanie (tanie okno)",
+            "uk": "Розумне заряджання (дешеве вікно)",
+            "zh-cn": "智能充电（最便宜时段）"
+          },
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "smartChargeDeparture": {
+          "type": "text",
+          "label": {
+            "en": "Departure time (HH:MM)",
+            "de": "Abfahrtszeit (HH:MM)",
+            "ru": "Время выезда (ЧЧ:ММ)",
+            "pt": "Hora de partida (HH:MM)",
+            "nl": "Vertrektijd (HH:MM)",
+            "fr": "Heure de départ (HH:MM)",
+            "it": "Ora di partenza (HH:MM)",
+            "es": "Hora de salida (HH:MM)",
+            "pl": "Godzina odjazdu (HH:MM)",
+            "uk": "Час виїзду (ГГ:ХХ)",
+            "zh-cn": "出发时间（HH:MM）"
+          },
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         }
       }
     }

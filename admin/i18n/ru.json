@@ -38,5 +38,15 @@
   "Python program (empty = auto)": "Python (пусто = авто)",
   "Alert webhook https://": "Alert webhook https://",
   "Debug logging": "Отладка",
-  "Mock mode (test without account)": "Mock-режим (тест без аккаунта)"
+  "Mock mode (test without account)": "Mock-режим (тест без аккаунта)",
+  "Battery capacity (kWh)": "Ёмкость батареи (кВт·ч)",
+  "Charging efficiency (%)": "КПД зарядки (%)",
+  "Default price per kWh": "Цена по умолчанию за кВт·ч",
+  "Tariffs JSON (chargers + time windows)": "Тарифы JSON",
+  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Home latitude": "Широта дома",
+  "Home longitude": "Долгота дома",
+  "Home radius (m)": "Радиус дома (м)",
+  "Smart charging (cheapest window)": "Умная зарядка (дешёвое окно)",
+  "Departure time (HH:MM)": "Время выезда (ЧЧ:ММ)"
 }

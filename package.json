@@ -31,7 +31,7 @@
     "url": "https://github.com/solderer-de/ioBroker.zeekr/issues"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test node --test test/adapter.test.js",
+    "test": "cross-env NODE_ENV=test node --test test/adapter.test.js test/energy.test.js",
     "test:package": "mocha test/package.js --exit",
     "test:integration": "mocha test/integration.js --exit --timeout 120000",
     "lint": "node scripts/lint.js",

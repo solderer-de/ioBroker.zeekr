@@ -38,5 +38,15 @@
   "Python program (empty = auto)": "Python程序（空=自动）",
   "Alert webhook https://": "告警Webhook https://",
   "Debug logging": "调试日志",
-  "Mock mode (test without account)": "模拟模式（无账户测试）"
+  "Mock mode (test without account)": "模拟模式（无账户测试）",
+  "Battery capacity (kWh)": "电池容量（kWh）",
+  "Charging efficiency (%)": "充电效率（%）",
+  "Default price per kWh": "默认每kWh价格",
+  "Tariffs JSON (chargers + time windows)": "电价JSON",
+  "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Home latitude": "家庭纬度",
+  "Home longitude": "家庭经度",
+  "Home radius (m)": "家庭半径（米）",
+  "Smart charging (cheapest window)": "智能充电（最便宜时段）",
+  "Departure time (HH:MM)": "出发时间（HH:MM）"
 }
