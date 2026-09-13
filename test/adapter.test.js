@@ -605,3 +605,30 @@ test('smart charge starts and pauses via RCS', async () => {
         global.Date = RealDate;
     }
 });
+
+test('mock object tree has no missing parents and valid button roles (E1008/E3009)', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = { mockMode: true, pollingInterval: 3600, countryCode: 'DE' };
+    await adapter.onReady();
+    await adapter.readyPromise;
+    await adapter.onUnload(() => {});
+    const ids = new Set(adapter._objects.keys());
+    const missing = [];
+    for (const id of ids) {
+        const parts = id.split('.');
+        for (let i = 2; i < parts.length; i++) {
+            const parent = parts.slice(0, i).join('.');
+            if (!ids.has(parent)) {
+                missing.push(`${id} misses ${parent}`);
+            }
+        }
+    }
+    assert.deepEqual(missing, []);
+    const badButtons = [];
+    for (const [id, obj] of adapter._objects) {
+        if (obj.type === 'state' && obj.common && obj.common.role === 'button' && obj.common.read !== false) {
+            badButtons.push(id);
+        }
+    }
+    assert.deepEqual(badButtons, []);
+});
