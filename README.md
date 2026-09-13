@@ -31,78 +31,13 @@ Run the test suite locally:
 npm test
 ```
 
-## Installation in a local ioBroker instance
+## Installation
 
-The adapter is designed to be installed directly into an ioBroker host.
+Install the adapter from the ioBroker repositories: open the Admin UI, go to Adapters, search for `Zeekr` and install it. Afterwards create a new instance and configure it (see below).
 
-Important: the adapter repository is published at `solderer-de/iobroker.zeekr`. For `iobroker url` installs, use a direct tarball URL from `codeload.github.com` rather than a GitHub repository URL or a GitHub release asset URL. The ioBroker CLI treats GitHub repository URLs as Git dependencies and can fall back to SSH-based installs; that is what triggers the `Permission denied (publickey)` failures on this host. A `codeload` tarball URL installs the package as a normal tarball and avoids that Git fallback.
+If the adapter misbehaves after an update, run `iobroker fix` on the host.
 
-For tarball-based installs, pass the adapter name explicitly as the second argument. `iobroker url <url> zeekr ...` is the reliable form for this adapter. Without the explicit adapter name, the CLI can treat the full URL as the adapter identifier and fail later in the install/upload step even though the npm tarball install itself succeeded.
-
-### Install via CLI (recommended)
-
-Use this exact install form:
-
-```bash
-iobroker url https://codeload.github.com/solderer-de/iobroker.zeekr/tar.gz/refs/tags/v0.1.45 zeekr --host iobroker --debug
-```
-
-The second argument (`zeekr`) is required for this adapter. This is the concrete install command for the current release.
-
-### Install via ioBroker Admin UI
-
-If you prefer the Admin UI, use the same GitHub release asset URL in the "Adapter from URL install" field. If you upload a file instead, upload the tarball from the release; it must contain the adapter package root with `io-package.json`, `package.json`, `main.js`, `lib/`, `admin/`, and `img/`.
-
-After installation, restart ioBroker and create a new instance of the `Zeekr` adapter.
-
-### Repairing a broken or half-installed adapter
-
-If a previous install left a stale `node_modules/iobroker.zeekr` directory behind, `iobroker del zeekr` can fail with:
-
-```text
-Cannot find module 'iobroker.zeekr/io-package.json'
-```
-
-In that case, remove the stale module directory from the ioBroker host and reinstall the adapter from the current codeload tarball URL:
-
-```bash
-sudo rm -rf /opt/iobroker/node_modules/iobroker.zeekr
-sudo iobroker fix
-sudo iobroker url https://codeload.github.com/solderer-de/iobroker.zeekr/tar.gz/refs/tags/v0.1.45 zeekr --host iobroker --debug
-```
-
-The repository also ships helper scripts for this case:
-
-```bash
-./scripts/repair-install.sh
-./scripts/install-adapter.sh
-```
-
-Both scripts use the same `codeload` tarball URL format and pass the adapter name `zeekr` explicitly for a clean, SSH-free installation path.
-
-### Option B: Install directly from a local checkout
-
-If you want to test the adapter from a local repository checkout, run:
-
-```bash
-cd /path/to/iobroker.zeekr
-npm ci
-```
-
-Then make the adapter visible to ioBroker on a typical Linux host:
-
-```bash
-mkdir -p /opt/iobroker/node_modules
-ln -s /path/to/iobroker.zeekr /opt/iobroker/node_modules/iobroker.zeekr
-```
-
-If you run ioBroker in Docker or a different base path, adapt the target directory accordingly.
-
-### 3. Restart ioBroker
-
-Restart the ioBroker service or container so the adapter is discovered.
-
-### 4. Add an instance in the admin UI
+## Configure the instance
 
 Open the ioBroker Admin UI, create a new instance of the `Zeekr` adapter, and configure:
 
@@ -140,19 +75,13 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
    - if you already have the APK from another source, use that file directly
 3. If you use `adb`, the typical workflow is:
    - `adb devices`
-   - `adb shell pm path com.zeekr.app` (or the package name used by your Zeekr app build)
-   - `adb pull /data/app/<...>/base.apk /tmp/base.apk`
-   - `adb pull /data/app/<...>/split_config.arm64_v8a.apk /tmp/arm64.apk`
-4. Copy the resulting files to a location readable by the `iobroker` user on the ioBroker host, for example:
-   - `sudo mkdir -p /opt/iobroker/iobroker-data/zeekr`
-   - `sudo cp /tmp/base.apk /opt/iobroker/iobroker-data/zeekr/base.apk`
-   - `sudo cp /tmp/arm64.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
-5. Make sure the files are readable by the `iobroker` user:
-   - `sudo chown iobroker:iobroker /opt/iobroker/iobroker-data/zeekr/base.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
-   - `sudo chmod 644 /opt/iobroker/iobroker-data/zeekr/base.apk /opt/iobroker/iobroker-data/zeekr/arm64.apk`
-6. In the adapter admin UI, enable `autoExtractSecrets` and enter the absolute paths in `apkBasePath` and `apkArm64Path`.
-7. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
-8. Save the adapter configuration and restart the instance. The adapter will then try to clone the extractor tool into `.tools/zeekr_key_extractor`, install its Python dependencies, run the extractor, and populate the missing secrets automatically.
+   - `adb shell pm path com.zeekr.global` (most markets) or `adb shell pm path com.zeekr.overseas` (EU)
+   - `adb pull /data/app/<...>/base.apk base.apk`
+   - `adb pull /data/app/<...>/split_config.arm64_v8a.apk arm64.apk`
+4. Put the two files anywhere the `iobroker` user can read, e.g. your home directory or `/tmp`. No special directories or permissions are needed.
+5. In the adapter admin UI, enable `autoExtractSecrets` and enter the file paths in `apkBasePath` and `apkArm64Path`. The adapter copies the APKs into its own storage and runs the extraction itself.
+6. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
+7. Save the adapter configuration and restart the instance. The adapter imports the APKs, installs the extractor dependencies, runs the extractor, and fills in the missing secrets automatically.
 
 ### Alternative: use a secrets JSON file
 
