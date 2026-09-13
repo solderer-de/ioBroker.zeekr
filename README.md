@@ -198,6 +198,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.51
+
+- Real charging costs with losses and per-charger/time tariffs, geofence, smart charging, battery log
+
 ### 0.1.50
 
 - Valid lock role, leaner CI, correct authors and credits

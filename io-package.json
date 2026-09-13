@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.50",
+    "version": "0.1.51",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.51": {
+        "en": "Real charging costs with losses and tariffs, geofence, smart charging.",
+        "de": "Echte Ladekosten mit Verlusten und Tarifen, Geofence, Smart Charging.",
+        "ru": "Реальная стоимость зарядки с потерями и тарифами, геозона, умная зарядка.",
+        "pt": "Custos reais de carga com perdas e tarifas, geofence, carga inteligente.",
+        "nl": "Werkelijke laadkosten met verliezen en tarieven, geofence, slim laden.",
+        "fr": "Coûts de charge réels avec pertes et tarifs, géorepérage, charge intelligente.",
+        "it": "Costi di ricarica reali con perdite e tariffe, geofence, ricarica intelligente.",
+        "es": "Costes reales de carga con pérdidas y tarifas, geovalla, carga inteligente.",
+        "pl": "Rzeczywiste koszty ładowania ze stratami i taryfami, geofence, inteligentne ładowanie.",
+        "uk": "Реальна вартість заряджання з втратами й тарифами, геозона, розумне заряджання.",
+        "zh-cn": "含损耗和电价的真实充电成本、地理围栏、智能充电。"
+      },
       "0.1.50": {
         "en": "Valid roles, leaner CI, correct authors.",
         "de": "Gültige Rollen, schlankere CI, korrekte Autoren.",
