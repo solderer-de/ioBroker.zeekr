@@ -632,3 +632,52 @@ test('mock object tree has no missing parents and valid button roles (E1008/E300
     }
     assert.deepEqual(badButtons, []);
 });
+
+test('experimental commands exist for new openzeekr actions', () => {
+    const { EXPERIMENTAL_COMMANDS } = require('../lib/adapter');
+    assert.deepEqual(EXPERIMENTAL_COMMANDS.trunkUnlock, {
+        command: 'stop',
+        serviceId: 'RDU',
+        setting: { serviceParameters: [{ key: 'door', value: 'trunk' }] },
+    });
+    assert.deepEqual(EXPERIMENTAL_COMMANDS.sentryOn, {
+        command: 'start',
+        serviceId: 'RSM',
+        setting: { serviceParameters: [{ key: 'SETTING', value: 'RSM_THREE' }] },
+    });
+    for (const key of [
+        'trunkUnlock',
+        'trunkLock',
+        'frunk',
+        'chargeLidOpen',
+        'defrostOn',
+        'defrostOff',
+        'sunroofOpen',
+        'sunroofClose',
+        'sentryOn',
+        'sentryOff',
+        'engineStart',
+        'engineStop',
+        'wake',
+    ]) {
+        assert.ok(EXPERIMENTAL_COMMANDS[key], key);
+    }
+});
+
+test('experimental button triggers bridge with preset', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await adapter.setStateAsync('vehicles.my_car.vin', 'VIN123', true);
+    let bridged = null;
+    adapter.runBridge = async (action, payload) => {
+        bridged = { action, payload };
+        return { ok: true };
+    };
+    await adapter.onMessage({
+        command: 'stateChange',
+        message: { id: 'vehicles.my_car.control.sentryOn', value: true },
+        from: 'test',
+        callback: () => {},
+    });
+    assert.equal(bridged.payload.serviceId, 'RSM');
+    assert.equal(bridged.payload.command, 'start');
+});

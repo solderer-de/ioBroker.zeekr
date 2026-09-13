@@ -159,6 +159,25 @@ The adapter accepts a lightweight `sendCommand` message with:
 
 The command is routed through the Python bridge and forwarded to the underlying `zeekr_ev_api` client.
 
+### Experimental commands (borconi/openzeekr research)
+
+Additional buttons marked `(experimental)` come from Smali research in [borconi/openzeekr](https://github.com/borconi/openzeekr) and are **unverified**: trunk/frunk, charge lid open, defrost, sunroof, sentry mode, remote engine start/stop, wake. They only add new actions; proven defaults are unchanged.
+
+Known conflicts with our proven values (do NOT change without a live test):
+
+- windows/sunshade: proven `RWS` + lowercase targets (`window`, `ventilate`, `sunshade`) vs. research `RWS_2` + uppercase (`WINDOW`, `WIN_VENTILATE`, `WIN_SUNSHADE`, `SUNROOF`)
+- climate: proven `ZAF` + AC params vs. research `RCE_2`/`RCC_2`
+- flash/honk: proven `rhl` key vs. research `SETTING` key
+
+### Live A/B checklist (for the real car)
+
+For each conflict pair, try the proven variant first, then the research variant, and report which one the car executes (check `control.lastResult` plus the car itself):
+
+1. Windows open: `start`/`RWS`/`target=window` vs. `start`/`RWS_2`/`TARGET=WINDOW`
+2. Ventilate: `RWS`/`target=ventilate` vs. `RWS_2`/`TARGET=WIN_VENTILATE`
+3. Climate on: `ZAF` + AC params vs. `RCE_2` + `RCE_CONDITIONER=ENABLE`
+4. Flash: `RHL`/`rhl=light-flash` vs. `RHL`/`SETTING=LIGHT_FLASH`
+
 ## Release and Maintenance
 
 - The repository includes GitHub Actions for CI and release creation.
