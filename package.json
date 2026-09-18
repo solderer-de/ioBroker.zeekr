@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@iobroker/eslint-config": "^2.3.4",
-    "@iobroker/testing": "^5.3.0",
+    "@iobroker/testing": "^6.2.1",
     "@types/node": "^22.20.1",
     "cross-env": "^10.1.0"
   }
