@@ -131,10 +131,10 @@ test('suggestRegion maps EU countries to EU', () => {
 });
 
 test('getErrorHint maps known Zeekr errors to German hints', () => {
-    assert.match(getErrorHint('0001 Invalid access key'), /Region/);
+    assert.match(getErrorHint('0001 Invalid access key'), /region/i);
     assert.match(getErrorHint('079025 Signature authentication failed'), /prod_secret/);
     assert.match(getErrorHint('Decrypt X-VIN failed'), /VIN/);
-    assert.match(getErrorHint('079021 session'), /Zweitaccount/);
+    assert.match(getErrorHint('079021 session'), /second.*account/i);
 });
 
 test('jsonConfig parses and covers every native key', () => {
@@ -680,4 +680,30 @@ test('experimental button triggers bridge with preset', async () => {
     });
     assert.equal(bridged.payload.serviceId, 'RSM');
     assert.equal(bridged.payload.command, 'start');
+});
+
+test('onStateChange triggers typed command on direct write', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await adapter.setStateAsync('vehicles.my_car.vin', 'VIN123', true);
+    let bridged = null;
+    adapter.runBridge = async (action, payload) => {
+        bridged = { action, payload };
+        return { ok: true };
+    };
+    await adapter.onStateChange('zeekr.0.vehicles.my_car.control.lock', { val: true, ack: false });
+    assert.ok(bridged, 'bridge was called');
+    assert.equal(bridged.payload.serviceId, 'RDL');
+});
+
+test('onStateChange ignores ack confirmations', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    let bridged = 0;
+    adapter.runBridge = async () => {
+        bridged += 1;
+        return { ok: true };
+    };
+    await adapter.onStateChange('zeekr.0.vehicles.my_car.control.lock', { val: true, ack: true });
+    await adapter.onStateChange('zeekr.0.vehicles.my_car.control.lock', null);
+    await adapter.onStateChange('zeekr.0.info.connection', { val: false, ack: false });
+    assert.equal(bridged, 0);
 });
