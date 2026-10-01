@@ -2,6 +2,9 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const E = require('../lib/energy');
 
+// Windows runners provide `python`, not `python3`.
+const PYTHON = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+
 test('haversine Berlin-Mitte ~1km', () => {
     const d = E.haversineMeters(52.52, 13.405, 52.529, 13.405);
     assert.ok(d > 900 && d < 1100, d);
@@ -53,4 +56,25 @@ test('smart charge waits for cheap window, charges when forced', () => {
     assert.equal(E.decideSmartCharge({ ...base, now: new Date(2026, 0, 1, 23, 30), departureHhMm: '' }), 'charge');
     assert.equal(E.decideSmartCharge({ ...base, pluggedIn: false, now: new Date() }), 'idle');
     assert.equal(E.decideSmartCharge({ ...base, batteryPct: 95, targetPct: 90, now: new Date() }), 'idle');
+});
+
+test('bridge mock works with pip-less venv (no traceback, exit 0)', () => {
+    const { spawnSync, execFileSync } = require('node:child_process');
+    const fs = require('node:fs');
+    const os = require('node:os');
+    const path = require('node:path');
+    const venvDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brokenvenv-'));
+    try {
+        execFileSync(PYTHON, ['-m', 'venv', '--without-pip', venvDir], { stdio: 'ignore' });
+    } catch {
+        return;
+    }
+    const result = spawnSync(PYTHON, ['lib/bridge.py', 'vehicles'], {
+        input: JSON.stringify({ username: 'mock', password: 'mock' }),
+        cwd: path.join(__dirname, '..'),
+        encoding: 'utf8',
+        env: { ...process.env, ZEEKR_VENV: venvDir },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).mock, true);
 });

@@ -25,14 +25,16 @@ def ensure_runtime_dependencies():
     if not os.path.exists(python_exe):
         return
     import subprocess
+    # A venv created without ensurepip support (e.g. missing python3-venv on
+    # Debian) has no pip at all — bootstrap it instead of crashing.
+    probe = subprocess.run([python_exe, '-m', 'pip', '--version'], capture_output=True, timeout=60)
+    if probe.returncode != 0:
+        subprocess.check_call([python_exe, '-m', 'ensurepip', '--default-pip'], timeout=120)
     # Pinned install from requirements.txt (single source of truth).
     # Falls back to a pinned version if requirements.txt is missing.
     req_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'requirements.txt')
     target = ['-r', req_file] if os.path.exists(req_file) else ['zeekr-ev-api==0.1.15']
     subprocess.check_call([python_exe, '-m', 'pip', 'install', '--quiet', '--disable-pip-version-check'] + target, timeout=180)
-
-
-ensure_runtime_dependencies()
 
 
 def get_first(*sources, keys, default=None):
@@ -425,6 +427,13 @@ def main() -> int:
                 return 0
             print(json.dumps({"ok": True, "mock": True}))
             return 0
+
+    try:
+        # Mock mode never touches venv/pip/network by design.
+        ensure_runtime_dependencies()
+    except Exception as exc:
+        print(json.dumps({"error": f"Python dependency setup failed: {exc}", "vehicles": [], "connection": False}))
+        return 0
 
     try:
         from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
