@@ -18,7 +18,7 @@ This repository contains an ioBroker adapter for [Zeekr electric vehicles](https
 
 ## Requirements
 
-- Node.js 18+ (20+ recommended)
+- Node.js 22+ (matches `engines` in `package.json`)
 - Python 3
 
 No manual Python package installation is required. The adapter creates a local virtual environment on first run and installs the Zeekr dependency automatically.
@@ -158,6 +158,8 @@ The adapter accepts a lightweight `sendCommand` message with:
 - `setting`: payload object forwarded to the Zeekr API
 
 The command is routed through the Python bridge and forwarded to the underlying `zeekr_ev_api` client.
+
+Writable control states react to direct writes: set a button state (for example `vehicles.<id>.control.lock`) to `true` with `ack: false` from the admin UI, Vis, Blockly (`setState`) or scripts, and the adapter executes the command and resets the button. Direct state writes and `sendTo(instance, 'stateChange', { id, value })` messages share the same handler.
 
 ### Experimental commands (borconi/openzeekr research)
 
