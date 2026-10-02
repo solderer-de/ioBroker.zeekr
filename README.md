@@ -163,22 +163,29 @@ Writable control states react to direct writes: set a button state (for example 
 
 ### Experimental commands (borconi/openzeekr research)
 
-Additional buttons marked `(experimental)` come from Smali research in [borconi/openzeekr](https://github.com/borconi/openzeekr) and are **unverified**: trunk/frunk, charge lid open, defrost, sunroof, sentry mode, remote engine start/stop, wake. They only add new actions; proven defaults are unchanged.
+Additional buttons marked `(experimental)` come from Smali research in [borconi/openzeekr](https://github.com/borconi/openzeekr) and are **unverified**: trunk/frunk, charge lid, defrost, sunroof, sentry mode, remote engine start/stop, wake, battery preheat, seat/steering-wheel heat, fridge, cabin vent. They only add new actions; proven defaults are unchanged.
 
-Known conflicts with our proven values (do NOT change without a live test):
+Confirmed since the last update (openzeekr moved to the same values, conflicts resolved):
 
-- windows/sunshade: proven `RWS` + lowercase targets (`window`, `ventilate`, `sunshade`) vs. research `RWS_2` + uppercase (`WINDOW`, `WIN_VENTILATE`, `WIN_SUNSHADE`, `SUNROOF`)
-- climate: proven `ZAF` + AC params vs. research `RCE_2`/`RCC_2`
-- flash/honk: proven `rhl` key vs. research `SETTING` key
+- windows/sunshade: `RWS` + lowercase targets (`window`, `ventilate`, `sunshade`, `sunroof`) — our values were correct
+- climate/comfort: unified `ZAF` service (`AC`, `DF`, `SH.11`, `SW`) — our values were correct
+- flash/honk: lowercase `rhl` key — our values were correct
+
+Known caveats:
+
+- powered tailgate open/close (`RDU_2`/`RDL_2`) need the ecarx telematics transport (`PUT /remote-control/vehicle/telematics/{vin}`), which the `zeekr_ev_api` client does not speak — expect no effect via this adapter. Plain trunk unlock (`RDU`) uses the standard transport.
+- sentry mode needs the lowercase `rsm` key (uppercase is ignored by the car).
+- glovebox/visitor/locker commands need a physical PIN (`0000` placeholder) and are intentionally **not** exposed as one-click buttons.
+- charge current (`control.chargeCurrent`, 6–32 A via `RCS`/`rcs.ac.current`) is experimental.
 
 ### Live A/B checklist (for the real car)
 
-For each conflict pair, try the proven variant first, then the research variant, and report which one the car executes (check `control.lastResult` plus the car itself):
+For each open pair, try the listed variant and report whether the car executes it (check `control.lastResult` plus the car itself):
 
-1. Windows open: `start`/`RWS`/`target=window` vs. `start`/`RWS_2`/`TARGET=WINDOW`
-2. Ventilate: `RWS`/`target=ventilate` vs. `RWS_2`/`TARGET=WIN_VENTILATE`
-3. Climate on: `ZAF` + AC params vs. `RCE_2` + `RCE_CONDITIONER=ENABLE`
-4. Flash: `RHL`/`rhl=light-flash` vs. `RHL`/`SETTING=LIGHT_FLASH`
+1. Trunk unlock: `stop`/`RDU`/`target=trunk`
+2. Frunk: `start`/`RDU`/`target=hood`
+3. Battery preheat: `start`/`ZAN`
+4. Charge current 16 A: `start`/`RCS`/`rcs.ac.current=16`
 
 ## Release and Maintenance
 
