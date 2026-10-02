@@ -638,12 +638,12 @@ test('experimental commands exist for new openzeekr actions', () => {
     assert.deepEqual(EXPERIMENTAL_COMMANDS.trunkUnlock, {
         command: 'stop',
         serviceId: 'RDU',
-        setting: { serviceParameters: [{ key: 'door', value: 'trunk' }] },
+        setting: { serviceParameters: [{ key: 'target', value: 'trunk' }] },
     });
     assert.deepEqual(EXPERIMENTAL_COMMANDS.sentryOn, {
         command: 'start',
         serviceId: 'RSM',
-        setting: { serviceParameters: [{ key: 'SETTING', value: 'RSM_THREE' }] },
+        setting: { serviceParameters: [{ key: 'rsm', value: '6' }] },
     });
     for (const key of [
         'trunkUnlock',
@@ -706,4 +706,57 @@ test('onStateChange ignores ack confirmations', async () => {
     await adapter.onStateChange('zeekr.0.vehicles.my_car.control.lock', null);
     await adapter.onStateChange('zeekr.0.info.connection', { val: false, ack: false });
     assert.equal(bridged, 0);
+});
+
+test('experimental presets match verified openzeekr values', () => {
+    const { EXPERIMENTAL_COMMANDS } = require('../lib/adapter');
+    assert.deepEqual(EXPERIMENTAL_COMMANDS.sentryOn, {
+        command: 'start',
+        serviceId: 'RSM',
+        setting: { serviceParameters: [{ key: 'rsm', value: '6' }] },
+    });
+    assert.deepEqual(EXPERIMENTAL_COMMANDS.trunkLock, {
+        command: 'start',
+        serviceId: 'RDL_2',
+        setting: { serviceParameters: [{ key: 'target', value: 'trunk' }] },
+    });
+    assert.deepEqual(EXPERIMENTAL_COMMANDS.frunk, {
+        command: 'start',
+        serviceId: 'RDU',
+        setting: { serviceParameters: [{ key: 'target', value: 'hood' }] },
+    });
+    assert.deepEqual(EXPERIMENTAL_COMMANDS.engineStart, {
+        command: 'start',
+        serviceId: 'RES',
+        setting: { serviceParameters: [{ key: 'engStrtType', value: '1' }] },
+    });
+    for (const key of [
+        'trunkOpen',
+        'chargeLidClose',
+        'batteryPreheatOn',
+        'batteryPreheatOff',
+        'seatHeatOn',
+        'seatHeatOff',
+        'steeringHeatOn',
+        'steeringHeatOff',
+        'fridgeOn',
+        'fridgeOff',
+        'cabinVentOn',
+        'cabinVentOff',
+    ]) {
+        assert.ok(EXPERIMENTAL_COMMANDS[key], key);
+    }
+});
+
+test('chargeCurrent write sends RCS current command', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await adapter.setStateAsync('vehicles.my_car.vin', 'VIN123', true);
+    let bridged = null;
+    adapter.runBridge = async (action, payload) => {
+        bridged = { action, payload };
+        return { ok: true };
+    };
+    await adapter.onStateChange('zeekr.0.vehicles.my_car.control.chargeCurrent', { val: 20, ack: false });
+    assert.equal(bridged.payload.serviceId, 'RCS');
+    assert.deepEqual(bridged.payload.setting.serviceParameters[0], { key: 'rcs.ac.current', value: '20' });
 });
