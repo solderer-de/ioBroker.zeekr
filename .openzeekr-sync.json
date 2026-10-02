@@ -1,0 +1,9 @@
+{
+  "repo": "borconi/openzeekr",
+  "branch": "master",
+  "sha": "e1168aeca52e1b1e7ba144820cd482bb56b6d8ba",
+  "updated_at": "2026-10-02T06:57:16Z",
+  "path": "core/src/main/java/com/openzeekr/app/remote/Repositories.kt",
+  "message": "OTA: dev-only Cancel update button (abort stuck assignment)",
+  "checked_at": "2026-10-02T08:09:42.669562+00:00"
+}

@@ -81,6 +81,54 @@ jobs:
           }, indent=2) + '\n')
           print(f'extractor sha={ext_sha} prev={prev.get("sha", "")}')
 
+          # 3) openzeekr command catalog (path-filtered: only Command.kt and
+          # Repositories.kt matter for our presets; the app commits daily)
+          oz_paths = [
+              'core/src/main/java/com/openzeekr/app/remote/Command.kt',
+              'app/src/main/java/com/openzeekr/app/remote/Command.kt',
+              'core/src/main/java/com/openzeekr/app/remote/Repositories.kt',
+              'app/src/main/java/com/openzeekr/app/remote/Repositories.kt',
+          ]
+          oz_latest = None
+          for oz_path in oz_paths:
+              try:
+                  commits = gh_json(
+                      f'https://api.github.com/repos/borconi/openzeekr/commits?path={oz_path}&per_page=1'
+                  )
+              except Exception as exc:
+                  print(f'openzeekr lookup failed for {oz_path}: {exc}')
+                  continue
+              if not commits:
+                  continue
+              head = commits[0]
+              stamp = head['commit']['committer']['date']
+              if oz_latest is None or stamp > oz_latest['updated_at']:
+                  oz_latest = {
+                      'sha': head['sha'],
+                      'updated_at': stamp,
+                      'path': oz_path,
+                      'message': head['commit']['message'].split('\n')[0][:120],
+                  }
+          oz_state_path = Path('.openzeekr-sync.json')
+          oz_prev = {}
+          if oz_state_path.exists():
+              try:
+                  oz_prev = json.loads(oz_state_path.read_text())
+              except Exception:
+                  oz_prev = {}
+          if oz_latest is not None:
+              oz_state_path.write_text(json.dumps({
+                  'repo': 'borconi/openzeekr',
+                  'branch': 'master',
+                  'sha': oz_latest['sha'],
+                  'path': oz_latest['path'],
+                  'message': oz_latest['message'],
+                  'updated_at': oz_latest['updated_at'],
+                  'checked_at': datetime.now(timezone.utc).isoformat(),
+              }, indent=2) + '\n')
+          print(f'openzeekr sha={oz_latest["sha"] if oz_latest else None} prev={oz_prev.get("sha", "")}')
+          oz_changed = bool(oz_latest) and oz_prev.get('sha') != oz_latest['sha']
+
           # Output for later steps
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
               fh.write(f'pinned={pinned}\n')
@@ -89,12 +137,14 @@ jobs:
               fh.write(f'ext_prev={prev.get("sha", "")}\n')
               fh.write(f'ext_changed={str(prev.get("sha") != ext_sha).lower()}\n')
               fh.write(f'api_changed={str(pinned != latest_api).lower()}\n')
+              fh.write(f'oz_sha={oz_latest["sha"] if oz_latest else ""}\n')
+              fh.write(f'oz_changed={str(oz_changed).lower()}\n')
           PY
       - name: Commit sync state
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .pypi-sync.json .extractor-sync.json
+          git add .pypi-sync.json .extractor-sync.json .openzeekr-sync.json
           if git diff --cached --quiet; then
             echo 'No state change to commit'
           else
@@ -102,7 +152,7 @@ jobs:
             git push
           fi
       - name: Open issues on change
-        if: steps.check-deps.outputs.api_changed == 'true' || steps.check-deps.outputs.ext_changed == 'true'
+        if: steps.check-deps.outputs.api_changed == 'true' || steps.check-deps.outputs.ext_changed == 'true' || steps.check-deps.outputs.oz_changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -116,8 +166,10 @@ jobs:
           pinned = '${{ steps.check-deps.outputs.pinned }}'
           latest = '${{ steps.check-deps.outputs.latest }}'
           ext_sha = '${{ steps.check-deps.outputs.ext_sha }}'
+          oz_sha = '${{ steps.check-deps.outputs.oz_sha }}'
           api_changed = '${{ steps.check-deps.outputs.api_changed }}' == 'true'
           ext_changed = '${{ steps.check-deps.outputs.ext_changed }}' == 'true'
+          oz_changed = '${{ steps.check-deps.outputs.oz_changed }}' == 'true'
 
           def open_issue(title, body):
               data = json.dumps({'title': title, 'body': body}).encode()
@@ -150,6 +202,14 @@ jobs:
                   f'- Commit: https://github.com/wysie/zeekr_key_extractor/commit/{ext_sha}\n'
                   f'- Relevant für EU 3.0.x (#11/#13) + App 1.6 (#12).\n\n'
                   'Bitte prüfen ob EXTRACTOR_DEPS / Docs / Region-Mapping anzupassen sind.',
+              )
+          if oz_changed:
+              open_issue(
+                  'Upstream openzeekr command catalog changed',
+                  f'Neuer Commit: {oz_sha}\n'
+                  f'- Commit: https://github.com/borconi/openzeekr/commit/{oz_sha}\n'
+                  f'- Nur Command.kt/Repositories.kt werden beobachtet.\n\n'
+                  'Bitte EXPERIMENTAL_COMMANDS in lib/adapter.js abgleichen (Werte, neue Aktionen, Transport-Hinweise).',
               )
           PY
       - name: Propose requirements bump PR
