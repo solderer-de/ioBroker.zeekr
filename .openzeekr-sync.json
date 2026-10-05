@@ -1,9 +1,9 @@
 {
   "repo": "borconi/openzeekr",
   "branch": "master",
-  "sha": "e1168aeca52e1b1e7ba144820cd482bb56b6d8ba",
+  "sha": "2ad5f0b439f4543ed9fe8aac0c38aef0316a162f",
   "path": "core/src/main/java/com/openzeekr/app/remote/Repositories.kt",
-  "message": "OTA: dev-only Cancel update button (abort stuck assignment)",
-  "updated_at": "2026-10-02T06:57:16Z",
-  "checked_at": "2026-10-04T12:39:43.449871+00:00"
+  "message": "fix(ota/session): shared-account OTA error (#23) + token-expiry re-login prompt (#22)",
+  "updated_at": "2026-10-04T18:29:30Z",
+  "checked_at": "2026-10-05T15:04:27.073588+00:00"
 }
