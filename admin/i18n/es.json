@@ -19,7 +19,6 @@
   "Contains the HMAC keys. Not the xxhdpi file.": "Contiene las claves HMAC. No el archivo xxhdpi.",
   "Or: zeekr_secrets.json path (instead of APKs)": "O: ruta zeekr_secrets.json (en vez de APKs)",
   "Keys": "Claves",
-  "Filled in automatically. Only enter manually if extraction is impossible.": "Se rellena automáticamente. Solo manual si la extracción es imposible.",
   "HMAC Access Key": "Clave de acceso HMAC",
   "HMAC Secret Key": "Clave secreta HMAC",
   "Password Public Key": "Clave pública de contraseña",
@@ -49,5 +48,9 @@
   "Smart charging (cheapest window)": "Carga inteligente (ventana barata)",
   "Departure time (HH:MM)": "Hora de salida (HH:MM)",
   "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Ejemplo con ubicación y ventana de tiempo: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
-  "Upload APKs from this PC (no file transfer needed)": "Subir APK desde este PC (sin transferencia de archivos)"
+  "Upload APKs from this PC (no file transfer needed)": "Subir APK desde este PC (sin transferencia de archivos)",
+  "Older base APK (optional, e.g. app 3.0.x)": "APK base antiguo (opcional, ej. app 3.0.x)",
+  "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Si la app actual (ej. 3.1.0) oculta claves, las faltantes se toman de este par antiguo.",
+  "Older arm64 APK (optional)": "APK arm64 antiguo (opcional)",
+  "Second file of the older pair (contains the native libraries).": "Segundo archivo del par antiguo (contiene las bibliotecas nativas)."
 }

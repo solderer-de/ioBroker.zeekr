@@ -19,7 +19,6 @@
   "Contains the HMAC keys. Not the xxhdpi file.": "包含HMAC密钥。不要用xxhdpi文件。",
   "Or: zeekr_secrets.json path (instead of APKs)": "或：zeekr_secrets.json路径（代替APK）",
   "Keys": "密钥",
-  "Filled in automatically. Only enter manually if extraction is impossible.": "自动填充。仅在无法提取时手动输入。",
   "HMAC Access Key": "HMAC Access Key",
   "HMAC Secret Key": "HMAC Secret Key",
   "Password Public Key": "Password Public Key",
@@ -49,5 +48,9 @@
   "Smart charging (cheapest window)": "智能充电（最便宜时段）",
   "Departure time (HH:MM)": "出发时间（HH:MM）",
   "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "包含地点和时间窗口的示例：[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
-  "Upload APKs from this PC (no file transfer needed)": "从此电脑上传APK（无需文件传输）"
+  "Upload APKs from this PC (no file transfer needed)": "从此电脑上传APK（无需文件传输）",
+  "Older base APK (optional, e.g. app 3.0.x)": "旧版base APK（可选，例如3.0.x应用）",
+  "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "如果当前应用（如3.1.0）隐藏密钥，则从此旧版本对中获取缺失的密钥。",
+  "Older arm64 APK (optional)": "旧版arm64 APK（可选）",
+  "Second file of the older pair (contains the native libraries).": "旧版本对的第二个文件（包含原生库）。"
 }

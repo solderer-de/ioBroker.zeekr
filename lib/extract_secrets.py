@@ -116,6 +116,41 @@ def _ensure_dependencies(python_binary: str, extractor_dir: Path) -> None:
     )
 
 
+def _run_extractor_once(python_exe, extractor_dir, base_apk, arm64_apk, region, output_path, temp_parent):
+    """Run the upstream extractor once. Returns (secrets_dict_or_None, error_str_or_None)."""
+    temp_dir = Path(tempfile.mkdtemp(prefix='zeekr-secrets-', dir=str(temp_parent)))
+    try:
+        completed = subprocess.run(
+            [str(python_exe), str(extractor_dir / 'zeekr_extract_secrets.py'), str(base_apk), str(arm64_apk), '--region', region],
+            cwd=str(extractor_dir),
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=300,
+        )
+        if completed.returncode != 0:
+            return None, (completed.stderr.strip() or completed.stdout.strip() or 'extractor failed')
+        output_json = _find_output_json(base_apk, arm64_apk, output_path)
+        if output_json is None:
+            return None, 'Extractor did not produce a zeekr_secrets.json file'
+        data = _read_json(output_json)
+        if not isinstance(data, dict):
+            return None, 'Extractor output was not a JSON object'
+        return _normalize_secrets(data), None
+    except subprocess.TimeoutExpired:
+        return None, 'Extractor timed out after 300s'
+    finally:
+        import shutil
+
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+def _missing_secret_keys(secrets: dict) -> list:
+    return [key for key in ('hmacAccessKey', 'hmacSecretKey', 'passwordPublicKey', 'prodSecret', 'vinKey', 'vinIv')
+            if not secrets.get(key)]
+
+
 def main() -> int:
     payload = _load_payload()
     secrets_json_path = payload.get('secretsJsonPath') or ''
@@ -173,63 +208,77 @@ def main() -> int:
     if os.name == 'nt':
         python_exe = venv_dir / 'Scripts' / 'python.exe'
 
+    apk_old_base_path = payload.get('apkOldBasePath') or ''
+    apk_old_arm64_path = payload.get('apkOldArm64Path') or ''
     output_path = payload.get('outputPath') or ''
     if output_path:
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-    temp_dir = Path(tempfile.mkdtemp(prefix='zeekr-secrets-', dir=str(extractor_dir)))
-    try:
-        completed = subprocess.run(
-            [str(python_exe), str(extractor_dir / 'zeekr_extract_secrets.py'), str(base_apk), str(arm64_apk), '--region', region],
-            cwd=str(extractor_dir),
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=300,
-        )
-        if completed.returncode != 0:
-            print(json.dumps({'ok': False, 'error': completed.stderr.strip() or completed.stdout.strip()}))
-            return 0
-        output_json = _find_output_json(base_apk, arm64_apk, output_path)
-        if output_json is None:
-            print(json.dumps({'ok': False, 'error': 'Extractor did not produce a zeekr_secrets.json file'}))
-            return 0
-        data = _read_json(output_json)
-        if not isinstance(data, dict):
-            print(json.dumps({'ok': False, 'error': 'Extractor output was not a JSON object'}))
-            return 0
-        secrets = _normalize_secrets(data)
-        warnings = []
-        if not secrets.get('hmacAccessKey') or not secrets.get('hmacSecretKey'):
-            warnings.append('HMAC keys missing — App 1.6+ oder falsches Split? Siehe Upstream-Issue #12. Region prüfen.')
-        if not secrets.get('vinKey') or not secrets.get('vinIv'):
-            warnings.append('VIN Key/IV fehlen — normal ab App ≥1.5.7 (iWall). Legacy-1.5.5-APK oder Frida-Runtime-JSON nutzen.')
-        # Legacy-1.5.5-APK nur für VIN mergen (gilt nicht für overseas 3.0.6+, dort Frida nötig).
-        if apk_legacy_path and (not secrets.get('vinKey') or not secrets.get('vinIv')):
-            legacy_data = _read_json(Path(apk_legacy_path)) if Path(apk_legacy_path).is_file() else None
-            # apkLegacyPath kann JSON oder APK sein: JSON direkt mergen, APK-Hinweis geben.
-            if isinstance(legacy_data, dict):
-                legacy_secrets = _normalize_secrets(legacy_data)
-                secrets = _merge_secrets(secrets, legacy_secrets, only_keys=['vinKey', 'vinIv'])
-                warnings.append('VIN aus Legacy-JSON gemerged (1.5.5-Trick, nicht gültig für overseas 3.0.6+).')
-            else:
-                warnings.append('apkLegacyPath ist gesetzt, aber kein JSON — bitte Legacy-APK separat extrahieren und als JSON hierher mergen, oder Runtime-JSON (Frida) nutzen.')
-        # Runtime-JSON (Frida, App 3.x) hat Vorrang für prod/vin.
-        if runtime_json_path and Path(runtime_json_path).exists():
-            runtime_data = _read_json(Path(runtime_json_path))
-            if isinstance(runtime_data, dict):
-                runtime_secrets = _normalize_secrets(runtime_data)
-                secrets = _merge_secrets(secrets, runtime_secrets, only_keys=['prodSecret', 'prodSecretCandidates', 'vinKey', 'vinIv'])
-        print(json.dumps({'ok': True, 'secrets': secrets, 'source': str(output_json), 'warnings': warnings}))
-        return 0
-    except subprocess.TimeoutExpired:
-        print(json.dumps({'ok': False, 'error': 'Extractor timed out after 300s'}))
-        return 0
-    finally:
-        import shutil
 
-        if temp_dir.exists():
-            shutil.rmtree(temp_dir, ignore_errors=True)
+    secrets, error = _run_extractor_once(python_exe, extractor_dir, base_apk, arm64_apk, region, output_path, extractor_dir)
+    if secrets is None:
+        print(json.dumps({'ok': False, 'error': error}))
+        return 0
+    sources = ['current APK']
+    warnings = []
+    missing = _missing_secret_keys(secrets)
+    if 'hmacAccessKey' in missing or 'hmacSecretKey' in missing:
+        warnings.append(
+            'HMAC keys missing — on app 3.1.0+ (KiwiVM) they cannot be extracted statically '
+            '(upstream issue #14); otherwise check the arm64 split APK and the region.'
+        )
+    if 'vinKey' in missing or 'vinIv' in missing:
+        warnings.append(
+            'VIN key/IV missing — expected on app 1.5.7 and newer (iWall). '
+            'Use a legacy JSON, an older APK pair, or a Frida runtime JSON.'
+        )
+    # Legacy JSON merges VIN only (the 1.5.5 trick does not hold for overseas 3.0.6+).
+    if apk_legacy_path and ('vinKey' in missing or 'vinIv' in missing):
+        legacy_data = _read_json(Path(apk_legacy_path)) if Path(apk_legacy_path).is_file() else None
+        if isinstance(legacy_data, dict):
+            legacy_secrets = _normalize_secrets(legacy_data)
+            before = _missing_secret_keys(secrets)
+            secrets = _merge_secrets(secrets, legacy_secrets, only_keys=['vinKey', 'vinIv'])
+            filled = [key for key in before if key not in _missing_secret_keys(secrets)]
+            if filled:
+                warnings.append(f'Merged {", ".join(filled)} from the legacy JSON (verify with testConnection).')
+        else:
+            warnings.append('apkLegacyPath is set but is not a JSON file — extract it separately or use a runtime JSON (Frida).')
+    # Older APK pair (e.g. app 3.0.x while the current app is 3.1.0+): fill every
+    # still-missing secret from it, since server-side keys often stay valid.
+    missing = _missing_secret_keys(secrets)
+    old_base = Path(apk_old_base_path) if apk_old_base_path else None
+    old_arm64 = Path(apk_old_arm64_path) if apk_old_arm64_path else None
+    if missing and old_base and old_arm64 and old_base.exists() and old_arm64.exists():
+        old_secrets, old_error = _run_extractor_once(
+            python_exe, extractor_dir, old_base, old_arm64, region, output_path, extractor_dir
+        )
+        if old_secrets is None:
+            warnings.append(f'Older APK extraction failed: {old_error}')
+        else:
+            before = list(missing)
+            secrets = _merge_secrets(secrets, old_secrets, only_keys=before)
+            filled = [key for key in before if key not in _missing_secret_keys(secrets)]
+            if filled:
+                sources.append('older APK')
+                warnings.append(
+                    f'Merged {", ".join(filled)} from the older APK (verify with testConnection — '
+                    'keys may differ between app versions).'
+                )
+    elif missing and (apk_old_base_path or apk_old_arm64_path):
+        warnings.append('Older APK paths are incomplete or do not exist — provide both base and arm64 files.')
+    # Runtime JSON (Frida, App 3.x) takes precedence for prod/vin.
+    if runtime_json_path and Path(runtime_json_path).exists():
+        runtime_data = _read_json(Path(runtime_json_path))
+        if isinstance(runtime_data, dict):
+            runtime_secrets = _normalize_secrets(runtime_data)
+            secrets = _merge_secrets(secrets, runtime_secrets, only_keys=['prodSecret', 'prodSecretCandidates', 'vinKey', 'vinIv'])
+            sources.append('runtime JSON')
+    missing = _missing_secret_keys(secrets)
+    if missing:
+        warnings.append(f'Still missing: {", ".join(missing)}. See the README section on app 3.1.0 and newer.')
+    print(json.dumps({'ok': True, 'secrets': secrets, 'sources': sources, 'warnings': warnings}))
+    return 0
 
 
 if __name__ == '__main__':

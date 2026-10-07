@@ -199,7 +199,9 @@
     "homeLon": "",
     "homeRadiusM": 150,
     "smartChargeEnabled": false,
-    "smartChargeDeparture": ""
+    "smartChargeDeparture": "",
+    "apkOldBasePath": "",
+    "apkOldArm64Path": ""
   },
   "protectedNative": [
     "password",

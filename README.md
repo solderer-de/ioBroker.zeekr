@@ -83,6 +83,13 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
 6. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
 7. Save the adapter configuration and restart the instance. The adapter imports the APKs, installs the extractor dependencies, runs the extractor, and fills in the missing secrets automatically.
 
+### App 3.1.0 and newer (KiwiVM)
+
+On app 3.1.0 and newer, static extraction is severely limited: the HMAC keys cannot be recovered statically (KiwiVM obfuscation, upstream issue #14), and VIN key/IV plus `prod_secret` are runtime-only (iWall). If extraction reports missing keys:
+
+1. Provide an **older APK pair** (e.g. overseas 3.0.x) via the upload page or `apkOldBasePath`/`apkOldArm64Path` — missing secrets are filled from it automatically (verify with `testConnection`, keys can differ between versions).
+2. For VIN key/IV and `prod_secret`, a Frida runtime dump may still be needed — note the 3.1.0 app detects a running Frida server and refuses to start, so the dump requires hiding measures.
+
 ### Alternative: use a secrets JSON file
 
 If you already have a `zeekr_secrets.json` from the extractor, you can skip the APK step completely and provide its absolute path in `secretsJsonPath`.
