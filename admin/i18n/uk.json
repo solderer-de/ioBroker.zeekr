@@ -48,5 +48,6 @@
   "Home radius (m)": "Радіус дому (м)",
   "Smart charging (cheapest window)": "Розумне заряджання (дешеве вікно)",
   "Departure time (HH:MM)": "Час виїзду (ГГ:ХХ)",
-  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Приклад із місцем і вікном часу: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
+  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Приклад із місцем і вікном часу: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Upload APKs from this PC (no file transfer needed)": "Завантажити APK із цього ПК (без передавання файлів)"
 }

@@ -104,13 +104,26 @@
           "help": "Contains the HMAC keys. Not the xxhdpi file."
         },
         "secretsJsonPath": {
-          "type": "text",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12,
-          "label": "Or: zeekr_secrets.json path (instead of APKs)"
+            "type": "text",
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12,
+            "label": "Or: zeekr_secrets.json path (instead of APKs)"
+        },
+        "_apkUpload": {
+            "type": "staticLink",
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12,
+            "label": "Upload APKs from this PC (no file transfer needed)",
+            "href": "/adapter/zeekr/upload.html",
+            "target": "_blank",
+            "button": true,
+            "variant": "outlined"
         }
       }
     },

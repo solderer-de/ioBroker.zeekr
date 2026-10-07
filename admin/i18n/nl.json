@@ -48,5 +48,6 @@
   "Home radius (m)": "Straal thuis (m)",
   "Smart charging (cheapest window)": "Slim laden (goedkoopste venster)",
   "Departure time (HH:MM)": "Vertrektijd (HH:MM)",
-  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Voorbeeld met locatie en tijdvenster: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]"
+  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Voorbeeld met locatie en tijdvenster: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+  "Upload APKs from this PC (no file transfer needed)": "APK's vanaf deze pc uploaden (geen bestandsoverdracht nodig)"
 }
