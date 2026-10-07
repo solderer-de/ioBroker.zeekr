@@ -10,6 +10,43 @@ except ImportError:  # pragma: no cover - very old Python fallback
     venv = None
 
 
+def _venv_python_exe():
+    """Pfad zum Python des Adapter-venvs (gesetzt via ZEEKR_VENV)."""
+    venv_dir = os.environ.get('ZEEKR_VENV')
+    if not venv_dir:
+        return None
+    if os.name == 'nt':
+        candidate = os.path.join(venv_dir, 'Scripts', 'python.exe')
+    else:
+        candidate = os.path.join(venv_dir, 'bin', 'python')
+    if os.path.exists(candidate):
+        return candidate
+    return None
+
+
+def _reexec_into_venv(action, payload):
+    """Nach ensure(): Laeuft dieses Skript nicht selbst im venv-Python (z.B.
+    frisch installierter Adapter, dessen .venv gerade erst angelegt wurde),
+    dort neu starten. stdin ist dann schon verbraucht, der Payload wandert
+    deshalb ueber die Env-Variable ZEEKR_PAYLOAD_RAW mit."""
+    target = _venv_python_exe()
+    if not target:
+        return False
+    try:
+        same = os.path.samefile(sys.executable, target)
+    except OSError:
+        same = os.path.abspath(sys.executable) == os.path.abspath(target)
+    if same:
+        return False
+    env = dict(os.environ)
+    env['ZEEKR_PAYLOAD_RAW'] = json.dumps(payload if isinstance(payload, dict) else {})
+    try:
+        os.execv(target, [target, os.path.abspath(__file__), action])
+    except OSError:
+        return False
+    return False  # unreachable — execv ersetzt den Prozess
+
+
 def ensure_runtime_dependencies():
     venv_dir = os.environ.get('ZEEKR_VENV')
     if not venv_dir:
@@ -377,6 +414,9 @@ def load_payload() -> tuple[str, dict]:
         except Exception:
             raw = ''
     if not raw.strip():
+        # Re-exec-Pfad: Payload kam via Env-Variable mit (stdin verbraucht).
+        raw = os.environ.get('ZEEKR_PAYLOAD_RAW') or ''
+    if not raw.strip():
         return action, {}
     try:
         return action, json.loads(raw)
@@ -446,6 +486,10 @@ def main() -> int:
                 "connection": False,
             }))
             return 0
+        # ensure() hat das venv ggf. gerade erst angelegt/befuellt — laeuft
+        # dieses Skript noch unter System-Python, ins venv wechseln, sonst
+        # schlaegt der zweite Import zwangslaeufig wieder fehl.
+        _reexec_into_venv(action, payload)
         try:
             from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
         except ImportError as import_error:
