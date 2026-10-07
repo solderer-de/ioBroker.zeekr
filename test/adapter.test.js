@@ -1021,3 +1021,21 @@ print('merge-ok')
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /merge-ok/);
 });
+
+test('missing HMAC hint mentions mandatory signing and older APK', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {
+        username: 'u',
+        password: 'p',
+        hmacAccessKey: '',
+        hmacSecretKey: '',
+        passwordPublicKey: 'p',
+        prodSecret: 'p',
+        vinKey: 'v',
+        vinIv: 'i',
+    };
+    await adapter.pollVehicles();
+    const state = await adapter.getStateAsync('info.lastError');
+    assert.match(state.val, /HMAC keys are mandatory/);
+    assert.match(state.val, /older APK pair/);
+});
