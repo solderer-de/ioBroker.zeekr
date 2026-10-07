@@ -46,7 +46,7 @@
       <div class="row" id="extractRow" style="display:none">
         <button id="extractBtn" type="button">2. Extract keys now</button>
       </div>
-      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>3. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.</div>
+      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>3. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
       <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
     </div>
     <script type="text/javascript">
@@ -169,6 +169,26 @@
           .then(function () { btn.disabled = false; });
       });
 
+      function startAutoClose(seconds) {
+        var hint = document.getElementById('closeHint');
+        var btn = document.getElementById('closeBtn');
+        btn.onclick = function () {
+          window.close();
+        };
+        function tick(left) {
+          if (left <= 0) {
+            window.close();
+            hint.textContent = 'This window should have closed. You can close it manually and restart the instance.';
+            return;
+          }
+          hint.textContent = 'This window closes automatically in ' + left + 's – then restart the instance.';
+          setTimeout(function () {
+            tick(left - 1);
+          }, 1000);
+        }
+        tick(seconds);
+      }
+
       function runExtraction(instance) {
         var btn = document.getElementById('extractBtn');
         btn.disabled = true;
@@ -178,6 +198,9 @@
             if (res && res.ok) {
               setStatus('arm64ApkStatus', 'Keys extracted successfully.', 'ok');
               document.getElementById('doneHint').style.display = 'block';
+              document.getElementById('uploadBtn').disabled = true;
+              document.getElementById('extractBtn').disabled = true;
+              startAutoClose(10);
             } else {
               setStatus(
                 'arm64ApkStatus',
