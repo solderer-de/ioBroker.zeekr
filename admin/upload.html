@@ -41,6 +41,18 @@
         <div class="status" id="arm64ApkStatus"></div>
       </div>
       <div class="row">
+        <label for="oldBaseApk">Older base.apk (optional, e.g. app 3.0.x — used if the current app hides keys)</label>
+        <input id="oldBaseApk" type="file" accept=".apk" />
+        <progress id="oldBaseApkBar" value="0" max="100"></progress>
+        <div class="status" id="oldBaseApkStatus"></div>
+      </div>
+      <div class="row">
+        <label for="oldArm64Apk">Older split_config.arm64_v8a.apk (optional, second file of the older pair)</label>
+        <input id="oldArm64Apk" type="file" accept=".apk" />
+        <progress id="oldArm64ApkBar" value="0" max="100"></progress>
+        <div class="status" id="oldArm64ApkStatus"></div>
+      </div>
+      <div class="row">
         <button id="uploadBtn" type="button" disabled>1. Upload APKs</button>
       </div>
       <div class="row" id="extractRow" style="display:none">
@@ -150,14 +162,30 @@
         var instance = document.getElementById('instance').value || 'zeekr.0';
         var base = document.getElementById('baseApk').files[0];
         var arm64 = document.getElementById('arm64Apk').files[0];
+        var oldBase = document.getElementById('oldBaseApk').files[0];
+        var oldArm64 = document.getElementById('oldArm64Apk').files[0];
         var btn = document.getElementById('uploadBtn');
         if (!base || !arm64) {
           setStatus('baseApkStatus', 'Please select both APK files first.', 'err');
           return;
         }
+        if ((oldBase && !oldArm64) || (!oldBase && oldArm64)) {
+          setStatus('oldBaseApkStatus', 'Please select both older APK files or none.', 'err');
+          return;
+        }
         btn.disabled = true;
         uploadFile(instance, base, 'base.apk', 'baseApkBar', 'baseApkStatus')
           .then(function () { return uploadFile(instance, arm64, 'arm64.apk', 'arm64ApkBar', 'arm64ApkStatus'); })
+          .then(function () {
+            if (oldBase && oldArm64) {
+              return uploadFile(instance, oldBase, 'old-base.apk', 'oldBaseApkBar', 'oldBaseApkStatus').then(
+                function () {
+                  return uploadFile(instance, oldArm64, 'old-arm64.apk', 'oldArm64ApkBar', 'oldArm64ApkStatus');
+                },
+              );
+            }
+            return null;
+          })
           .then(function () {
             setStatus('arm64ApkStatus', 'Upload complete. Now extract the keys:', 'ok');
             document.getElementById('extractRow').style.display = 'flex';

@@ -944,3 +944,80 @@ test('runExtraction message triggers secret extraction', async () => {
     assert.equal(sent.ok, true);
     fs.rmSync(path.dirname(secretsFile), { recursive: true, force: true });
 });
+
+test('extract_secrets user strings are English-only', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const src = fs.readFileSync(path.join(__dirname, '..', 'lib', 'extract_secrets.py'), 'utf8');
+    const warnings = [...src.matchAll(/warnings\.append\((['"])((?:\\\1|(?!\1).)*)\1\)/g)].map(m => m[2]);
+    assert.ok(warnings.length > 0, 'expected warning literals');
+    for (const text of warnings) {
+        assert.ok(!/[äöüÄÖÜß]/.test(text), `German text in warning: ${text.slice(0, 60)}`);
+    }
+});
+
+test('old APK pair paths are passed to the extractor', async () => {
+    const fs = require('node:fs');
+    const os = require('node:os');
+    const path = require('node:path');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'zeekr-oldapk-'));
+    const baseApk = path.join(tmp, 'base.apk');
+    const arm64Apk = path.join(tmp, 'arm64.apk');
+    fs.writeFileSync(baseApk, 'fake');
+    fs.writeFileSync(arm64Apk, 'fake');
+    adapter.config = {
+        autoExtractSecrets: true,
+        hmacAccessKey: '',
+        hmacSecretKey: '',
+        passwordPublicKey: 'p',
+        prodSecret: 'p',
+        vinKey: '',
+        vinIv: '',
+        apkBasePath: baseApk,
+        apkArm64Path: arm64Apk,
+        apkLegacyPath: '',
+        apkOldBasePath: '/tmp/old-base.apk',
+        apkOldArm64Path: '/tmp/old-arm64.apk',
+        secretsJsonPath: '',
+        runtimeSecretsJsonPath: '',
+        extractRegion: 'EU',
+    };
+    let seen = null;
+    adapter.runPythonScript = async (_script, _args, payload) => {
+        seen = payload;
+        return { ok: true, secrets: {}, warnings: [] };
+    };
+    await adapter.maybeAutoExtractSecrets();
+    assert.equal(seen.apkOldBasePath, '/tmp/old-base.apk');
+    assert.equal(seen.apkOldArm64Path, '/tmp/old-arm64.apk');
+    fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test('extract_secrets merge fills only missing keys', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util, json, pathlib
+spec = importlib.util.spec_from_file_location('extract_secrets', pathlib.Path('lib/extract_secrets.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+base = {'hmacAccessKey': 'new-hmac', 'hmacSecretKey': '', 'passwordPublicKey': 'rsa', 'prodSecret': '', 'vinKey': '', 'vinIv': ''}
+old = {'hmacAccessKey': 'old-hmac', 'hmacSecretKey': 'old-secret', 'prodSecret': 'old-prod', 'vinKey': 'old-key', 'vinIv': 'old-iv'}
+missing = m._missing_secret_keys(base)
+assert missing == ['hmacSecretKey', 'prodSecret', 'vinKey', 'vinIv'], missing
+merged = m._merge_secrets(base, old, only_keys=missing)
+assert merged['hmacAccessKey'] == 'new-hmac'
+assert merged['hmacSecretKey'] == 'old-secret'
+assert merged['prodSecret'] == 'old-prod'
+assert m._missing_secret_keys(merged) == []
+print('merge-ok')
+`,
+        ],
+        { cwd: path.join(__dirname, '..'), encoding: 'utf8' },
+    );
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /merge-ok/);
+});
