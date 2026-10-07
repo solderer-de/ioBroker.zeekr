@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Zeekr APK Upload</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="../../lib/js/socket.io.js"></script>
     <style>
       body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #f3f6fb; color: #17212b; }
       .box { max-width: 640px; margin: 0 auto; padding: 24px; border-radius: 8px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
@@ -107,9 +107,18 @@
       }
 
       try {
+        if (typeof io === 'undefined') {
+          throw new Error('socket.io client not loaded (expected at ../../lib/js/socket.io.js)');
+        }
         socket = io();
       } catch (e) {
-        setStatus('baseApkStatus', 'No connection to ioBroker (socket.io missing). Open this page from your ioBroker host.', 'err');
+        setStatus(
+          'baseApkStatus',
+          'No connection to ioBroker (' +
+            e.message +
+            '). Open this page from your ioBroker host, e.g. http://<host>:8081/adapter/zeekr/upload.html while logged in.',
+          'err',
+        );
       }
       if (socket) {
         socket.on('connect', function () {
