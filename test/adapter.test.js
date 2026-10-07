@@ -886,3 +886,27 @@ test('uploadApkChunk message forwards result via sendTo', async () => {
     const stored = await adapter.resolveStoredFile('legacy.apk');
     await require('node:fs').promises.unlink(stored);
 });
+
+test('completed upload persists path into instance config', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {};
+    const written = {};
+    adapter.getObjectAsync = async () => ({ native: { username: 'u' } });
+    adapter.extendObjectAsync = async (_id, obj) => {
+        Object.assign(written, obj.native);
+        return true;
+    };
+    const data = Buffer.concat([Buffer.from('PK\x03\x04'), Buffer.from('q')]).toString('base64');
+    const res = await adapter.storeUploadedChunk({
+        uploadId: 'test-persist-path',
+        filename: 'arm64.apk',
+        chunkIndex: 0,
+        chunkTotal: 1,
+        data,
+    });
+    assert.equal(res.complete, true);
+    assert.match(written.apkArm64Path || '', /arm64\.apk$/);
+    assert.match(adapter.config.apkArm64Path || '', /arm64\.apk$/);
+    const stored = await adapter.resolveStoredFile('arm64.apk');
+    await require('node:fs').promises.unlink(stored);
+});
