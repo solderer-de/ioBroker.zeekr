@@ -1142,3 +1142,18 @@ test('extracted secrets are persisted into instance config', async () => {
     assert.equal(stored.prodSecret, 'manual-prod');
     assert.equal(adapter.config.hmacAccessKey, 'k');
 });
+
+test('persist uses callback-style object API as fallback', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {};
+    let stored = null;
+    adapter.getObject = (id, callback) => callback(null, { native: { username: 'u' } });
+    adapter.extendObject = (id, obj, callback) => {
+        stored = obj.native;
+        callback(null);
+    };
+    await adapter.persistSecretsToConfig({ hmacAccessKey: 'k', hmacSecretKey: '' });
+    assert.equal(stored.hmacAccessKey, 'k');
+    assert.equal(stored.username, 'u');
+    assert.equal(adapter.config.hmacAccessKey, 'k');
+});
