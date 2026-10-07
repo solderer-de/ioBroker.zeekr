@@ -1039,3 +1039,69 @@ test('missing HMAC hint mentions mandatory signing and older APK', async () => {
     assert.match(state.val, /HMAC keys are mandatory/);
     assert.match(state.val, /older APK pair/);
 });
+
+test('extract_secrets inspects APK version, package and libenv', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util, io, json, pathlib, struct, zipfile
+spec = importlib.util.spec_from_file_location('extract_secrets', pathlib.Path('lib/extract_secrets.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+
+def utf16(s):
+    return struct.pack('<H', len(s)) + s.encode('utf-16-le')
+
+def build_manifest(package, version):
+    strings = [package, version, 'manifest', 'package', 'versionName']
+    pool_data = b''.join(utf16(s) for s in strings)
+    offsets = []
+    off = 0
+    for s in strings:
+        offsets.append(off)
+        off += 2 + len(s.encode('utf-16-le'))
+    n = len(strings)
+    pool = struct.pack('<HHI', 0x0001, 28 + 4 * n, 28 + 4 * n + len(pool_data))
+    pool += struct.pack('<IIIII', n, 0, 0, 28 + 4 * n, 0)
+    pool += struct.pack(f'<{n}I', *offsets) + pool_data
+    # root <manifest> start element with package + versionName attributes
+    attrs = b''
+    for name_i, val in ((3, 0), (4, 1)):
+        attrs += struct.pack('<iiihBBi', -1, name_i, -1, 8, 0, 0x03, val)
+    elem = struct.pack('<HHI', 0x0102, 28, 28 + len(attrs))
+    elem += struct.pack('<iiHHHHHH', -1, 2, 20, 20, 2, 0xFFFF, 0xFFFF, 0xFFFF) + attrs
+    header = struct.pack('<HHI', 0x0003, 8, 8 + len(pool) + len(elem))
+    return header + pool + elem
+
+pkg, ver = m._read_axml_info(build_manifest('com.zeekr.overseas', '3.1.0'))
+assert (pkg, ver) == ('com.zeekr.overseas', '3.1.0'), (pkg, ver)
+assert m._read_axml_info(b'garbage') == ('', '')
+assert m._version_at_least('3.1.0', 3, 1) is True
+assert m._version_at_least('3.0.9', 3, 1) is False
+assert m._version_at_least('', 3, 1) is False
+assert m._version_at_least('2.9.9', 3, 1) is False
+
+import tempfile, os
+tmp = tempfile.mkdtemp()
+base = os.path.join(tmp, 'base.apk')
+arm64 = os.path.join(tmp, 'arm64.apk')
+with zipfile.ZipFile(base, 'w') as z:
+    z.writestr('AndroidManifest.xml', build_manifest('com.zeekr.global', '1.5.5'))
+with zipfile.ZipFile(arm64, 'w') as z:
+    z.writestr('lib/arm64-v8a/libenv.so', b'x')
+info = m._inspect_apk(pathlib.Path(base), pathlib.Path(arm64))
+assert info == {'package': 'com.zeekr.global', 'version': '1.5.5', 'hasLibenv': True}, info
+with zipfile.ZipFile(arm64, 'w') as z:
+    z.writestr('lib/xxhdpi/nothing.so', b'x')
+info = m._inspect_apk(pathlib.Path(base), pathlib.Path(arm64))
+assert info['hasLibenv'] is False, info
+print('inspect-ok')
+`,
+        ],
+        { cwd: path.join(__dirname, '..'), encoding: 'utf8' },
+    );
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /inspect-ok/);
+});

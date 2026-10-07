@@ -146,6 +146,112 @@ def _run_extractor_once(python_exe, extractor_dir, base_apk, arm64_apk, region, 
             shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+def _read_utf16_string(data: bytes, offset: int):
+    length = int.from_bytes(data[offset:offset + 2], 'little')
+    start = offset + 2
+    return data[start:start + length * 2].decode('utf-16-le', errors='replace')
+
+
+def _read_utf8_string(data: bytes, offset: int):
+    first = data[offset]
+    if first & 0x80:
+        length = ((first & 0x7F) << 8) | data[offset + 1]
+        start = offset + 2
+    else:
+        length = first
+        start = offset + 1
+    return data[start:start + length].decode('utf-8', errors='replace')
+
+
+def _read_axml_info(manifest: bytes):
+    """Minimal binary AndroidManifest parser. Returns (package, versionName)."""
+    import struct
+
+    try:
+        if len(manifest) < 8 or struct.unpack_from('<H', manifest, 0)[0] != 0x0003:
+            return '', ''
+        pos = 8
+        pool = []
+        is_utf8 = False
+        while pos + 8 <= len(manifest):
+            chunk_type, _header_size, chunk_size = struct.unpack_from('<HHI', manifest, pos)
+            if chunk_size < 8 or pos + chunk_size > len(manifest):
+                break
+            if chunk_type == 0x0001:  # string pool
+                (string_count, _style_count, flags, strings_start, _styles_start) = struct.unpack_from(
+                    '<IIIII', manifest, pos + 8
+                )
+                is_utf8 = bool(flags & 0x100)
+                offsets = struct.unpack_from(f'<{string_count}I', manifest, pos + 28)
+                base = pos + strings_start
+                for off in offsets:
+                    if is_utf8:
+                        pool.append(_read_utf8_string(manifest, base + off))
+                    else:
+                        pool.append(_read_utf16_string(manifest, base + off))
+            elif chunk_type == 0x0102:  # start element (first one is <manifest>)
+                name_idx = struct.unpack_from('<i', manifest, pos + 12)[0]
+                attr_count = struct.unpack_from('<H', manifest, pos + 20)[0]
+                result = {}
+                for i in range(attr_count):
+                    a_off = pos + 28 + i * 20
+                    _ns, name_i, _raw, _size, _res0, data_type, data = struct.unpack_from(
+                        '<iiihBBi', manifest, a_off
+                    )
+                    name = pool[name_i] if 0 <= name_i < len(pool) else ''
+                    if data_type == 0x03 and 0 <= data < len(pool):
+                        value = pool[data]
+                    else:
+                        value = str(data)
+                    if name:
+                        result[name] = value
+                return result.get('package', ''), result.get('versionName', '')
+            pos += chunk_size
+    except Exception:
+        pass
+    return '', ''
+
+
+def _inspect_apk(base_apk: Path, arm64_apk: Path) -> dict:
+    """Dependency-free APK checks: package/version from the manifest, libenv presence."""
+    import zipfile
+
+    info = {'package': '', 'version': '', 'hasLibenv': False}
+    try:
+        with zipfile.ZipFile(base_apk) as archive:
+            names = archive.namelist()
+            if 'lib/arm64-v8a/libenv.so' in names:
+                info['hasLibenv'] = True
+            try:
+                manifest = archive.read('AndroidManifest.xml')
+            except KeyError:
+                manifest = b''
+            if manifest:
+                package, version = _read_axml_info(manifest)
+                info['package'] = package
+                info['version'] = version
+    except Exception:
+        pass
+    if not info['hasLibenv']:
+        try:
+            with zipfile.ZipFile(arm64_apk) as archive:
+                if 'lib/arm64-v8a/libenv.so' in archive.namelist():
+                    info['hasLibenv'] = True
+        except Exception:
+            pass
+    return info
+
+
+def _version_at_least(version: str, major: int, minor: int) -> bool:
+    try:
+        parts = [int(piece) for piece in version.strip().split('.')[:2]]
+        while len(parts) < 2:
+            parts.append(0)
+        return (parts[0], parts[1]) >= (major, minor)
+    except (ValueError, AttributeError):
+        return False
+
+
 def _missing_secret_keys(secrets: dict) -> list:
     return [key for key in ('hmacAccessKey', 'hmacSecretKey', 'passwordPublicKey', 'prodSecret', 'vinKey', 'vinIv')
             if not secrets.get(key)]
@@ -195,6 +301,23 @@ def main() -> int:
         print(json.dumps({'ok': False, 'error': 'One or both APK files do not exist'}))
         return 0
 
+    apk_info = _inspect_apk(base_apk, arm64_apk)
+    apk_warnings = []
+    if not apk_info['hasLibenv']:
+        apk_warnings.append(
+            'Neither APK contains lib/arm64-v8a/libenv.so — the second file is probably the wrong split '
+            '(e.g. xxhdpi instead of arm64_v8a). Re-pull split_config.arm64_v8a.apk from the device.'
+        )
+    if apk_info['package'] == 'com.zeekr.overseas' and region != 'EU':
+        apk_warnings.append(
+            'The APK is the EU build (com.zeekr.overseas) but the region is not EU — set extractRegion to EU.'
+        )
+    if _version_at_least(apk_info['version'], 3, 1):
+        apk_warnings.append(
+            f"Detected app version {apk_info['version']}: static extraction is limited on 3.1.0 and newer "
+            '(KiwiVM, upstream issue #14). Provide an older APK pair (e.g. app 3.0.x) to fill missing keys.'
+        )
+
     extractor_dir = Path(payload.get('extractorDir') or os.path.join(os.path.dirname(__file__), '..', '.tools', 'zeekr_key_extractor'))
     try:
         _clone_extractor(extractor_dir)
@@ -220,7 +343,7 @@ def main() -> int:
         print(json.dumps({'ok': False, 'error': error}))
         return 0
     sources = ['current APK']
-    warnings = []
+    warnings = list(apk_warnings)
     missing = _missing_secret_keys(secrets)
     if 'hmacAccessKey' in missing or 'hmacSecretKey' in missing:
         warnings.append(
@@ -277,7 +400,14 @@ def main() -> int:
     missing = _missing_secret_keys(secrets)
     if missing:
         warnings.append(f'Still missing: {", ".join(missing)}. See the README section on app 3.1.0 and newer.')
-    print(json.dumps({'ok': True, 'secrets': secrets, 'sources': sources, 'warnings': warnings}))
+    print(json.dumps({
+        'ok': True,
+        'secrets': secrets,
+        'sources': sources,
+        'warnings': warnings,
+        'apkVersion': apk_info['version'],
+        'apkPackage': apk_info['package'],
+    }))
     return 0
 
 

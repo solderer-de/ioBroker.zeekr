@@ -187,11 +187,8 @@
             return null;
           })
           .then(function () {
-            setStatus('arm64ApkStatus', 'Upload complete. Now extract the keys:', 'ok');
-            document.getElementById('extractRow').style.display = 'flex';
-            document.getElementById('extractBtn').onclick = function () {
-              runExtraction(instance);
-            };
+            setStatus('arm64ApkStatus', 'Upload complete. Starting key extraction automatically…', 'ok');
+            runExtraction(instance, true);
           })
           .catch(function (err) { setStatus('arm64ApkStatus', 'Upload failed: ' + err.message, 'err'); })
           .then(function () { btn.disabled = false; });
@@ -217,24 +214,33 @@
         tick(seconds);
       }
 
-      function runExtraction(instance) {
+      function runExtraction(instance, auto) {
         var btn = document.getElementById('extractBtn');
         btn.disabled = true;
         setStatus('arm64ApkStatus', 'Extracting keys, this takes a few minutes…');
         sendTo(instance, 'runExtraction', {})
           .then(function (res) {
             if (res && res.ok) {
-              setStatus('arm64ApkStatus', 'Keys extracted successfully.', 'ok');
+              var warn = res.warnings ? ' Notes: ' + res.warnings : '';
+              setStatus('arm64ApkStatus', 'Keys extracted successfully.' + warn, 'ok');
               document.getElementById('doneHint').style.display = 'block';
               document.getElementById('uploadBtn').disabled = true;
               document.getElementById('extractBtn').disabled = true;
-              startAutoClose(10);
+              startAutoClose(15);
             } else {
               setStatus(
                 'arm64ApkStatus',
-                'Extraction did not complete (' + ((res && res.error) || 'missing secrets or files') + '). Enable auto extraction in the settings and restart the instance instead.',
+                'Extraction did not complete (' + ((res && res.error) || 'missing secrets or files') + ').',
                 'err',
               );
+              if (!auto) {
+                return;
+              }
+              document.getElementById('extractRow').style.display = 'flex';
+              document.getElementById('extractBtn').disabled = false;
+              document.getElementById('extractBtn').onclick = function () {
+                runExtraction(instance, false);
+              };
             }
           })
           .catch(function (err) { setStatus('arm64ApkStatus', 'Extraction failed: ' + err.message, 'err'); })

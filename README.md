@@ -68,20 +68,19 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
 
 ### How to obtain the APKs from a phone or emulator
 
-1. On the Android phone or emulator, install the Zeekr app from the Play Store or from the APK package you already have.
-2. Export the installed app package from the device/emulator. Typical ways are:
-   - use `adb shell pm path <package>` and `adb pull` to copy the APK from the device
-   - use an emulator snapshot or Android backup tool to export the app package
-   - if you already have the APK from another source, use that file directly
-3. If you use `adb`, the typical workflow is:
-   - `adb devices`
-   - `adb shell pm path com.zeekr.global` (most markets) or `adb shell pm path com.zeekr.overseas` (EU)
+Mandatory preparation on your own device — the adapter cannot do this for you:
+
+1. On the Android phone or emulator, install the Zeekr app from the Play Store.
+2. On your PC, install `adb` (Android platform tools) and enable USB debugging on the device, then verify the connection:
+   - `adb devices` (your device must be listed)
+3. Find the exact package paths (use `com.zeekr.overseas` for EU accounts, `com.zeekr.global` otherwise):
+   - `adb shell pm path com.zeekr.overseas`
+4. Pull exactly these two files (the `arm64_v8a` split is mandatory — `xxhdpi` or language splits do **not** work):
    - `adb pull /data/app/<...>/base.apk base.apk`
    - `adb pull /data/app/<...>/split_config.arm64_v8a.apk arm64.apk`
-4. Upload the two files from your PC: in the adapter settings (Access tab) click “Upload APKs from this PC” and select `base.apk` plus the ARM64 split APK. The files go straight into the adapter storage on the ioBroker host — no file transfer, no paths, no permissions to manage. (Alternatively, put the files anywhere the `iobroker` user can read and enter the paths in `apkBasePath`/`apkArm64Path`.)
-5. On the upload page, click “Extract keys now” after the upload — no need to touch `autoExtractSecrets` or restart first. Afterwards restart the instance so polling starts with the new secrets.
-6. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
-7. Save the adapter configuration and restart the instance. The adapter imports the APKs, installs the extractor dependencies, runs the extractor, and fills in the missing secrets automatically.
+5. Upload the two files from your PC: in the adapter settings (Access tab) click “Upload APKs from this PC” and select `base.apk` plus the ARM64 split APK. Extraction starts automatically; afterwards restart the instance so polling starts with the new secrets. (Alternatively, put the files anywhere the `iobroker` user can read and enter the paths in `apkBasePath`/`apkArm64Path`.)
+6. Set `extractRegion` to the region that matches your Zeekr account (`EU` for `com.zeekr.overseas`, otherwise `EM`, `SEA`, or `CN`).
+7. Verify with the `testConnection` message (or check `info.connection`): on success you are done. On missing keys, see below.
 
 ### App 3.1.0 and newer (KiwiVM)
 
