@@ -429,17 +429,28 @@ def main() -> int:
             return 0
 
     try:
-        # Mock mode never touches venv/pip/network by design.
-        ensure_runtime_dependencies()
-    except Exception as exc:
-        print(json.dumps({"error": f"Python dependency setup failed: {exc}", "vehicles": [], "connection": False}))
-        return 0
-
-    try:
         from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
     except ImportError:
-        print(json.dumps({"error": "Python dependency zeekr_ev_api not installed", "vehicles": []}))
-        return 0
+        # Only touch venv/pip/network when the import really fails — a
+        # system-wide install or a pre-seeded venv then just works.
+        try:
+            ensure_runtime_dependencies()
+        except Exception as exc:
+            print(json.dumps({
+                "error": (
+                    f"Python dependency setup failed: {exc}. "
+                    "On Debian/Ubuntu install python3-venv and python3-pip, "
+                    "delete the adapter .venv directory and restart the instance."
+                ),
+                "vehicles": [],
+                "connection": False,
+            }))
+            return 0
+        try:
+            from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
+        except ImportError:
+            print(json.dumps({"error": "Python dependency zeekr_ev_api not installed", "vehicles": []}))
+            return 0
 
     try:
         last_login_error = None
