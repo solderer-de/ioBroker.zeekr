@@ -46,7 +46,8 @@ def _reexec_into_venv(action, payload):
     env = dict(os.environ)
     env['ZEEKR_PAYLOAD_RAW'] = json.dumps(payload if isinstance(payload, dict) else {})
     try:
-        os.execv(target, [target, os.path.abspath(__file__), action])
+        # execve (nicht execv): nur so kommt ZEEKR_PAYLOAD_RAW im Kind an.
+        os.execve(target, [target, os.path.abspath(__file__), action], env)
     except OSError:
         return False
     return False  # unreachable — execv ersetzt den Prozess
