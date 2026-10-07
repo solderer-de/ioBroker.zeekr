@@ -760,3 +760,129 @@ test('chargeCurrent write sends RCS current command', async () => {
     assert.equal(bridged.payload.serviceId, 'RCS');
     assert.deepEqual(bridged.payload.setting.serviceParameters[0], { key: 'rcs.ac.current', value: '20' });
 });
+
+test('browser upload reassembles chunks into adapter storage', async () => {
+    const fs = require('node:fs');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const payload = Buffer.concat([Buffer.from('PK\x03\x04'), Buffer.alloc(300000, 0x41), Buffer.alloc(100000, 0x42)]);
+    const b64 = payload.toString('base64');
+    const mid = Math.ceil(b64.length / 2);
+    const upId = 'test-upload-reassemble';
+    await adapter.abortUpload(upId);
+    const r1 = await adapter.storeUploadedChunk({
+        uploadId: upId,
+        filename: 'base.apk',
+        chunkIndex: 0,
+        chunkTotal: 2,
+        data: b64.slice(0, mid),
+    });
+    assert.equal(r1.complete, false);
+    const r2 = await adapter.storeUploadedChunk({
+        uploadId: upId,
+        filename: 'base.apk',
+        chunkIndex: 1,
+        chunkTotal: 2,
+        data: b64.slice(mid),
+    });
+    assert.equal(r2.complete, true);
+    const stored = await adapter.resolveStoredFile('base.apk');
+    assert.ok(stored);
+    const storedBytes = fs.readFileSync(stored);
+    assert.equal(storedBytes.length, payload.length);
+    assert.ok(storedBytes.equals(payload));
+    const state = await adapter.getStateAsync('info.apkUpload');
+    assert.match(state.val, /base\.apk uploaded/);
+    await fs.promises.unlink(stored);
+});
+
+test('browser upload rejects bad filenames, order and magic', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await assert.rejects(
+        adapter.storeUploadedChunk({
+            uploadId: 'x1',
+            filename: 'evil.exe',
+            chunkIndex: 0,
+            chunkTotal: 1,
+            data: 'eA==',
+        }),
+        /not allowed/,
+    );
+    await assert.rejects(
+        adapter.storeUploadedChunk({
+            uploadId: 'x2',
+            filename: 'arm64.apk',
+            chunkIndex: 1,
+            chunkTotal: 2,
+            data: 'eA==',
+        }),
+        /must start with chunk 0/,
+    );
+    await assert.rejects(
+        adapter.storeUploadedChunk({
+            uploadId: 'x3',
+            filename: 'arm64.apk',
+            chunkIndex: 0,
+            chunkTotal: 1,
+            data: Buffer.from('not a zip').toString('base64'),
+        }),
+        /not a valid APK/,
+    );
+});
+
+test('auto extraction falls back to uploaded files', async () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {
+        autoExtractSecrets: true,
+        hmacAccessKey: '',
+        hmacSecretKey: '',
+        passwordPublicKey: '',
+        prodSecret: '',
+        vinKey: '',
+        vinIv: '',
+        apkBasePath: '',
+        apkArm64Path: '',
+        apkLegacyPath: '',
+        secretsJsonPath: '',
+        runtimeSecretsJsonPath: '',
+        extractRegion: 'EU',
+    };
+    const dir = await adapter.getApkStorageDir();
+    const header = Buffer.from('PK\x03\x04');
+    await fs.promises.writeFile(path.join(dir, 'base.apk'), Buffer.concat([header, Buffer.from('b')]));
+    await fs.promises.writeFile(path.join(dir, 'arm64.apk'), Buffer.concat([header, Buffer.from('a')]));
+    let seen = null;
+    adapter.runPythonScript = async (_script, _args, payload) => {
+        seen = payload;
+        return { ok: true, secrets: { hmacAccessKey: 'k' } };
+    };
+    const ok = await adapter.maybeAutoExtractSecrets();
+    assert.equal(ok, true);
+    assert.ok(seen.apkBasePath.endsWith(path.join('apks', 'base.apk')));
+    assert.ok(seen.apkArm64Path.endsWith(path.join('apks', 'arm64.apk')));
+    await fs.promises.unlink(path.join(dir, 'base.apk'));
+    await fs.promises.unlink(path.join(dir, 'arm64.apk'));
+});
+
+test('uploadApkChunk message forwards result via sendTo', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    let sent = null;
+    adapter.sendTo = (from, command, message, callback) => {
+        sent = message;
+        if (callback) {
+            callback(message);
+        }
+    };
+    const data = Buffer.concat([Buffer.from('PK\x03\x04'), Buffer.from('z')]).toString('base64');
+    await adapter.onMessage({
+        command: 'uploadApkChunk',
+        message: { uploadId: 'test-msg-upload', filename: 'legacy.apk', chunkIndex: 0, chunkTotal: 1, data },
+        from: 'test',
+        callback: () => {},
+    });
+    assert.equal(sent.ok, true);
+    assert.equal(sent.complete, true);
+    const stored = await adapter.resolveStoredFile('legacy.apk');
+    await require('node:fs').promises.unlink(stored);
+});
