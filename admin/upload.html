@@ -58,7 +58,11 @@
       <div class="row" id="extractRow" style="display:none">
         <button id="extractBtn" type="button">2. Extract keys now</button>
       </div>
-      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>3. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
+      <div class="row" id="testRow" style="display:none">
+        <button id="testBtn" type="button">3. Test connection</button>
+        <div class="status" id="testStatus"></div>
+      </div>
+      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>4. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
       <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
     </div>
     <script type="text/javascript">
@@ -214,6 +218,34 @@
         tick(seconds);
       }
 
+      function showTestRow(instance) {
+        document.getElementById('testRow').style.display = 'flex';
+        document.getElementById('testBtn').onclick = function () {
+          runTest(instance);
+        };
+      }
+
+      function runTest(instance) {
+        var btn = document.getElementById('testBtn');
+        btn.disabled = true;
+        setStatus('testStatus', 'Testing connection…');
+        sendTo(instance, 'testConnection', {})
+          .then(function (res) {
+            if (res && res.ok) {
+              var count = typeof res.vehicleCount === 'number' ? ' Found ' + res.vehicleCount + ' vehicle(s).' : '';
+              setStatus('testStatus', 'Connection OK.' + count + ' Restart the instance to start polling.', 'ok');
+            } else {
+              setStatus(
+                'testStatus',
+                'Connection failed (' + ((res && res.error) || 'unknown error') + '). Check username/password, region and keys.',
+                'err',
+              );
+            }
+          })
+          .catch(function (err) { setStatus('testStatus', 'Connection failed: ' + err.message, 'err'); })
+          .then(function () { btn.disabled = false; });
+      }
+
       function runExtraction(instance, auto) {
         var btn = document.getElementById('extractBtn');
         btn.disabled = true;
@@ -227,6 +259,7 @@
               document.getElementById('doneHint').style.display = 'block';
               document.getElementById('uploadBtn').disabled = true;
               document.getElementById('extractBtn').disabled = true;
+              showTestRow(instance);
               startAutoClose(15);
             } else if (res && res.ok) {
               var warn2 = res.warnings ? ' Notes: ' + res.warnings : '';
@@ -236,6 +269,7 @@
                   ' See the README section “App 3.1.0 and newer”: upload an older APK pair below, or provide a Frida runtime JSON in the settings, then run extraction again. This window stays open.',
                 'err',
               );
+              showTestRow(instance);
             } else {
               setStatus(
                 'arm64ApkStatus',

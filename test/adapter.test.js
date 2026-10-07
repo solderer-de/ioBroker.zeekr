@@ -1106,3 +1106,39 @@ print('inspect-ok')
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /inspect-ok/);
 });
+
+test('extracted secrets are persisted into instance config', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {
+        autoExtractSecrets: true,
+        hmacAccessKey: '',
+        hmacSecretKey: '',
+        passwordPublicKey: '',
+        prodSecret: 'manual-prod',
+        vinKey: '',
+        vinIv: '',
+        apkBasePath: '',
+        apkArm64Path: '',
+        apkLegacyPath: '',
+        secretsJsonPath: '',
+        runtimeSecretsJsonPath: '',
+        extractRegion: 'EU',
+    };
+    let stored = null;
+    adapter.getObjectAsync = async () => ({ native: { username: 'u', prodSecret: 'manual-prod' } });
+    adapter.extendObjectAsync = async (_id, obj) => {
+        stored = obj.native;
+        return true;
+    };
+    adapter.runPythonScript = async () => ({
+        ok: true,
+        secrets: { hmacAccessKey: 'k', hmacSecretKey: '' },
+        warnings: [],
+    });
+    const ok = await adapter.maybeAutoExtractSecrets();
+    assert.equal(ok, true);
+    assert.equal(stored.hmacAccessKey, 'k');
+    assert.equal(stored.username, 'u');
+    assert.equal(stored.prodSecret, 'manual-prod');
+    assert.equal(adapter.config.hmacAccessKey, 'k');
+});
