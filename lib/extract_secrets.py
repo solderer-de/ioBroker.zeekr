@@ -8,10 +8,20 @@ from pathlib import Path
 
 
 def _load_payload() -> dict:
-    if len(sys.argv) < 2:
+    # Payload arrives via stdin (see runPythonScript); argv[1] is kept as a
+    # fallback for direct CLI use.
+    raw = ''
+    if len(sys.argv) > 1:
+        raw = sys.argv[1]
+    elif not sys.stdin.isatty():
+        try:
+            raw = sys.stdin.read() or ''
+        except Exception:
+            raw = ''
+    if not raw.strip():
         return {}
     try:
-        return json.loads(sys.argv[1])
+        return json.loads(raw)
     except json.JSONDecodeError:
         return {}
 

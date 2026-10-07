@@ -79,7 +79,7 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
    - `adb pull /data/app/<...>/base.apk base.apk`
    - `adb pull /data/app/<...>/split_config.arm64_v8a.apk arm64.apk`
 4. Upload the two files from your PC: in the adapter settings (Access tab) click “Upload APKs from this PC” and select `base.apk` plus the ARM64 split APK. The files go straight into the adapter storage on the ioBroker host — no file transfer, no paths, no permissions to manage. (Alternatively, put the files anywhere the `iobroker` user can read and enter the paths in `apkBasePath`/`apkArm64Path`.)
-5. In the adapter admin UI, enable `autoExtractSecrets` (uploaded files are used automatically).
+5. On the upload page, click “Extract keys now” after the upload — no need to touch `autoExtractSecrets` or restart first. Afterwards restart the instance so polling starts with the new secrets.
 6. Set `extractRegion` to the region that matches your Zeekr account (`EM`, `SEA`, `EU`, or `CN`).
 7. Save the adapter configuration and restart the instance. The adapter imports the APKs, installs the extractor dependencies, runs the extractor, and fills in the missing secrets automatically.
 
