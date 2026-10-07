@@ -910,3 +910,37 @@ test('completed upload persists path into instance config', async () => {
     const stored = await adapter.resolveStoredFile('arm64.apk');
     await require('node:fs').promises.unlink(stored);
 });
+
+test('runExtraction message triggers secret extraction', async () => {
+    const fs = require('node:fs');
+    const os = require('node:os');
+    const path = require('node:path');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const secretsFile = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'zeekr-secrets-')), 'zeekr_secrets.json');
+    fs.writeFileSync(secretsFile, JSON.stringify({ hmac_access_key: 'k', hmac_secret_key: 's' }));
+    adapter.config = {
+        autoExtractSecrets: true,
+        hmacAccessKey: '',
+        hmacSecretKey: '',
+        passwordPublicKey: 'p',
+        prodSecret: 'p',
+        vinKey: 'v',
+        vinIv: 'i',
+        apkBasePath: '',
+        apkArm64Path: '',
+        apkLegacyPath: '',
+        secretsJsonPath: secretsFile,
+        runtimeSecretsJsonPath: '',
+        extractRegion: 'EU',
+    };
+    let sent = null;
+    adapter.sendTo = (from, command, message, callback) => {
+        sent = message;
+        if (callback) {
+            callback(message);
+        }
+    };
+    await adapter.onMessage({ command: 'runExtraction', message: {}, from: 'test', callback: () => {} });
+    assert.equal(sent.ok, true);
+    fs.rmSync(path.dirname(secretsFile), { recursive: true, force: true });
+});

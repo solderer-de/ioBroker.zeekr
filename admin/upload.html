@@ -41,9 +41,13 @@
         <div class="status" id="arm64ApkStatus"></div>
       </div>
       <div class="row">
-        <button id="uploadBtn" type="button" disabled>Upload</button>
+        <button id="uploadBtn" type="button" disabled>1. Upload APKs</button>
       </div>
-      <div class="hint">After the upload: enable “Extract missing keys automatically on start” in the instance settings (Access tab) and restart the instance. Progress is shown under <code>info.apkUpload</code>.</div>
+      <div class="row" id="extractRow" style="display:none">
+        <button id="extractBtn" type="button">2. Extract keys now</button>
+      </div>
+      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>3. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.</div>
+      <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
     </div>
     <script type="text/javascript">
       // ~2 MB per chunk (multiple of 3 bytes so no base64 padding lands
@@ -154,10 +158,37 @@
         btn.disabled = true;
         uploadFile(instance, base, 'base.apk', 'baseApkBar', 'baseApkStatus')
           .then(function () { return uploadFile(instance, arm64, 'arm64.apk', 'arm64ApkBar', 'arm64ApkStatus'); })
-          .then(function () { setStatus('arm64ApkStatus', 'Upload complete. Enable auto extraction and restart the instance.', 'ok'); })
+          .then(function () {
+            setStatus('arm64ApkStatus', 'Upload complete. Now extract the keys:', 'ok');
+            document.getElementById('extractRow').style.display = 'flex';
+            document.getElementById('extractBtn').onclick = function () {
+              runExtraction(instance);
+            };
+          })
           .catch(function (err) { setStatus('arm64ApkStatus', 'Upload failed: ' + err.message, 'err'); })
           .then(function () { btn.disabled = false; });
       });
+
+      function runExtraction(instance) {
+        var btn = document.getElementById('extractBtn');
+        btn.disabled = true;
+        setStatus('arm64ApkStatus', 'Extracting keys, this takes a few minutes…');
+        sendTo(instance, 'runExtraction', {})
+          .then(function (res) {
+            if (res && res.ok) {
+              setStatus('arm64ApkStatus', 'Keys extracted successfully.', 'ok');
+              document.getElementById('doneHint').style.display = 'block';
+            } else {
+              setStatus(
+                'arm64ApkStatus',
+                'Extraction did not complete (' + ((res && res.error) || 'missing secrets or files') + '). Enable auto extraction in the settings and restart the instance instead.',
+                'err',
+              );
+            }
+          })
+          .catch(function (err) { setStatus('arm64ApkStatus', 'Extraction failed: ' + err.message, 'err'); })
+          .then(function () { btn.disabled = false; });
+      }
     </script>
   </body>
 </html>
