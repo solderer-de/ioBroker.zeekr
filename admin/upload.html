@@ -46,9 +46,10 @@
       <div class="hint">After the upload: enable “Extract missing keys automatically on start” in the instance settings (Access tab) and restart the instance. Progress is shown under <code>info.apkUpload</code>.</div>
     </div>
     <script type="text/javascript">
-      // Multiple of 3 bytes so no base64 padding lands mid-stream
-      // (the server additionally tolerates splits mid-quantum).
-      var CHUNK_SIZE = 255 * 1024;
+      // ~2 MB per chunk (multiple of 3 bytes so no base64 padding lands
+      // mid-stream; the server additionally tolerates splits mid-quantum).
+      // Fewer round-trips = much faster uploads for 100+ MB APKs.
+      var CHUNK_SIZE = 2046 * 1024;
       var socket = null;
 
       function setStatus(id, text, cls) {
