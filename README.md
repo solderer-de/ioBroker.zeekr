@@ -84,10 +84,28 @@ Mandatory preparation on your own device — the adapter cannot do this for you:
 
 ### App 3.1.0 and newer (KiwiVM)
 
-On app 3.1.0 and newer, static extraction is severely limited: the HMAC keys cannot be recovered statically (KiwiVM obfuscation, upstream issue #14), and VIN key/IV plus `prod_secret` are runtime-only (iWall). If extraction reports missing keys:
+On app 3.1.0 and newer, static extraction is severely limited: the HMAC keys cannot be recovered statically (KiwiVM obfuscation, upstream issue #14), and VIN key/IV plus `prod_secret` are runtime-only (iWall). If extraction reports missing keys, provide an **older APK pair** (e.g. overseas 3.0.x) via the upload page or `apkOldBasePath`/`apkOldArm64Path` — missing secrets are filled from it automatically (verify with `testConnection`, keys can differ between versions). Whatever remains must come from a Frida dump:
 
-1. Provide an **older APK pair** (e.g. overseas 3.0.x) via the upload page or `apkOldBasePath`/`apkOldArm64Path` — missing secrets are filled from it automatically (verify with `testConnection`, keys can differ between versions).
-2. For VIN key/IV and `prod_secret`, a Frida runtime dump may still be needed — note the 3.1.0 app detects a running Frida server and refuses to start, so the dump requires hiding measures.
+### Runtime keys via Frida (step by step, one-time job)
+
+`prod_secret`, `vin_key` and `vin_iv` only exist decrypted inside the running app (iWall/`libiwallca.so`), so no static tool can read them. You dump them once from a rooted device; afterwards the rooted device is never needed again. Based on [mescon/zeekr-7x-home-assistant](https://github.com/mescon/zeekr-7x-home-assistant) (QUICKSTART + EMULATOR guides).
+
+**You need:** a rooted arm64 Android (cheap second-hand phone with Magisk, or a rooted emulator — see below), a PC with Python + `adb`, and a second Zeekr account with the car shared to it (create/share it in your normal app; never use your daily account for extraction).
+
+1. **Emulator (if no spare phone):** Android Studio → Device Manager → Pixel phone → **arm64-v8a**, API 33/34, **Google APIs** image (has Play Services and is rootable; the **Google Play** image cannot be rooted). Launch it once. Root with [rootAVD](https://github.com/newbit1/rootAVD): `git clone https://github.com/newbit1/rootAVD && cd rootAVD && ./rootAVD.sh ListAllAVDs`, then `./rootAVD.sh <that/ramdisk.img path>`. Confirm root in the Magisk app (`adb root` alone is not enough). On Intel/AMD PCs use an x86_64 image instead — if the app crashes at login (arm translation vs. white-box crypto), fall back to a physical arm phone.
+2. **Frida 16.x (not 17 — v17 removed the Java bridge):** on the PC `pip install "frida-tools==16.7.19"`. Download `frida-server-16.7.19-android-<arch>.xz` from [frida releases](https://github.com/frida/frida/releases) (arch matches the **device**: arm64, or x86_64 for an Intel emulator), unpack and push it:
+   - `adb push frida-server-16.7.19-android-<arch> /data/local/tmp/frida-server`
+   - `adb shell "su -c 'chmod 755 /data/local/tmp/frida-server && /data/local/tmp/frida-server &'"`
+   - verify with `frida-ps -U` (must list processes).
+   - **App 3.1.0 note:** it detects a running Frida server and refuses to start. Hide it: rename the binary to something neutral (not `frida-server`), listen on a custom port (`/data/local/tmp/<name> -l 127.0.0.1:<port>` and point the tools at it), and put the Zeekr app on the Magisk deny list (Shamiko). If it still refuses, use `frida-gadget` (`objection patchapk`) instead of a server — there is then no server process to detect.
+3. **Install the Zeekr app** (`com.zeekr.overseas`, current **v3.0.x** from [APKPure](https://apkpure.com/zeekr/com.zeekr.overseas) — the `.xapk` is a zip: unzip, then `adb install-multiple base.apk split_config.arm64_v8a.apk split_config.xxhdpi.apk`). Open it and **log in with the second account** — the values only exist after the first signed request, merely opening the app is not enough.
+4. **Dump the keys:**
+   - `git clone https://github.com/mescon/zeekr-7x-home-assistant && cd zeekr-7x-home-assistant/tools`
+   - `bash check.sh` (confirms frida + device + running app; the app shows up as **`ZEEKR`**)
+   - `python3 extract_runtime_keys.py` — prints `prod_secret`, `vin_key`, `vin_iv`.
+   - If it reports the getter failed (newer build moved the classes): `jadx` the base APK, open `xn/a.java`, copy the three base64 strings of fields `c` (`prod_secret`), `a` (`vin_key`), `l` (`vin_iv`) into the `PROD`/`VKEY`/`VIV` placeholders in `tools/dump.js`, and re-run.
+5. **Into the adapter:** paste the three values into the Keys tab (`prodSecret`, `vinKey`, `vinIv`) — or save `{"prod_secret": "...", "vin_key": "...", "vin_iv": "..."}` as JSON and set `runtimeSecretsJsonPath`. Verify with `testConnection`.
+6. **Cleanup:** uninstall the app from the extraction device (otherwise two sessions fight over the second account) and stop/remove `frida-server`.
 
 ### Alternative: use a secrets JSON file
 

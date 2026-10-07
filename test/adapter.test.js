@@ -942,6 +942,7 @@ test('runExtraction message triggers secret extraction', async () => {
     };
     await adapter.onMessage({ command: 'runExtraction', message: {}, from: 'test', callback: () => {} });
     assert.equal(sent.ok, true);
+    assert.deepEqual(sent.missing, []);
     fs.rmSync(path.dirname(secretsFile), { recursive: true, force: true });
 });
 

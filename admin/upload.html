@@ -220,13 +220,22 @@
         setStatus('arm64ApkStatus', 'Extracting keys, this takes a few minutes…');
         sendTo(instance, 'runExtraction', {})
           .then(function (res) {
-            if (res && res.ok) {
+            var missing = (res && res.missing) || [];
+            if (res && res.ok && missing.length === 0) {
               var warn = res.warnings ? ' Notes: ' + res.warnings : '';
-              setStatus('arm64ApkStatus', 'Keys extracted successfully.' + warn, 'ok');
+              setStatus('arm64ApkStatus', 'All 6 keys extracted successfully.' + warn, 'ok');
               document.getElementById('doneHint').style.display = 'block';
               document.getElementById('uploadBtn').disabled = true;
               document.getElementById('extractBtn').disabled = true;
               startAutoClose(15);
+            } else if (res && res.ok) {
+              var warn2 = res.warnings ? ' Notes: ' + res.warnings : '';
+              setStatus(
+                'arm64ApkStatus',
+                'Partial result — still missing: ' + missing.join(', ') + '.' + warn2 +
+                  ' See the README section “App 3.1.0 and newer”: upload an older APK pair below, or provide a Frida runtime JSON in the settings, then run extraction again. This window stays open.',
+                'err',
+              );
             } else {
               setStatus(
                 'arm64ApkStatus',
