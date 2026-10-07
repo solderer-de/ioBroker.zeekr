@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.51",
+    "version": "0.1.52",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.52": {
+        "en": "APK upload straight from the browser, no host file transfer needed.",
+        "de": "APK-Upload direkt aus dem Browser, kein Dateitransfer auf den Host nötig.",
+        "ru": "Загрузка APK прямо из браузера, без передачи файлов на хост.",
+        "pt": "Envio de APKs diretamente do navegador, sem transferência para o anfitrião.",
+        "nl": "APK-upload rechtstreeks vanuit de browser, geen bestandsoverdracht nodig.",
+        "fr": "Envoi des APK depuis le navigateur, sans transfert vers l'hôte.",
+        "it": "Caricamento APK direttamente dal browser, senza trasferimento sull'host.",
+        "es": "Subida de APK directamente desde el navegador, sin transferencia al host.",
+        "pl": "Przesyłanie APK bezpośrednio z przeglądarki, bez transferu na host.",
+        "uk": "Завантаження APK прямо з браузера, без передавання файлів на хост.",
+        "zh-cn": "直接从浏览器上传APK，无需传输文件到主机。"
+      },
       "0.1.51": {
         "en": "Real charging costs with losses and tariffs, geofence, smart charging.",
         "de": "Echte Ladekosten mit Verlusten und Tarifen, Geofence, Smart Charging.",

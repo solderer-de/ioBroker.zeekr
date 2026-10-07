@@ -226,6 +226,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.52
+
+- APK upload straight from the browser (no host file transfer needed)
+
 ### 0.1.51
 
 - Real charging costs with losses and per-charger/time tariffs, geofence, smart charging, battery log
