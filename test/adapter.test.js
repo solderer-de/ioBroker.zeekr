@@ -1157,3 +1157,33 @@ test('persist uses callback-style object API as fallback', async () => {
     assert.equal(stored.username, 'u');
     assert.equal(adapter.config.hmacAccessKey, 'k');
 });
+test('empty chargingState never writes objects as state values', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = { mockMode: true, countryCode: 'DE' };
+    const chargingStatus = {
+        chargerState: 'idle',
+        chargeVoltage: 0,
+        chargeCurrent: 0,
+        chargeSpeed: 0,
+        chargePower: 0,
+        dcChargePowerLimitSts: 0,
+        updateTime: '2026-10-07',
+    };
+    adapter.runBridge = async () => ({
+        vehicles: [
+            {
+                name: 'Car',
+                vin: 'VIN1',
+                chargingState: '',
+                chargingStatus,
+                status: {},
+                remoteControlState: {},
+            },
+        ],
+    });
+    await adapter.pollVehicles();
+    const state = await adapter.getStateAsync('vehicles.vin1.status.chargingState');
+    assert.equal(state.val, '');
+    const raw = await adapter.getStateAsync('vehicles.vin1.status.chargingStatusRaw');
+    assert.equal(typeof raw.val, 'string');
+});
