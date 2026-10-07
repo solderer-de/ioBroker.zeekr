@@ -399,6 +399,12 @@ def main() -> int:
             sources.append('runtime JSON')
     missing = _missing_secret_keys(secrets)
     if missing:
+        # Drop stale hints for fields that were filled in afterwards so the
+        # message describes the current state, not the history.
+        if 'hmacAccessKey' not in missing and 'hmacSecretKey' not in missing:
+            warnings = [w for w in warnings if not w.startswith('HMAC keys missing')]
+        if 'vinKey' not in missing and 'vinIv' not in missing:
+            warnings = [w for w in warnings if 'VIN key/IV missing' not in w]
         warnings.append(f'Still missing: {", ".join(missing)}. See the README section on app 3.1.0 and newer.')
     print(json.dumps({
         'ok': True,
