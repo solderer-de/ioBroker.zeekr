@@ -448,8 +448,19 @@ def main() -> int:
             return 0
         try:
             from zeekr_ev_api.client import ZeekrClient, ZeekrException  # type: ignore
-        except ImportError:
-            print(json.dumps({"error": "Python dependency zeekr_ev_api not installed", "vehicles": []}))
+        except ImportError as import_error:
+            # Diagnose mitschicken: Welches Python lief, was schlug fehl?
+            # (Der Adapter nutzt denselben String als Log-Meldung.)
+            print(json.dumps({
+                "error": (
+                    "Python dependency zeekr_ev_api not installed "
+                    f"(python={sys.executable}, import_error={import_error}, "
+                    f"path={os.pathsep.join(sys.path[:4])}). "
+                    "Install requirements.txt into the adapter venv: "
+                    ".venv/bin/pip install -r requirements.txt"
+                ),
+                "vehicles": [],
+            }))
             return 0
 
     try:
