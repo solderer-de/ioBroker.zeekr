@@ -32,11 +32,16 @@ def _reexec_into_venv(action, payload):
     target = _venv_python_exe()
     if not target:
         return False
+    # Achtung: kein samefile-Vergleich der Binaries — .venv/bin/python ist
+    # (per symlinks=True) oft ein Symlink auf genau dieses System-Python.
+    # Entscheidend ist sys.prefix: zeigt es nicht ins venv, laufen wir
+    # ausserhalb und muessen wechseln.
+    venv_dir = os.environ.get('ZEEKR_VENV') or ''
     try:
-        same = os.path.samefile(sys.executable, target)
+        in_venv = bool(venv_dir) and os.path.abspath(sys.prefix) == os.path.abspath(venv_dir)
     except OSError:
-        same = os.path.abspath(sys.executable) == os.path.abspath(target)
-    if same:
+        in_venv = False
+    if in_venv:
         return False
     env = dict(os.environ)
     env['ZEEKR_PAYLOAD_RAW'] = json.dumps(payload if isinstance(payload, dict) else {})
