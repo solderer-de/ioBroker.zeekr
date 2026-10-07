@@ -78,15 +78,39 @@
         el.className = 'status' + (cls ? ' ' + cls : '');
       }
 
-      function sendTo(instance, command, message) {
+      function sendTo(instance, command, message, timeoutMs) {
         return new Promise(function (resolve, reject) {
-          socket.emit('sendTo', instance, command, message, function (res) {
-            if (res && res.ok === false) {
-              reject(new Error(res.error || 'failed'));
-            } else {
-              resolve(res);
+          var done = false;
+          var timer = setTimeout(function () {
+            if (!done) {
+              done = true;
+              reject(
+                new Error(
+                  'no response from instance (timeout). Is the adapter updated to the latest version and running?',
+                ),
+              );
             }
-          });
+          }, timeoutMs || 30000);
+          try {
+            socket.emit('sendTo', instance, command, message, function (res) {
+              if (done) {
+                return;
+              }
+              done = true;
+              clearTimeout(timer);
+              if (res && res.ok === false) {
+                reject(new Error(res.error || 'failed'));
+              } else {
+                resolve(res);
+              }
+            });
+          } catch (err) {
+            if (!done) {
+              done = true;
+              clearTimeout(timer);
+              reject(err);
+            }
+          }
         });
       }
 
@@ -191,31 +215,36 @@
             return null;
           })
           .then(function () {
-            setStatus('arm64ApkStatus', 'Upload complete. Starting key extraction automatically…', 'ok');
+            setStatus('arm64ApkStatus', 'Upload complete. Extraction starts automatically…', 'ok');
             runExtraction(instance, true);
           })
-          .catch(function (err) { setStatus('arm64ApkStatus', 'Upload failed: ' + err.message, 'err'); })
-          .then(function () { btn.disabled = false; });
+          .catch(function (err) {
+            setStatus('arm64ApkStatus', 'Upload failed: ' + err.message, 'err');
+            btn.disabled = false;
+          });
       });
 
       function startAutoClose(seconds) {
+        // Intentionally no automatic close: the user must be able to read the
+        // result first. The manual button below closes the window instead.
         var hint = document.getElementById('closeHint');
         var btn = document.getElementById('closeBtn');
         btn.onclick = function () {
           window.close();
         };
-        function tick(left) {
-          if (left <= 0) {
-            window.close();
-            hint.textContent = 'This window should have closed. You can close it manually and restart the instance.';
-            return;
-          }
-          hint.textContent = 'This window closes automatically in ' + left + 's – then restart the instance.';
-          setTimeout(function () {
-            tick(left - 1);
-          }, 1000);
-        }
-        tick(seconds);
+        hint.textContent = 'You can close this window now and restart the instance.';
+        void seconds;
+      }
+
+      function elapsedTicker(statusId, baseText) {
+        var started = Date.now();
+        var timer = setInterval(function () {
+          var secs = Math.floor((Date.now() - started) / 1000);
+          setStatus(statusId, baseText + ' (elapsed ' + Math.floor(secs / 60) + ':' + ('0' + (secs % 60)).slice(-2) + ')');
+        }, 5000);
+        return function stop() {
+          clearInterval(timer);
+        };
       }
 
       function showTestRow(instance) {
@@ -249,9 +278,12 @@
       function runExtraction(instance, auto) {
         var btn = document.getElementById('extractBtn');
         btn.disabled = true;
+        document.getElementById('uploadBtn').disabled = true;
         setStatus('arm64ApkStatus', 'Extracting keys, this takes a few minutes…');
-        sendTo(instance, 'runExtraction', {})
+        var stopTicker = elapsedTicker('arm64ApkStatus', 'Extracting keys, this takes a few minutes…');
+        sendTo(instance, 'runExtraction', {}, 600000)
           .then(function (res) {
+            stopTicker();
             var missing = (res && res.missing) || [];
             if (res && res.ok && missing.length === 0) {
               var warn = res.warnings ? ' Notes: ' + res.warnings : '';
