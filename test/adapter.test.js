@@ -1048,8 +1048,8 @@ test('completed upload persists path into instance config', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     adapter.config = {};
     const written = {};
-    adapter.getObjectAsync = async () => ({ native: { username: 'u' } });
-    adapter.extendObjectAsync = async (_id, obj) => {
+    adapter.getForeignObjectAsync = async () => ({ native: { username: 'u' } });
+    adapter.extendForeignObjectAsync = async (_id, obj) => {
         Object.assign(written, obj.native);
         return true;
     };
@@ -1282,8 +1282,8 @@ test('extracted secrets are persisted into instance config', async () => {
         extractRegion: 'EU',
     };
     let stored = null;
-    adapter.getObjectAsync = async () => ({ native: { username: 'u', prodSecret: 'manual-prod' } });
-    adapter.extendObjectAsync = async (_id, obj) => {
+    adapter.getForeignObjectAsync = async () => ({ native: { username: 'u', prodSecret: 'manual-prod' } });
+    adapter.extendForeignObjectAsync = async (_id, obj) => {
         stored = obj.native;
         return true;
     };
@@ -1304,12 +1304,18 @@ test('persist uses callback-style object API as fallback', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     adapter.config = {};
     let stored = null;
-    adapter.getObject = (id, callback) => callback(null, { native: { username: 'u' } });
-    adapter.extendObject = (id, obj, callback) => {
+    const seen = [];
+    adapter.getForeignObject = (id, callback) => {
+        seen.push(id);
+        callback(null, { native: { username: 'u' } });
+    };
+    adapter.extendForeignObject = (id, obj, callback) => {
+        seen.push(id);
         stored = obj.native;
         callback(null);
     };
     await adapter.persistSecretsToConfig({ hmacAccessKey: 'k', hmacSecretKey: '' });
+    assert.deepEqual(seen, ['system.adapter.zeekr.0', 'system.adapter.zeekr.0', 'system.adapter.zeekr.0']);
     assert.equal(stored.hmacAccessKey, 'k');
     assert.equal(stored.username, 'u');
     assert.equal(adapter.config.hmacAccessKey, 'k');
@@ -1421,8 +1427,8 @@ test('applyBackupData restores secrets into config and presence states', async (
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     adapter.config = { username: '', password: '', countryCode: 'AU' };
     let written = null;
-    adapter.getObjectAsync = async () => ({ native: { username: '', password: '' } });
-    adapter.extendObjectAsync = async (id, obj) => {
+    adapter.getForeignObjectAsync = async () => ({ native: { username: '', password: '' } });
+    adapter.extendForeignObjectAsync = async (id, obj) => {
         written = obj.native;
     };
     const count = await adapter.applyBackupData(
@@ -1453,8 +1459,8 @@ test('saveBackupFileQuiet and restoreMissingSecretsFromBackup roundtrip gaps', a
     const makeAdapter = config => {
         const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
         adapter.config = { ...config, secretsBackupPath: target };
-        adapter.getObjectAsync = async () => ({ native: {} });
-        adapter.extendObjectAsync = async () => {};
+        adapter.getForeignObjectAsync = async () => ({ native: {} });
+        adapter.extendForeignObjectAsync = async () => {};
         return adapter;
     };
     const full = makeAdapter({
@@ -1592,11 +1598,39 @@ test('writeSecretsToObject prefers updateConfig (encrypted server roundtrip)', a
         captured = cfg;
     };
     let extended = 0;
-    adapter.extendObjectAsync = async () => {
+    adapter.extendForeignObjectAsync = async () => {
         extended += 1;
     };
     await adapter.writeSecretsToObject({ hmacAccessKey: 'ak', prodSecret: 'ps' }, 'stored');
     assert.deepEqual(captured, { hmacAccessKey: 'ak', prodSecret: 'ps' });
     assert.equal(extended, 0);
     assert.equal(adapter.config.hmacAccessKey, 'ak');
+});
+
+test('instance object access always uses absolute Foreign IDs (no shadow objects)', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {};
+    const calls = [];
+    // Both variants exist: only Foreign (absolute) may be used.
+    adapter.getObjectAsync = async id => {
+        calls.push(['relative-get', id]);
+        return { native: {} };
+    };
+    adapter.extendObjectAsync = async id => {
+        calls.push(['relative-extend', id]);
+    };
+    adapter.getForeignObjectAsync = async id => {
+        calls.push(['foreign-get', id]);
+        return { native: {} };
+    };
+    adapter.extendForeignObjectAsync = async id => {
+        calls.push(['foreign-extend', id]);
+    };
+    await adapter.writeSecretsToObject({ hmacAccessKey: 'ak' }, 'stored');
+    // get (read) + extend (write) + get (verify) — all absolute Foreign IDs.
+    assert.deepEqual(calls, [
+        ['foreign-get', 'system.adapter.zeekr.0'],
+        ['foreign-extend', 'system.adapter.zeekr.0'],
+        ['foreign-get', 'system.adapter.zeekr.0'],
+    ]);
 });
