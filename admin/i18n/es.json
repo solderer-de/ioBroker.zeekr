@@ -48,11 +48,19 @@
   "Smart charging (cheapest window)": "Carga inteligente (ventana barata)",
   "Departure time (HH:MM)": "Hora de salida (HH:MM)",
   "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Ejemplo con ubicación y ventana de tiempo: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
-  "Upload APKs from this PC (no file transfer needed)": "Subir APK desde este PC (sin transferencia de archivos)",
   "Older base APK (optional, e.g. app 3.0.x)": "APK base antiguo (opcional, ej. app 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Si la app actual (ej. 3.1.0) oculta claves, las faltantes se toman de este par antiguo.",
   "Older arm64 APK (optional)": "APK arm64 antiguo (opcional)",
   "Second file of the older pair (contains the native libraries).": "Segundo archivo del par antiguo (contiene las bibliotecas nativas).",
-  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4.": "Los valores guardados nunca se muestran aquí — ioBroker oculta los secretos protegidos por seguridad. La presencia se ve en los estados info.secretsPresent. Copia y restauración vía «Upload APKs from this PC», sección 4.",
-  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "Se rellena automáticamente. Solo manual si la extracción es imposible. El VIN se detecta automáticamente tras el login — nunca introducirlo aquí. VIN Key y VIN IV son claves de cifrado, no tu VIN."
+  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "Se rellena automáticamente. Solo manual si la extracción es imposible. El VIN se detecta automáticamente tras el login — nunca introducirlo aquí. VIN Key y VIN IV son claves de cifrado, no tu VIN.",
+  "APKs": "APK",
+  "Energy": "Energía",
+  "Keys come from the Zeekr APKs. Easiest: upload from your PC (no file transfer needed). Or enter host paths below. Extraction fills the Keys tab automatically.": "Las claves vienen de los APK de Zeekr. Lo más fácil: subir desde tu PC (sin transferencia). O indica rutas del host abajo. La extracción rellena la pestaña Keys automáticamente.",
+  "Host path, e.g. /data/base.apk. Leave empty when using the browser upload above.": "Ruta en el host, ej. /data/base.apk. Vacío si usas la subida de arriba.",
+  "Legacy secrets JSON (VIN only)": "JSON de secretos heredado (solo VIN)",
+  "JSON file with VIN key/IV from an older app (e.g. 1.5.5) — not an APK. Only needed if VIN keys are missing.": "Archivo JSON con clave/IV del VIN de una app antigua (ej. 1.5.5) — no un APK. Solo si faltan claves VIN.",
+  "Warning: the connection test shows green without a real account. Turn off for real use.": "Aviso: la prueba muestra verde sin cuenta real. Desactivar para uso real.",
+  "Charging costs and smart charging. See README section “Energy, costs and smart charging”.": "Costes de carga y carga inteligente. Ver README «Energy, costs and smart charging».",
+  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5.": "Los valores guardados nunca se muestran aquí — ioBroker oculta los secretos protegidos por seguridad. La presencia se ve en los estados info.secretsPresent. Copia y restauración vía «Upload APKs from this PC», secciones 4 y 5.",
+  "Upload APKs from this PC (no file transfer needed)": "Subir APK desde este PC (sin transferencia de archivos)"
 }

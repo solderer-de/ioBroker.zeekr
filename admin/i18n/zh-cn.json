@@ -48,11 +48,19 @@
   "Smart charging (cheapest window)": "智能充电（最便宜时段）",
   "Departure time (HH:MM)": "出发时间（HH:MM）",
   "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "包含地点和时间窗口的示例：[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
-  "Upload APKs from this PC (no file transfer needed)": "从此电脑上传APK（无需文件传输）",
   "Older base APK (optional, e.g. app 3.0.x)": "旧版base APK（可选，例如3.0.x应用）",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "如果当前应用（如3.1.0）隐藏密钥，则从此旧版本对中获取缺失的密钥。",
   "Older arm64 APK (optional)": "旧版arm64 APK（可选）",
   "Second file of the older pair (contains the native libraries).": "旧版本对的第二个文件（包含原生库）。",
-  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4.": "此处从不显示已存储的值——ioBroker出于安全原因隐藏受保护的密钥。可通过info.secretsPresent状态查看是否存在。通过“Upload APKs from this PC”第4节备份和恢复。",
-  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "自动填写。仅在无法提取时手动输入。VIN在登录后自动检测——请勿在此输入。VIN Key和VIN IV是加密密钥，不是你的VIN。"
+  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "自动填写。仅在无法提取时手动输入。VIN在登录后自动检测——请勿在此输入。VIN Key和VIN IV是加密密钥，不是你的VIN。",
+  "APKs": "APK文件",
+  "Energy": "能源",
+  "Keys come from the Zeekr APKs. Easiest: upload from your PC (no file transfer needed). Or enter host paths below. Extraction fills the Keys tab automatically.": "密钥来自Zeekr APK。最简单：从PC上传（无需传输文件）。或在下面输入主机路径。提取会自动填写Keys选项卡。",
+  "Host path, e.g. /data/base.apk. Leave empty when using the browser upload above.": "主机路径，例如/data/base.apk。使用上方浏览器上传时留空。",
+  "Legacy secrets JSON (VIN only)": "旧版秘钥JSON（仅VIN）",
+  "JSON file with VIN key/IV from an older app (e.g. 1.5.5) — not an APK. Only needed if VIN keys are missing.": "来自旧版应用（如1.5.5）的含VIN密钥/IV的JSON文件——不是APK。仅在缺少VIN密钥时需要。",
+  "Warning: the connection test shows green without a real account. Turn off for real use.": "警告：没有真实账户测试也显示绿色。实际使用请关闭。",
+  "Charging costs and smart charging. See README section “Energy, costs and smart charging”.": "充电费用和智能充电。见README“Energy, costs and smart charging”节。",
+  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5.": "此处从不显示已存储的值——ioBroker出于安全原因隐藏受保护的密钥。可通过info.secretsPresent状态查看是否存在。通过“Upload APKs from this PC”第4和5节备份和恢复。",
+  "Upload APKs from this PC (no file transfer needed)": "从此电脑上传APK（无需文件传输）"
 }

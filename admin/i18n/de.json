@@ -48,11 +48,19 @@
   "Smart charging (cheapest window)": "Smart Charging (günstigstes Fenster)",
   "Departure time (HH:MM)": "Abfahrtszeit (HH:MM)",
   "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Beispiel mit Ort und Zeitfenster: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
-  "Upload APKs from this PC (no file transfer needed)": "APKs von diesem PC hochladen (kein Dateitransfer nötig)",
   "Older base APK (optional, e.g. app 3.0.x)": "Ältere base-APK (optional, z.B. App 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Falls die aktuelle App (z.B. 3.1.0) Keys verbirgt, werden fehlende aus diesem älteren Paar übernommen.",
   "Older arm64 APK (optional)": "Ältere arm64-APK (optional)",
   "Second file of the older pair (contains the native libraries).": "Zweite Datei des älteren Paars (enthält die nativen Libraries).",
-  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4.": "Gespeicherte Werte werden hier nie angezeigt — ioBroker verbirgt geschützte Secrets aus Sicherheitsgründen. Die Anwesenheit ist als info.secretsPresent-States sichtbar. Sichern und Wiederherstellen über „Upload APKs from this PC“, Abschnitt 4.",
-  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "Wird automatisch befüllt. Nur manuell eintragen, wenn keine Extraktion möglich ist. Die VIN wird nach dem Login automatisch erkannt — hier nie eintragen. VIN Key und VIN IV sind Verschlüsselungs-Keys, nicht deine VIN."
+  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "Wird automatisch befüllt. Nur manuell eintragen, wenn keine Extraktion möglich ist. Die VIN wird nach dem Login automatisch erkannt — hier nie eintragen. VIN Key und VIN IV sind Verschlüsselungs-Keys, nicht deine VIN.",
+  "APKs": "APKs",
+  "Energy": "Energie",
+  "Keys come from the Zeekr APKs. Easiest: upload from your PC (no file transfer needed). Or enter host paths below. Extraction fills the Keys tab automatically.": "Keys stammen aus den Zeekr-APKs. Am einfachsten: vom PC hochladen (kein Dateitransfer nötig). Oder Host-Pfade unten eintragen. Die Extraktion füllt den Keys-Tab automatisch.",
+  "Host path, e.g. /data/base.apk. Leave empty when using the browser upload above.": "Host-Pfad, z.B. /data/base.apk. Leer lassen bei Browser-Upload oben.",
+  "Legacy secrets JSON (VIN only)": "Legacy Secrets-JSON (nur VIN)",
+  "JSON file with VIN key/IV from an older app (e.g. 1.5.5) — not an APK. Only needed if VIN keys are missing.": "JSON-Datei mit VIN-Key/IV aus einer älteren App (z.B. 1.5.5) — keine APK. Nur nötig bei fehlenden VIN-Keys.",
+  "Warning: the connection test shows green without a real account. Turn off for real use.": "Warnung: Der Verbindungstest zeigt grün ohne echten Account. Für echten Betrieb ausschalten.",
+  "Charging costs and smart charging. See README section “Energy, costs and smart charging”.": "Ladekosten und smartes Laden. Siehe README-Abschnitt „Energy, costs and smart charging“.",
+  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5.": "Gespeicherte Werte werden hier nie angezeigt — ioBroker verbirgt geschützte Secrets aus Sicherheitsgründen. Die Anwesenheit ist als info.secretsPresent-States sichtbar. Sichern und Wiederherstellen über „Upload APKs from this PC“, Abschnitte 4 und 5.",
+  "Upload APKs from this PC (no file transfer needed)": "APKs von diesem PC hochladen (kein Dateitransfer nötig)"
 }

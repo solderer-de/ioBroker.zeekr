@@ -82,6 +82,34 @@
           "lg": 12,
           "xl": 12,
           "label": "Extract missing keys automatically on start"
+        }
+      }
+    },
+    "apks": {
+      "type": "panel",
+      "label": "APKs",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Keys come from the Zeekr APKs. Easiest: upload from your PC (no file transfer needed). Or enter host paths below. Extraction fills the Keys tab automatically."
+        },
+        "_apkUpload": {
+          "type": "staticLink",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "label": "Upload APKs from this PC (no file transfer needed)",
+          "href": "/adapter/zeekr/upload.html",
+          "target": "_blank",
+          "button": true,
+          "variant": "outlined"
         },
         "apkBasePath": {
           "type": "text",
@@ -91,7 +119,7 @@
           "lg": 6,
           "xl": 6,
           "label": "APK base.apk (path on host)",
-          "help": "e.g. /opt/iobroker/iobroker-data/zeekr/base.apk"
+          "help": "Host path, e.g. /data/base.apk. Leave empty when using the browser upload above."
         },
         "apkArm64Path": {
           "type": "text",
@@ -112,144 +140,6 @@
           "xl": 12,
           "label": "Or: zeekr_secrets.json path (instead of APKs)"
         },
-        "_apkUpload": {
-          "type": "staticLink",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12,
-          "label": "Upload APKs from this PC (no file transfer needed)",
-          "href": "/adapter/zeekr/upload.html",
-          "target": "_blank",
-          "button": true,
-          "variant": "outlined"
-        }
-      }
-    },
-    "keys": {
-      "type": "panel",
-      "label": "Keys",
-      "items": {
-        "_hint": {
-          "type": "staticText",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12,
-          "text": "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN."
-        },
-        "_presenceHint": {
-          "type": "staticText",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12,
-          "text": "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4."
-        },
-        "hmacAccessKey": {
-          "type": "password",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "HMAC Access Key"
-        },
-        "hmacSecretKey": {
-          "type": "password",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "HMAC Secret Key"
-        },
-        "passwordPublicKey": {
-          "type": "password",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "Password Public Key"
-        },
-        "prodSecret": {
-          "type": "password",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "Prod Secret"
-        },
-        "prodSecretCandidates": {
-          "type": "text",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12,
-          "label": "Prod secret candidates (comma separated)",
-          "help": "If several are listed in zeekr_secrets.json, paste them all here."
-        },
-        "vinKey": {
-          "type": "password",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "VIN Key"
-        },
-        "vinIv": {
-          "type": "password",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "VIN IV"
-        }
-      }
-    },
-    "advanced": {
-      "type": "panel",
-      "label": "Advanced",
-      "items": {
-        "_hint": {
-          "type": "staticText",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12,
-          "text": "Only needed for problems. Live hints: info.lastErrorHint."
-        },
-        "pollingInterval": {
-          "type": "number",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "default": 300,
-          "min": 30,
-          "step": 30,
-          "label": "Poll interval (seconds)"
-        },
-        "vehicleFilter": {
-          "type": "text",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "Vehicle filter",
-          "help": "Part of name or VIN. Empty = all."
-        },
         "apkLegacyPath": {
           "type": "text",
           "xs": 12,
@@ -257,7 +147,8 @@
           "md": 6,
           "lg": 6,
           "xl": 6,
-          "label": "Legacy APK 1.5.5 (VIN only)"
+          "label": "Legacy secrets JSON (VIN only)",
+          "help": "JSON file with VIN key/IV from an older app (e.g. 1.5.5) — not an APK. Only needed if VIN keys are missing."
         },
         "apkOldBasePath": {
           "type": "text",
@@ -335,76 +226,109 @@
           "lg": 6,
           "xl": 6,
           "label": "Runtime JSON from Frida (app 3.x only)"
+        }
+      }
+    },
+    "keys": {
+      "type": "panel",
+      "label": "Keys",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN."
         },
-        "secretsBackupPath": {
+        "_presenceHint": {
+          "type": "staticText",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5."
+        },
+        "hmacAccessKey": {
+          "type": "password",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "HMAC Access Key"
+        },
+        "hmacSecretKey": {
+          "type": "password",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "HMAC Secret Key"
+        },
+        "passwordPublicKey": {
+          "type": "password",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Password Public Key"
+        },
+        "prodSecret": {
+          "type": "password",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Prod Secret"
+        },
+        "prodSecretCandidates": {
           "type": "text",
           "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": {
-            "en": "Secrets backup path (empty = auto)",
-            "de": "Secrets-Backup-Pfad (leer = automatisch)",
-            "ru": "Путь к резервной копии секретов (пусто = авто)",
-            "pt": "Caminho da cópia de segurança (vazio = auto)",
-            "nl": "Back-uppad voor secrets (leeg = auto)",
-            "fr": "Chemin de sauvegarde des secrets (vide = auto)",
-            "it": "Percorso backup segreti (vuoto = auto)",
-            "es": "Ruta de copia de seguridad (vacío = auto)",
-            "pl": "Ścieżka kopii zapasowej (pusto = auto)",
-            "uk": "Шлях до резервної копії секретів (порожньо = авто)",
-            "zh-cn": "密钥备份路径（空=自动）"
-          },
-          "help": {
-            "en": "Empty = secrets-backup.json in the instance data folder. Used by Export/Import on the APK page, section 4.",
-            "de": "Leer = secrets-backup.json im Instanz-Datenordner. Wird von Export/Import auf der APK-Seite, Abschnitt 4, verwendet.",
-            "ru": "Пусто = secrets-backup.json в папке данных инстанса. Используется экспортом/импортом на APK-странице, раздел 4.",
-            "pt": "Vazio = secrets-backup.json na pasta de dados. Usado por Exportar/Importar na página APK, secção 4.",
-            "nl": "Leeg = secrets-backup.json in de instancemap. Gebruikt door Exporteren/Importeren op de APK-pagina, sectie 4.",
-            "fr": "Vide = secrets-backup.json dans le dossier de données. Utilisé par Exporter/Importer sur la page APK, section 4.",
-            "it": "Vuoto = secrets-backup.json nella cartella dati. Usato da Esporta/Importa nella pagina APK, sezione 4.",
-            "es": "Vacío = secrets-backup.json en la carpeta de datos. Usado por Exportar/Importar en la página APK, sección 4.",
-            "pl": "Pusto = secrets-backup.json w folderze danych. Używane przez Eksport/Import na stronie APK, sekcja 4.",
-            "uk": "Порожньо = secrets-backup.json у папці даних. Використовується експортом/імпортом на APK-сторінці, розділ 4.",
-            "zh-cn": "空=实例数据文件夹中的secrets-backup.json。用于APK页面第4节的导出/导入。"
-          }
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "label": "Prod secret candidates (comma separated)",
+          "help": "If several are listed in zeekr_secrets.json, paste them all here."
         },
-        "pythonBinary": {
-          "type": "text",
+        "vinKey": {
+          "type": "password",
           "xs": 12,
           "sm": 6,
           "md": 6,
           "lg": 6,
           "xl": 6,
-          "label": "Python program (empty = auto)"
+          "label": "VIN Key"
         },
-        "alertWebhook": {
-          "type": "text",
+        "vinIv": {
+          "type": "password",
           "xs": 12,
           "sm": 6,
           "md": 6,
           "lg": 6,
           "xl": 6,
-          "label": "Alert webhook https://"
-        },
-        "debug": {
-          "type": "checkbox",
+          "label": "VIN IV"
+        }
+      }
+    },
+    "energy": {
+      "type": "panel",
+      "label": "Energy",
+      "items": {
+        "_hint": {
+          "type": "staticText",
           "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "Debug logging"
-        },
-        "mockMode": {
-          "type": "checkbox",
-          "xs": 12,
-          "sm": 6,
-          "md": 6,
-          "lg": 6,
-          "xl": 6,
-          "label": "Mock mode (test without account)"
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Charging costs and smart charging. See README section “Energy, costs and smart charging”."
         },
         "batteryCapacityKwh": {
           "type": "number",
@@ -497,6 +421,114 @@
           "md": 6,
           "lg": 6,
           "xl": 6
+        }
+      }
+    },
+    "advanced": {
+      "type": "panel",
+      "label": "Advanced",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Only needed for problems. Live hints: info.lastErrorHint."
+        },
+        "pollingInterval": {
+          "type": "number",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "default": 300,
+          "min": 30,
+          "step": 30,
+          "label": "Poll interval (seconds)"
+        },
+        "vehicleFilter": {
+          "type": "text",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Vehicle filter",
+          "help": "Part of name or VIN. Empty = all."
+        },
+        "secretsBackupPath": {
+          "type": "text",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": {
+            "en": "Secrets backup path (empty = auto)",
+            "de": "Secrets-Backup-Pfad (leer = automatisch)",
+            "ru": "Путь к резервной копии секретов (пусто = авто)",
+            "pt": "Caminho da cópia de segurança (vazio = auto)",
+            "nl": "Back-uppad voor secrets (leeg = auto)",
+            "fr": "Chemin de sauvegarde des secrets (vide = auto)",
+            "it": "Percorso backup segreti (vuoto = auto)",
+            "es": "Ruta de copia de seguridad (vacío = auto)",
+            "pl": "Ścieżka kopii zapasowej (pusto = auto)",
+            "uk": "Шлях до резервної копії секретів (порожньо = авто)",
+            "zh-cn": "密钥备份路径（空=自动）"
+          },
+          "help": {
+            "en": "Empty = secrets-backup.json in the instance data folder. Used by Export/Import on the APK page, sections 4 and 5.",
+            "de": "Leer = secrets-backup.json im Instanz-Datenordner. Wird von Export/Import auf der APK-Seite, Abschnitte 4 und 5, verwendet.",
+            "ru": "Пусто = secrets-backup.json в папке данных инстанса. Используется экспортом/импортом на APK-странице, разделы 4 и 5.",
+            "pt": "Vazio = secrets-backup.json na pasta de dados. Usado por Exportar/Importar na página APK, secções 4 e 5.",
+            "nl": "Leeg = secrets-backup.json in de instancemap. Gebruikt door Exporteren/Importeren op de APK-pagina, secties 4 en 5.",
+            "fr": "Vide = secrets-backup.json dans le dossier de données. Utilisé par Exporter/Importer sur la page APK, sections 4 et 5.",
+            "it": "Vuoto = secrets-backup.json nella cartella dati. Usato da Esporta/Importa nella pagina APK, sezioni 4 e 5.",
+            "es": "Vacío = secrets-backup.json en la carpeta de datos. Usado por Exportar/Importar en la página APK, secciones 4 y 5.",
+            "pl": "Pusto = secrets-backup.json w folderze danych. Używane przez Eksport/Import na stronie APK, sekcje 4 i 5.",
+            "uk": "Порожньо = secrets-backup.json у папці даних. Використовується експортом/імпортом на APK-сторінці, розділи 4 і 5.",
+            "zh-cn": "空=实例数据文件夹中的secrets-backup.json。用于APK页面第4和5节的导出/导入。"
+          }
+        },
+        "pythonBinary": {
+          "type": "text",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Python program (empty = auto)"
+        },
+        "alertWebhook": {
+          "type": "text",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Alert webhook https://"
+        },
+        "debug": {
+          "type": "checkbox",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Debug logging"
+        },
+        "mockMode": {
+          "type": "checkbox",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": "Mock mode (test without account)",
+          "help": "Warning: the connection test shows green without a real account. Turn off for real use."
         }
       }
     }
