@@ -313,7 +313,15 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
                                          *nested_subs, keys=['latitude', 'lat', 'vehicleLat']))
     longitude = coerce_number(get_first(vtm_payload, status_payload, position_payload, vehicle_dict,
                                         *nested_subs, keys=['longitude', 'lon', 'lng', 'vehicleLon']))
-    battery_12v = coerce_number(get_first(vtm_payload, status_payload, keys=['battery12v', 'voltage12v', 'lowVoltageBattery', 'auxBattery']))
+    # 12V board battery hides two levels deep (maintenanceStatus.mainBatteryStatus).
+    main_battery_payload = {}
+    for sub in nested_subs:
+        candidate = sub.get('mainBatteryStatus') if isinstance(sub, dict) else None
+        if isinstance(candidate, dict):
+            main_battery_payload = candidate
+            break
+    battery_12v = coerce_number(get_first(vtm_payload, status_payload, main_battery_payload,
+                                          keys=['battery12v', 'voltage12v', 'lowVoltageBattery', 'auxBattery', 'voltage']))
     last_trip = coerce_number(get_first(journey_payload, keys=['lastTripDistanceKm', 'lastTripDistance', 'lastDistance']))
     if last_trip is None:
         trips = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else None

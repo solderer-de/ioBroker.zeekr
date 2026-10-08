@@ -110,7 +110,8 @@ spec.loader.exec_module(module)
 payload = module.normalize_vehicle(
     {'vehicleName': 'Vehicle', 'vin': 'L6TZC2S57TN148853'},
     {'additionalVehicleStatus': {
-        'maintenanceStatus': {'odometer': 32, 'tyreStatusDriver': 275, 'tyreStatusPassenger': 286, 'tyreStatusDriverRear': 282, 'tyreStatusPassengerRear': 282},
+        'maintenanceStatus': {'odometer': 32, 'tyreStatusDriver': 275, 'tyreStatusPassenger': 286, 'tyreStatusDriverRear': 282, 'tyreStatusPassengerRear': 282,
+                              'mainBatteryStatus': {'voltage': 14.325}},
         'climateStatus': {'interiorTemp': 15.3, 'exteriorTemp': 9.1}}},
     {},
     {}
@@ -129,6 +130,7 @@ print(json.dumps(payload))
     assert.equal(payload.tirePressureRl, 2.82);
     assert.equal(payload.tirePressureRr, 2.82);
     assert.equal(payload.temperature, 15.3);
+    assert.equal(payload.battery12v, 14.325);
 });
 
 test('ensureBaseObjects creates the root info and vehicles channels', async () => {
@@ -1400,6 +1402,87 @@ test('saveBackupFileQuiet and restoreMissingSecretsFromBackup roundtrip gaps', a
     const empty = makeAdapter({});
     assert.equal(await empty.saveBackupFileQuiet(), 0);
     assert.equal(await empty.restoreMissingSecretsFromBackup(), 0);
+});
+
+test('audit: every payload leaf lands in datapoints with correct value and type', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = { mockMode: true, countryCode: 'DE' };
+    const vehicle = {
+        name: 'Audit Car',
+        vin: 'AUDITVIN123456789',
+        batteryLevel: 97,
+        rangeKm: 648,
+        odometerKm: 32,
+        chargePower: 0,
+        currentSpeed: 0,
+        pluggedIn: false,
+        isCharging: false,
+        temperature: 15.3,
+        chargingState: { chargerState: '0', nested: { deep: 'x' } },
+        lockState: '',
+        isLocked: true,
+        climateOn: false,
+        lastUpdated: '2026-10-08',
+        chargingLimit: 84,
+        tirePressureFl: 2.75,
+        latitude: 51.3429106,
+        longitude: 12.3867253,
+        battery12v: null,
+        chargePlan: { vin: 'AUDITVIN123456789', timerId: '2', command: 'stop' },
+        travelPlan: { timerId: '4', scheduleList: [] },
+        lastTripDistanceKm: null,
+        centralLockingStatus: '1',
+        windowPositionAvg: 0,
+        doorOpen: { doorOpenStatusDriver: false, trunkOpenStatus: false },
+        avgPowerConsumption: 19.2,
+        traveledDistanceKm: null,
+        engineStatus: 'engine-off',
+        maintenanceStatus: '',
+        maintenanceRaw: {},
+        tripCount: 0,
+        tripList: [{ distance: 12 }],
+        status: {
+            basicVehicleStatus: { speed: 0 },
+            additionalVehicleStatus: {
+                electricVehicleStatus: { chargeLevel: '97.0', dcChargeIAct: '-1638.0' },
+                climateStatus: { interiorTemp: 15.3, winPosDriver: 0 },
+            },
+        },
+        chargingStatus: { chargeCurrent: 0 },
+        remoteControlState: { privacyMode: '0', campingModeState: '1' },
+        vtmStatus: {},
+        chargingLimitRaw: { soc: 84 },
+        chargePlanRaw: {},
+        travelPlanRaw: {},
+        journeySummary: {},
+    };
+    adapter.runBridge = async () => ({ vehicles: [vehicle] });
+    await adapter.pollVehicles();
+    const base = 'vehicles.auditvin123456789';
+    const get = async id => (await adapter.getStateAsync(id))?.val;
+    // Curated layer carries the mapped values.
+    assert.equal(await get(`${base}.status.batteryLevel`), 97);
+    assert.equal(await get(`${base}.status.rangeKm`), 648);
+    assert.equal(await get(`${base}.status.odometerKm`), 32);
+    assert.equal(await get(`${base}.status.tirePressureFl`), 2.75);
+    assert.equal(await get(`${base}.status.temperature`), 15.3);
+    assert.equal(await get(`${base}.status.latitude`), 51.3429106);
+    // Raw layer mirrors every leaf 1:1.
+    assert.equal(await get(`${base}.all.batteryLevel`), 97);
+    assert.equal(await get(`${base}.all.status.additionalVehicleStatus.electricVehicleStatus.chargeLevel`), '97.0');
+    assert.equal(await get(`${base}.all.status.additionalVehicleStatus.electricVehicleStatus.dcChargeIAct`), '-1638.0');
+    assert.equal(await get(`${base}.all.status.additionalVehicleStatus.climateStatus.interiorTemp`), 15.3);
+    assert.equal(await get(`${base}.all.chargePlan.timerId`), '2');
+    assert.equal(await get(`${base}.all.remoteControlState.privacyMode`), '0');
+    assert.equal(await get(`${base}.all.chargingLimitRaw.soc`), 84);
+    assert.match(await get(`${base}.all.tripList`), /"distance":12/);
+    // Invariant: no state ever holds a plain object as value.
+    for (const [id, state] of adapter._states) {
+        assert.ok(
+            state.val === null || ['string', 'number', 'boolean'].includes(typeof state.val),
+            `${id} holds forbidden value type ${typeof state.val}`,
+        );
+    }
 });
 
 test('syncAllVehicleStates exposes every leaf, objects become channels', async () => {
