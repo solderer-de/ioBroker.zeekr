@@ -62,7 +62,7 @@
         <button id="testBtn" type="button">3. Test connection</button>
         <div class="status" id="testStatus"></div>
       </div>
-      <div class="row" id="backupRow" style="display:none">
+      <div class="row" id="backupRow">
         <button id="exportBtn" type="button">4. Export secrets backup</button>
         <button id="importBtn" type="button">5. Import secrets backup</button>
         <div class="status" id="backupStatus"></div>
@@ -257,14 +257,19 @@
         document.getElementById('testBtn').onclick = function () {
           runTest(instance);
         };
-        document.getElementById('backupRow').style.display = 'flex';
-        document.getElementById('exportBtn').onclick = function () {
-          runBackupExport(instance);
-        };
-        document.getElementById('importBtn').onclick = function () {
-          runBackupImport(instance);
-        };
       }
+
+      function currentInstance() {
+        var el = document.getElementById('instance');
+        return (el && el.value) || 'zeekr.0';
+      }
+
+      document.getElementById('exportBtn').onclick = function () {
+        runBackupExport(currentInstance());
+      };
+      document.getElementById('importBtn').onclick = function () {
+        runBackupImport(currentInstance());
+      };
 
       function runTest(instance) {
         var btn = document.getElementById('testBtn');
