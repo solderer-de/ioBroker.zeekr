@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.54",
+    "version": "0.1.55",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.55": {
+        "en": "Raw layer: every vehicle value as its own state under all.*, plus EU nested mapping fixes.",
+        "de": "Roh-Schicht: jeder Fahrzeugwert als eigener State unter all.*, dazu EU-Mapping-Fixes.",
+        "ru": "Сырой слой: каждое значение авто отдельным состоянием в all.*, плюс EU-маппинг.",
+        "pt": "Camada bruta: cada valor como estado próprio em all.*, mais correções UE.",
+        "nl": "Ruwe laag: elke waarde als eigen state onder all.*, plus EU-fixes.",
+        "fr": "Couche brute: chaque valeur dans son état sous all.*, plus correctifs UE.",
+        "it": "Livello grezzo: ogni valore come stato sotto all.*, più fix UE.",
+        "es": "Capa bruta: cada valor como estado bajo all.*, más correcciones UE.",
+        "pl": "Warstwa surowa: każda wartość jako stan w all.*, plus poprawki UE.",
+        "uk": "Сирий шар: кожне значення окремим станом в all.*, плюс EU-фікси.",
+        "zh-cn": "原始层：每个车辆值在all.*下作为独立状态，另有欧盟映射修复。"
+      },
       "0.1.54": {
         "en": "Secrets survive reinstalls (encrypted storage, self-healing backup), EU battery/range mapping, extraction sources visible.",
         "de": "Secrets überleben Reinstalls (verschlüsselt, selbstheilendes Backup), EU-Batterie-/Reichweiten-Mapping, sichtbare Extraktions-Quellen.",
