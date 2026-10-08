@@ -339,17 +339,40 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     win_positions = [v for v in win_positions if v is not None]
     window_position_avg = sum(win_positions) / len(win_positions) if win_positions else None
     # Türen/Kofferraum offen? Upstream-Felder aus drivingSafetyStatus/electricVehicleStatus.
+    # Nur Felder mit eindeutiger Semantik werden kuratiert: *OpenStatus (1 = offen),
+    # *LockStatus (1 = verriegelt), Fensterpositionen (> 0 = offen). Unklare Enums
+    # (winStatus, sunroofOpenStatus, tankFlapStatus) bleiben in der Roh-Schicht.
+    def _is_open(value):
+        if isinstance(value, bool):
+            return value
+        return str(value if value is not None else '').strip().lower() in {
+            '1', 'true', 'open', 'opened', 'yes', 'on'}
+
+    def _is_locked(value):
+        if isinstance(value, bool):
+            return value
+        return str(value if value is not None else '').strip().lower() in {
+            '1', 'true', 'locked', 'yes', 'on'}
+
+    door_open_keys = ['doorOpenStatusDriver', 'doorOpenStatusPassenger',
+                      'doorOpenStatusDriverRear', 'doorOpenStatusPassengerRear']
     door_open = {}
-    for door_key in ['doorOpenStatusDriver', 'doorOpenStatusPassenger',
-                     'doorOpenStatusDriverRear', 'doorOpenStatusPassengerRear',
-                     'trunkOpenStatus']:
+    for door_key in door_open_keys + ['trunkOpenStatus']:
         raw_door = get_first(status_payload, vtm_payload, *nested_subs, keys=[door_key])
         if raw_door is None:
             door_open[door_key] = None
-        elif isinstance(raw_door, bool):
-            door_open[door_key] = raw_door
         else:
-            door_open[door_key] = str(raw_door).strip().lower() in {'1', 'true', 'open', 'opened', 'yes', 'on'}
+            door_open[door_key] = _is_open(raw_door)
+    door_lock_keys = ['doorLockStatusDriver', 'doorLockStatusPassenger',
+                      'doorLockStatusDriverRear', 'doorLockStatusPassengerRear']
+    doors_open = any(door_open.get(key) for key in door_open_keys)
+    door_locks = [get_first(status_payload, vtm_payload, *nested_subs, keys=[key]) for key in door_lock_keys]
+    doors_locked = all(_is_locked(flag) for flag in door_locks)
+    trunk_open = bool(door_open.get('trunkOpenStatus'))
+    trunk_locked = _is_locked(get_first(status_payload, vtm_payload, *nested_subs, keys=['trunkLockStatus']))
+    hood_open = _is_open(get_first(status_payload, vtm_payload, *nested_subs,
+                                   keys=['engineHoodOpenStatus', 'hoodOpenStatus', 'bonnetOpenStatus']))
+    windows_open = any(value > 0 for value in win_positions)
     avg_consumption = coerce_number(get_first(
         status_payload, vtm_payload, *nested_subs,
         keys=['averPowerConsumption', 'avgPowerConsumption', 'powerConsumption',
@@ -407,6 +430,12 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'centralLockingStatus': central_locking,
         'windowPositionAvg': window_position_avg,
         'doorOpen': door_open,
+        'doorsOpen': doors_open,
+        'doorsLocked': doors_locked,
+        'trunkOpen': trunk_open,
+        'trunkLocked': trunk_locked,
+        'hoodOpen': hood_open,
+        'windowsOpen': windows_open,
         'avgPowerConsumption': avg_consumption,
         'traveledDistanceKm': traveled_distance,
         'engineStatus': engine_status,

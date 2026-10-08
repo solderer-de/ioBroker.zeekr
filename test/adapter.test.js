@@ -133,6 +133,46 @@ print(json.dumps(payload))
     assert.equal(payload.battery12v, 14.325);
 });
 
+test('bridge derives door/window booleans from safety fields', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle(
+    {'vehicleName': 'Vehicle', 'vin': 'V1'},
+    {'additionalVehicleStatus': {
+        'drivingSafetyStatus': {'doorOpenStatusDriver': 0, 'doorOpenStatusPassenger': '1', 'doorOpenStatusDriverRear': 0, 'doorOpenStatusPassengerRear': 0,
+                                'doorLockStatusDriver': 1, 'doorLockStatusPassenger': 1, 'doorLockStatusDriverRear': 1, 'doorLockStatusPassengerRear': 1,
+                                'trunkOpenStatus': 0, 'trunkLockStatus': 1, 'engineHoodOpenStatus': 0},
+        'climateStatus': {'winPosDriver': 0, 'winPosPassenger': 10, 'winPosDriverRear': 0, 'winPosPassengerRear': 0}}},
+    {},
+    {}
+)
+print(json.dumps(payload))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+
+    assert.equal(result.status, 0, result.stderr.toString());
+    const payload = JSON.parse(result.stdout.toString());
+    assert.equal(payload.doorsOpen, true);
+    assert.equal(payload.doorsLocked, true);
+    assert.equal(payload.trunkOpen, false);
+    assert.equal(payload.trunkLocked, true);
+    assert.equal(payload.hoodOpen, false);
+    assert.equal(payload.windowsOpen, true);
+    assert.equal(payload.doorOpen.doorOpenStatusPassenger, true);
+    assert.equal(payload.doorOpen.trunkOpenStatus, false);
+});
+
 test('ensureBaseObjects creates the root info and vehicles channels', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     await adapter.ensureBaseObjects();
