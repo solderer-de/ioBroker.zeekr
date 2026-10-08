@@ -272,6 +272,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.57
+
+- Security fix: instance config access uses Foreign (absolute) object IDs only — a relative-ID bug wrote plaintext secrets into a shadow object instead of the instance config
+
 ### 0.1.56
 
 - More curated states: odometer, tyre pressure (kPa to bar) and temperature, 12V battery, doors/windows/trunk/hood, service distance/days, repair mode, derived isLocked; raw duplication removed from object tree

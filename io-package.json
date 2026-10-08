@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.56",
+    "version": "0.1.57",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.57": {
+        "en": "Security fix: instance config is written with absolute IDs only (no more shadow objects with plaintext secrets).",
+        "de": "Security-Fix: Instanz-Config nur mit absoluten IDs (keine Schatten-Objekte mit Klartext-Secrets mehr).",
+        "ru": "Исправление безопасности: только абсолютные ID (без теневых объектов с секретами).",
+        "pt": "Correção de segurança: só IDs absolutos (sem objetos-sombra com segredos).",
+        "nl": "Beveiligingsfix: alleen absolute ID's (geen schaduwobjecten met secrets meer).",
+        "fr": "Correctif de sécurité : ID absolus uniquement (plus d'objets fantômes avec secrets).",
+        "it": "Fix di sicurezza: solo ID assoluti (niente più oggetti fantasma con segreti).",
+        "es": "Corrección de seguridad: solo ID absolutos (sin objetos sombra con secretos).",
+        "pl": "Poprawka bezpieczeństwa: tylko absolutne ID (bez obiektów-cieni z sekretami).",
+        "uk": "Фікс безпеки: лише абсолютні ID (без тіньових об'єктів із секретами).",
+        "zh-cn": "安全修复：仅使用绝对ID（不再有带明文密钥的影子对象）。"
+      },
       "0.1.56": {
         "en": "More curated states (odometer, tyres, cabin temp, 12V, doors/windows, service), leaner object tree without raw duplication.",
         "de": "Mehr kuratierte States (Kilometer, Reifen, Innen-Temp, 12V, Türen/Fenster, Service), schlankerer Objektbaum ohne Raw-Doppel.",
