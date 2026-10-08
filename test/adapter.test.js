@@ -1330,3 +1330,20 @@ test('saveBackupFileQuiet and restoreMissingSecretsFromBackup roundtrip gaps', a
     assert.equal(await empty.saveBackupFileQuiet(), 0);
     assert.equal(await empty.restoreMissingSecretsFromBackup(), 0);
 });
+
+test('writeSecretsToObject prefers updateConfig (encrypted server roundtrip)', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = {};
+    let captured = null;
+    adapter.updateConfig = async cfg => {
+        captured = cfg;
+    };
+    let extended = 0;
+    adapter.extendObjectAsync = async () => {
+        extended += 1;
+    };
+    await adapter.writeSecretsToObject({ hmacAccessKey: 'ak', prodSecret: 'ps' }, 'stored');
+    assert.deepEqual(captured, { hmacAccessKey: 'ak', prodSecret: 'ps' });
+    assert.equal(extended, 0);
+    assert.equal(adapter.config.hmacAccessKey, 'ak');
+});
