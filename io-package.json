@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.52",
+    "version": "0.1.53",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.53": {
+        "en": "Secrets backup with direct download, restructured settings (APKs/Energy tabs), robust Python venv handling.",
+        "de": "Secrets-Backup mit Direkt-Download, neu strukturierte Einstellungen (APKs-/Energy-Tabs), robustes Python-venv-Handling.",
+        "ru": "Резервная копия секретов с прямой загрузкой, реструктурированные настройки (вкладки APKs/Energy), надёжный venv Python.",
+        "pt": "Cópia de segredos com descarga direta, definições reestruturadas (separadores APKs/Energy), venv Python robusto.",
+        "nl": "Back-up van secrets met directe download, opnieuw ingedeelde instellingen (APKs/Energy-tabbladen), robuuste Python-venv.",
+        "fr": "Sauvegarde des secrets avec téléchargement direct, paramètres restructurés (onglets APKs/Energy), venv Python robuste.",
+        "it": "Backup dei segreti con download diretto, impostazioni ristrutturate (schede APKs/Energy), venv Python robusto.",
+        "es": "Copia de secretos con descarga directa, ajustes reestructurados (pestañas APKs/Energy), venv Python robusto.",
+        "pl": "Kopia sekretów z bezpośrednim pobieraniem, przebudowane ustawienia (zakładki APKs/Energy), solidny venv Pythona.",
+        "uk": "Резервна копія секретів із прямим завантаженням, реструктуровані налаштування (вкладки APKs/Energy), надійний venv Python.",
+        "zh-cn": "密钥备份直接下载，重组设置（APKs/Energy选项卡），稳健的Python虚拟环境。"
+      },
       "0.1.52": {
         "en": "APK upload straight from the browser, no host file transfer needed.",
         "de": "APK-Upload direkt aus dem Browser, kein Dateitransfer auf den Host nötig.",

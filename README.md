@@ -268,6 +268,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.53
+
+- Secrets backup with direct download and PC import, presence states, restructured Admin (APKs/Energy tabs), robust venv handling (auto re-exec into fresh venvs)
+
 ### 0.1.52
 
 - APK upload straight from the browser (no host file transfer needed)
