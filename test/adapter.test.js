@@ -173,6 +173,29 @@ print(json.dumps(payload))
     assert.equal(payload.windowsOpen, true);
     assert.equal(payload.doorOpen.doorOpenStatusPassenger, true);
     assert.equal(payload.doorOpen.trunkOpenStatus, false);
+    assert.equal(payload.isLocked, true);
+});
+
+test('bridge isLocked prefers explicit flag, falls back to locks then central', () => {
+    const run = status => {
+        const result = spawnSync(
+            PYTHON,
+            ['-c', `import importlib.util, json, pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+print(json.dumps(module.normalize_vehicle({'vin': 'V1'}, ${status}, {}, {})))`],
+            { cwd: path.join(__dirname, '..') },
+        );
+        assert.equal(result.status, 0, result.stderr.toString());
+        return JSON.parse(result.stdout.toString());
+    };
+    // Explicit flag wins over open doors.
+    assert.equal(run(`{"isLocked": False, "additionalVehicleStatus": {"drivingSafetyStatus": {"doorLockStatusDriver": 1}}}`).isLocked, false);
+    // Central locking alone locks.
+    assert.equal(run(`{"additionalVehicleStatus": {"drivingSafetyStatus": {"centralLockingStatus": "1"}}}`).isLocked, true);
+    // Nothing known stays unlocked, never crashes.
+    assert.equal(run(`{}`).isLocked, false);
 });
 
 test('ensureBaseObjects creates the root info and vehicles channels', async () => {
