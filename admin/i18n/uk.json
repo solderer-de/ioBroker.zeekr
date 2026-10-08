@@ -52,5 +52,7 @@
   "Older base APK (optional, e.g. app 3.0.x)": "Старий base APK (необов’язково, напр. застосунок 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Якщо поточний застосунок (напр. 3.1.0) приховує ключі, відсутні беруться з цієї старішої пари.",
   "Older arm64 APK (optional)": "Старий arm64 APK (необов’язково)",
-  "Second file of the older pair (contains the native libraries).": "Другий файл старішої пари (містить нативні бібліотеки)."
+  "Second file of the older pair (contains the native libraries).": "Другий файл старішої пари (містить нативні бібліотеки).",
+  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4.": "Збережені значення тут ніколи не показуються — ioBroker приховує захищені секрети з міркувань безпеки. Наявність видно у станах info.secretsPresent. Резервне копіювання та відновлення через «Upload APKs from this PC», розділ 4.",
+  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "Заповнюється автоматично. Вручну — лише якщо вилучення неможливе. VIN визначається автоматично після входу — ніколи не вводьте його тут. VIN Key і VIN IV — ключі шифрування, а не ваш VIN."
 }

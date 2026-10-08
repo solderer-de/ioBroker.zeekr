@@ -8,5 +8,6 @@ __pycache__/
 .tools/
 *.apk
 zeekr_secrets.json
+secrets-backup*.json
 .iobroker-data/
 .commitinfo

@@ -52,5 +52,7 @@
   "Older base APK (optional, e.g. app 3.0.x)": "Ältere base-APK (optional, z.B. App 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Falls die aktuelle App (z.B. 3.1.0) Keys verbirgt, werden fehlende aus diesem älteren Paar übernommen.",
   "Older arm64 APK (optional)": "Ältere arm64-APK (optional)",
-  "Second file of the older pair (contains the native libraries).": "Zweite Datei des älteren Paars (enthält die nativen Libraries)."
+  "Second file of the older pair (contains the native libraries).": "Zweite Datei des älteren Paars (enthält die nativen Libraries).",
+  "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4.": "Gespeicherte Werte werden hier nie angezeigt — ioBroker verbirgt geschützte Secrets aus Sicherheitsgründen. Die Anwesenheit ist als info.secretsPresent-States sichtbar. Sichern und Wiederherstellen über „Upload APKs from this PC“, Abschnitt 4.",
+  "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN.": "Wird automatisch befüllt. Nur manuell eintragen, wenn keine Extraktion möglich ist. Die VIN wird nach dem Login automatisch erkannt — hier nie eintragen. VIN Key und VIN IV sind Verschlüsselungs-Keys, nicht deine VIN."
 }

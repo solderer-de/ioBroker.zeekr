@@ -201,7 +201,8 @@
     "smartChargeEnabled": false,
     "smartChargeDeparture": "",
     "apkOldBasePath": "",
-    "apkOldArm64Path": ""
+    "apkOldArm64Path": "",
+    "secretsBackupPath": ""
   },
   "protectedNative": [
     "password",

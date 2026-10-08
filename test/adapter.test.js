@@ -4,6 +4,12 @@ const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 
 const { createDeviceBaseId, ZeekrAdapter, suggestRegionForCountry, getErrorHint } = require('../lib/adapter');
+const {
+    collectSecretBackup,
+    parseSecretBackup,
+    computeSecretsPresence,
+    SECRET_BACKUP_TYPE,
+} = require('../lib/adapter');
 
 // Windows runners provide `python`, not `python3`.
 const PYTHON = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
@@ -1186,4 +1192,57 @@ test('empty chargingState never writes objects as state values', async () => {
     assert.equal(state.val, '');
     const raw = await adapter.getStateAsync('vehicles.vin1.status.chargingStatusRaw');
     assert.equal(typeof raw.val, 'string');
+});
+
+test('collectSecretBackup gathers secrets and identity without values leaking elsewhere', () => {
+    const backup = collectSecretBackup({
+        username: 'user@example.com',
+        password: 's3cret',
+        hmacAccessKey: 'ak',
+        hmacSecretKey: '',
+        countryCode: 'DE',
+        pollingInterval: 300,
+    });
+    assert.equal(backup.type, SECRET_BACKUP_TYPE);
+    assert.deepEqual(backup.secrets, { password: 's3cret', hmacAccessKey: 'ak' });
+    assert.deepEqual(backup.identity, { username: 'user@example.com', countryCode: 'DE' });
+});
+
+test('parseSecretBackup validates type and drops unknown keys', () => {
+    const { secrets, identity } = parseSecretBackup({
+        type: SECRET_BACKUP_TYPE,
+        version: 1,
+        secrets: { password: 's3cret', evil: 'x', hmacAccessKey: '' },
+        identity: { username: 'user@example.com', other: 'y' },
+    });
+    assert.deepEqual(secrets, { password: 's3cret' });
+    assert.deepEqual(identity, { username: 'user@example.com' });
+    assert.throws(() => parseSecretBackup({ type: 'nope', secrets: {} }), /Not an iobroker.zeekr secrets backup/);
+    assert.throws(() => parseSecretBackup({ type: SECRET_BACKUP_TYPE, secrets: {} }), /no secrets/);
+    assert.throws(() => parseSecretBackup('junk'), /not a JSON object/);
+});
+
+test('computeSecretsPresence reports groups without values', () => {
+    assert.deepEqual(computeSecretsPresence({}), {
+        password: false,
+        hmac: false,
+        prodSecret: false,
+        passwordPublicKey: false,
+        vinKeys: false,
+    });
+    const presence = computeSecretsPresence({
+        password: 's3cret',
+        hmacAccessKey: 'ak',
+        hmacSecretKey: 'sk',
+        prodSecretCandidates: 'a,b',
+        vinKey: 'k',
+        vinIv: '',
+    });
+    assert.deepEqual(presence, {
+        password: true,
+        hmac: true,
+        prodSecret: true,
+        passwordPublicKey: false,
+        vinKeys: false,
+    });
 });

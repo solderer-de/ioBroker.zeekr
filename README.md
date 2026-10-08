@@ -113,6 +113,21 @@ If you already have a `zeekr_secrets.json` from the extractor, you can skip the 
 
 This removes the need to copy the six secrets manually into the admin page once the APKs or the JSON file are available on the host.
 
+### Secrets backup and restore
+
+Protected config values (`password`, HMAC keys, prod secret, VIN keys) are never shown in Admin — ioBroker hides them on purpose. Presence is visible without values:
+
+- states `zeekr.0.info.secretsPresent.*` (`true`/`false` per secret group),
+- the `Credentials:` line in the adapter log at startup.
+
+To secure the secrets outside ioBroker (migration, reinstall, safekeeping):
+
+1. Open the APK page (`Upload APKs from this PC`), section 4: **Export secrets backup**.
+2. The adapter writes `secrets-backup.json` (default: instance data folder, configurable via `secretsBackupPath`) with file mode `0600`. **The file is PLAINTEXT** — store it safely and delete it from the host when no longer needed.
+3. **Import secrets backup** reads the same file back (after an instance move, for example) and stores the values in the instance config. Restart the instance afterwards.
+
+The backup file is never committed (see `.gitignore`) and is never uploaded anywhere by the adapter.
+
 ## Configuration
 
 The adapter exposes the following configuration fields:
@@ -132,6 +147,7 @@ The adapter exposes the following configuration fields:
 - `autoExtractSecrets` (boolean)
 - `apkBasePath` / `apkArm64Path` (optional)
 - `secretsJsonPath` (optional)
+- `secretsBackupPath` (optional, empty = `secrets-backup.json` in the instance data folder)
 - `extractRegion`
 - `debug` (boolean)
 

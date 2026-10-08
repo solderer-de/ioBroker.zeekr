@@ -140,6 +140,15 @@
           "xl": 12,
           "text": "Filled in automatically. Only enter manually if extraction is impossible. Your VIN is detected automatically after login — never enter it here. VIN Key and VIN IV are encryption keys, not your VIN."
         },
+        "_presenceHint": {
+          "type": "staticText",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, section 4."
+        },
         "hmacAccessKey": {
           "type": "password",
           "xs": 12,
@@ -326,6 +335,40 @@
           "lg": 6,
           "xl": 6,
           "label": "Runtime JSON from Frida (app 3.x only)"
+        },
+        "secretsBackupPath": {
+          "type": "text",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": {
+            "en": "Secrets backup path (empty = auto)",
+            "de": "Secrets-Backup-Pfad (leer = automatisch)",
+            "ru": "Путь к резервной копии секретов (пусто = авто)",
+            "pt": "Caminho da cópia de segurança (vazio = auto)",
+            "nl": "Back-uppad voor secrets (leeg = auto)",
+            "fr": "Chemin de sauvegarde des secrets (vide = auto)",
+            "it": "Percorso backup segreti (vuoto = auto)",
+            "es": "Ruta de copia de seguridad (vacío = auto)",
+            "pl": "Ścieżka kopii zapasowej (pusto = auto)",
+            "uk": "Шлях до резервної копії секретів (порожньо = авто)",
+            "zh-cn": "密钥备份路径（空=自动）"
+          },
+          "help": {
+            "en": "Empty = secrets-backup.json in the instance data folder. Used by Export/Import on the APK page, section 4.",
+            "de": "Leer = secrets-backup.json im Instanz-Datenordner. Wird von Export/Import auf der APK-Seite, Abschnitt 4, verwendet.",
+            "ru": "Пусто = secrets-backup.json в папке данных инстанса. Используется экспортом/импортом на APK-странице, раздел 4.",
+            "pt": "Vazio = secrets-backup.json na pasta de dados. Usado por Exportar/Importar na página APK, secção 4.",
+            "nl": "Leeg = secrets-backup.json in de instancemap. Gebruikt door Exporteren/Importeren op de APK-pagina, sectie 4.",
+            "fr": "Vide = secrets-backup.json dans le dossier de données. Utilisé par Exporter/Importer sur la page APK, section 4.",
+            "it": "Vuoto = secrets-backup.json nella cartella dati. Usato da Esporta/Importa nella pagina APK, sezione 4.",
+            "es": "Vacío = secrets-backup.json en la carpeta de datos. Usado por Exportar/Importar en la página APK, sección 4.",
+            "pl": "Pusto = secrets-backup.json w folderze danych. Używane przez Eksport/Import na stronie APK, sekcja 4.",
+            "uk": "Порожньо = secrets-backup.json у папці даних. Використовується експортом/імпортом на APK-сторінці, розділ 4.",
+            "zh-cn": "空=实例数据文件夹中的secrets-backup.json。用于APK页面第4节的导出/导入。"
+          }
         },
         "pythonBinary": {
           "type": "text",

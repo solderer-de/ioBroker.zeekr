@@ -62,6 +62,11 @@
         <button id="testBtn" type="button">3. Test connection</button>
         <div class="status" id="testStatus"></div>
       </div>
+      <div class="row" id="backupRow" style="display:none">
+        <button id="exportBtn" type="button">4. Export secrets backup</button>
+        <button id="importBtn" type="button">5. Import secrets backup</button>
+        <div class="status" id="backupStatus"></div>
+      </div>
       <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>4. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
       <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
     </div>
@@ -252,6 +257,13 @@
         document.getElementById('testBtn').onclick = function () {
           runTest(instance);
         };
+        document.getElementById('backupRow').style.display = 'flex';
+        document.getElementById('exportBtn').onclick = function () {
+          runBackupExport(instance);
+        };
+        document.getElementById('importBtn').onclick = function () {
+          runBackupImport(instance);
+        };
       }
 
       function runTest(instance) {
@@ -272,6 +284,38 @@
             }
           })
           .catch(function (err) { setStatus('testStatus', 'Connection failed: ' + err.message, 'err'); })
+          .then(function () { btn.disabled = false; });
+      }
+
+      function runBackupExport(instance) {
+        var btn = document.getElementById('exportBtn');
+        btn.disabled = true;
+        setStatus('backupStatus', 'Exporting secrets backup…');
+        sendTo(instance, 'exportSecrets', {})
+          .then(function (res) {
+            setStatus(
+              'backupStatus',
+              'Backup written (' + res.secretCount + ' secrets): ' + res.path + ' — PLAINTEXT file, store it safely.',
+              'ok',
+            );
+          })
+          .catch(function (err) { setStatus('backupStatus', 'Export failed: ' + err.message, 'err'); })
+          .then(function () { btn.disabled = false; });
+      }
+
+      function runBackupImport(instance) {
+        var btn = document.getElementById('importBtn');
+        btn.disabled = true;
+        setStatus('backupStatus', 'Importing secrets backup…');
+        sendTo(instance, 'importSecrets', {})
+          .then(function (res) {
+            setStatus(
+              'backupStatus',
+              'Imported ' + res.secretCount + ' secrets from ' + res.path + '. Restart the instance to use them.',
+              'ok',
+            );
+          })
+          .catch(function (err) { setStatus('backupStatus', 'Import failed: ' + err.message, 'err'); })
           .then(function () { btn.disabled = false; });
       }
 
