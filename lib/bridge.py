@@ -410,6 +410,9 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     service_days = coerce_number(get_first(
         status_payload, vtm_payload, *nested_subs,
         keys=['daysToService', 'daysToNextService', 'nextServiceDays']))
+    repair_mode = get_first(
+        status_payload, vtm_payload, *nested_subs,
+        keys=['repairModeActive', 'repairMode'])
     trip_list = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else []
     trip_count = journey_payload.get('total') or journey_payload.get('count') or len(trip_list)
     try:
@@ -460,6 +463,7 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'maintenanceRaw': maintenance_raw,
         'distanceToService': service_distance,
         'daysToService': service_days,
+        'repairModeActive': coerce_bool(repair_mode),
         'tripCount': trip_count,
         'tripList': trip_list,
         'status': status_payload,

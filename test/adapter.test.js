@@ -111,7 +111,8 @@ payload = module.normalize_vehicle(
     {'vehicleName': 'Vehicle', 'vin': 'L6TZC2S57TN148853'},
     {'additionalVehicleStatus': {
         'maintenanceStatus': {'odometer': 32, 'tyreStatusDriver': 275, 'tyreStatusPassenger': 286, 'tyreStatusDriverRear': 282, 'tyreStatusPassengerRear': 282,
-                              'mainBatteryStatus': {'voltage': 14.325}, 'distanceToService': 32000, 'daysToService': 701},
+                              'mainBatteryStatus': {'voltage': 14.325}, 'distanceToService': 32000, 'daysToService': 701,
+                              'repairModeActive': True},
         'climateStatus': {'interiorTemp': 15.3, 'exteriorTemp': 9.1}}},
     {},
     {}
@@ -133,6 +134,7 @@ print(json.dumps(payload))
     assert.equal(payload.battery12v, 14.325);
     assert.equal(payload.distanceToService, 32000);
     assert.equal(payload.daysToService, 701);
+    assert.equal(payload.repairModeActive, true);
 });
 
 test('bridge derives door/window booleans from safety fields', () => {
@@ -180,20 +182,30 @@ test('bridge isLocked prefers explicit flag, falls back to locks then central', 
     const run = status => {
         const result = spawnSync(
             PYTHON,
-            ['-c', `import importlib.util, json, pathlib
+            [
+                '-c',
+                `import importlib.util, json, pathlib
 spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
-print(json.dumps(module.normalize_vehicle({'vin': 'V1'}, ${status}, {}, {})))`],
+print(json.dumps(module.normalize_vehicle({'vin': 'V1'}, ${status}, {}, {})))`,
+            ],
             { cwd: path.join(__dirname, '..') },
         );
         assert.equal(result.status, 0, result.stderr.toString());
         return JSON.parse(result.stdout.toString());
     };
     // Explicit flag wins over open doors.
-    assert.equal(run(`{"isLocked": False, "additionalVehicleStatus": {"drivingSafetyStatus": {"doorLockStatusDriver": 1}}}`).isLocked, false);
+    assert.equal(
+        run(`{"isLocked": False, "additionalVehicleStatus": {"drivingSafetyStatus": {"doorLockStatusDriver": 1}}}`)
+            .isLocked,
+        false,
+    );
     // Central locking alone locks.
-    assert.equal(run(`{"additionalVehicleStatus": {"drivingSafetyStatus": {"centralLockingStatus": "1"}}}`).isLocked, true);
+    assert.equal(
+        run(`{"additionalVehicleStatus": {"drivingSafetyStatus": {"centralLockingStatus": "1"}}}`).isLocked,
+        true,
+    );
     // Nothing known stays unlocked, never crashes.
     assert.equal(run(`{}`).isLocked, false);
 });
