@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.53",
+    "version": "0.1.54",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.54": {
+        "en": "Secrets survive reinstalls (encrypted storage, self-healing backup), EU battery/range mapping, extraction sources visible.",
+        "de": "Secrets überleben Reinstalls (verschlüsselt, selbstheilendes Backup), EU-Batterie-/Reichweiten-Mapping, sichtbare Extraktions-Quellen.",
+        "ru": "Секреты переживают переустановки (шифрование, самовосстановление), EU-маппинг батареи/запаса хода, видимые источники.",
+        "pt": "Segredos sobrevivem a reinstalações (cifrados, auto-reposição), mapeamento UE de bateria/autonomia, fontes visíveis.",
+        "nl": "Secrets overleven herinstallaties (versleuteld, zelfherstellend), EU-mapping accu/bereik, zichtbare bronnen.",
+        "fr": "Secrets persistants (chiffrés, auto-réparation), mapping UE batterie/autonomie, sources visibles.",
+        "it": "Segreti persistenti (cifrati, auto-ripristino), mapping UE batteria/autonomia, sorgenti visibili.",
+        "es": "Secretos persistentes (cifrados, autorreparación), mapeo UE batería/autonomía, fuentes visibles.",
+        "pl": "Sekrety przetrwają reinstalacje (szyfrowanie, samonaprawa), mapowanie UE baterii/zasięgu, widoczne źródła.",
+        "uk": "Секрети переживають перевстановлення (шифрування, самовідновлення), EU-меппінг батареї/запасу ходу, видимі джерела.",
+        "zh-cn": "密钥在重装后保留（加密、自愈备份），欧盟电池/续航映射，可见提取来源。"
+      },
       "0.1.53": {
         "en": "Secrets backup with direct download, restructured settings (APKs/Energy tabs), robust Python venv handling.",
         "de": "Secrets-Backup mit Direkt-Download, neu strukturierte Einstellungen (APKs-/Energy-Tabs), robustes Python-venv-Handling.",
