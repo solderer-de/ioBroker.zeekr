@@ -111,7 +111,7 @@ payload = module.normalize_vehicle(
     {'vehicleName': 'Vehicle', 'vin': 'L6TZC2S57TN148853'},
     {'additionalVehicleStatus': {
         'maintenanceStatus': {'odometer': 32, 'tyreStatusDriver': 275, 'tyreStatusPassenger': 286, 'tyreStatusDriverRear': 282, 'tyreStatusPassengerRear': 282,
-                              'mainBatteryStatus': {'voltage': 14.325}},
+                              'mainBatteryStatus': {'voltage': 14.325}, 'distanceToService': 32000, 'daysToService': 701},
         'climateStatus': {'interiorTemp': 15.3, 'exteriorTemp': 9.1}}},
     {},
     {}
@@ -131,6 +131,8 @@ print(json.dumps(payload))
     assert.equal(payload.tirePressureRr, 2.82);
     assert.equal(payload.temperature, 15.3);
     assert.equal(payload.battery12v, 14.325);
+    assert.equal(payload.distanceToService, 32000);
+    assert.equal(payload.daysToService, 701);
 });
 
 test('bridge derives door/window booleans from safety fields', () => {

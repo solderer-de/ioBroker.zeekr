@@ -393,6 +393,14 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         maintenance_raw = {}
     if not isinstance(maintenance, str):
         maintenance = str(maintenance) if maintenance is not None else ''
+    # Service interval: plain numbers with known units (km / days). Fluid
+    # levels and warning enums stay in the raw layer (unknown scales).
+    service_distance = coerce_number(get_first(
+        status_payload, vtm_payload, *nested_subs,
+        keys=['distanceToService', 'distanceToNextService', 'serviceDistanceKm', 'nextServiceKm']))
+    service_days = coerce_number(get_first(
+        status_payload, vtm_payload, *nested_subs,
+        keys=['daysToService', 'daysToNextService', 'nextServiceDays']))
     trip_list = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else []
     trip_count = journey_payload.get('total') or journey_payload.get('count') or len(trip_list)
     try:
@@ -441,6 +449,8 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'engineStatus': engine_status,
         'maintenanceStatus': maintenance,
         'maintenanceRaw': maintenance_raw,
+        'distanceToService': service_distance,
+        'daysToService': service_days,
         'tripCount': trip_count,
         'tripList': trip_list,
         'status': status_payload,
