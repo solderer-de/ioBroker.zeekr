@@ -123,8 +123,10 @@ Protected config values (`password`, HMAC keys, prod secret, VIN keys) are never
 To secure the secrets outside ioBroker (migration, reinstall, safekeeping):
 
 1. Open the APK page (`Upload APKs from this PC`), section 4: **Export secrets backup**.
-2. The adapter writes `secrets-backup.json` (default: instance data folder, configurable via `secretsBackupPath`) with file mode `0600`. **The file is PLAINTEXT** — store it safely and delete it from the host when no longer needed.
-3. **Import secrets backup** reads the same file back (after an instance move, for example) and stores the values in the instance config. Restart the instance afterwards.
+2. The backup downloads directly to your PC as `zeekr-secrets-backup.json` and is additionally stored on the host (default: `secrets-backup.json` in the instance data folder, e.g. `/opt/iobroker/iobroker-data/zeekr.0/`, configurable via `secretsBackupPath`). **The file is PLAINTEXT** — store it safely and delete it from the host when no longer needed.
+3. **Import secrets backup** reads the backup back: pick the file on your PC (no host access needed) or leave the picker empty to use the host file (e.g. after an instance move). Restart the instance afterwards.
+
+Uploaded APKs live in the same instance data folder (`apks/` subdirectory) and survive adapter updates and restarts (they used to sit in the container temp dir — if yours are missing after this change, upload once more).
 
 The backup file is never committed (see `.gitignore`) and is never uploaded anywhere by the adapter.
 
