@@ -95,6 +95,42 @@ print(json.dumps(payload))
     assert.ok(!('raw' in payload), 'no duplicated raw container');
 });
 
+test('bridge normalization reads odometer, tyre kPa and cabin temp', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle(
+    {'vehicleName': 'Vehicle', 'vin': 'L6TZC2S57TN148853'},
+    {'additionalVehicleStatus': {
+        'maintenanceStatus': {'odometer': 32, 'tyreStatusDriver': 275, 'tyreStatusPassenger': 286, 'tyreStatusDriverRear': 282, 'tyreStatusPassengerRear': 282},
+        'climateStatus': {'interiorTemp': 15.3, 'exteriorTemp': 9.1}}},
+    {},
+    {}
+)
+print(json.dumps(payload))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+
+    assert.equal(result.status, 0, result.stderr.toString());
+    const payload = JSON.parse(result.stdout.toString());
+    assert.equal(payload.odometerKm, 32);
+    assert.equal(payload.tirePressureFl, 2.75);
+    assert.equal(payload.tirePressureFr, 2.86);
+    assert.equal(payload.tirePressureRl, 2.82);
+    assert.equal(payload.tirePressureRr, 2.82);
+    assert.equal(payload.temperature, 15.3);
+});
+
 test('ensureBaseObjects creates the root info and vehicles channels', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     await adapter.ensureBaseObjects();

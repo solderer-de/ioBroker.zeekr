@@ -246,8 +246,8 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
                                        keys=['rangeKm', 'range_km', 'drivingRange', 'remainingRange',
                                              'distanceToEmpty', 'distanceToEmptyOnBatteryOnly',
                                              'distanceToEmptyOnBattery', 'remainingMileage']))
-    odometer = coerce_number(get_first(vehicle_dict, status_payload,
-                                       keys=['odometerKm', 'odometer_km', 'mileage', 'odometerValue']))
+    odometer = coerce_number(get_first(vehicle_dict, status_payload, *nested_subs,
+                                       keys=['odometerKm', 'odometer_km', 'mileage', 'odometerValue', 'odometer']))
     charge_power = coerce_number(get_first(charging_payload, status_payload,
                                            keys=['chargePower', 'chargingPower', 'chargingPowerKw']))
     current_speed = coerce_number(get_first(vehicle_dict, status_payload, *nested_subs, basic_payload,
@@ -256,8 +256,9 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
                            keys=['pluggedIn', 'isPluggedIn', 'chargingCableConnected'])
     charging = get_first(charging_payload, status_payload,
                          keys=['isCharging', 'is_charging', 'charging'])
-    temperature = coerce_number(get_first(status_payload, vehicle_dict,
-                                          keys=['insideTemperature', 'inside_temp', 'cabinTemperature', 'temperature']))
+    temperature = coerce_number(get_first(status_payload, vehicle_dict, *nested_subs,
+                                          keys=['insideTemperature', 'inside_temp', 'cabinTemperature',
+                                                'temperature', 'interiorTemp', 'exteriorTemp']))
     charging_state = get_first(charging_payload, status_payload,
                                keys=['chargingState', 'chargeState', 'chargeStatus'])
     if not isinstance(charging_state, str):
@@ -295,10 +296,19 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     if charging_limit is not None and charging_limit > 100:
         # API liefert SoC-Limit mal 10 (z.B. 800 -> 80 %).
         charging_limit = charging_limit / 10.0
-    tire_fl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFl', 'tyrePressureFl', 'flTirePressure', 'tireFl']))
-    tire_fr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFr', 'tyrePressureFr', 'frTirePressure', 'tireFr']))
-    tire_rl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRl', 'tyrePressureRl', 'rlTirePressure', 'tireRl']))
-    tire_rr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRr', 'tyrePressureRr', 'rrTirePressure', 'tireRr']))
+    def _tire_pressure(primary_keys, kpa_key):
+        direct = coerce_number(get_first(vtm_payload, status_payload, keys=primary_keys))
+        if direct is not None:
+            return direct
+        # EU overseas reports tyre pressure in kPa (e.g. 275) under tyreStatus*,
+        # states expect bar -> convert only this source.
+        kpa = coerce_number(get_first(vtm_payload, status_payload, *nested_subs, keys=[kpa_key]))
+        return kpa / 100.0 if kpa is not None else None
+
+    tire_fl = _tire_pressure(['tirePressureFl', 'tyrePressureFl', 'flTirePressure', 'tireFl'], 'tyreStatusDriver')
+    tire_fr = _tire_pressure(['tirePressureFr', 'tyrePressureFr', 'frTirePressure', 'tireFr'], 'tyreStatusPassenger')
+    tire_rl = _tire_pressure(['tirePressureRl', 'tyrePressureRl', 'rlTirePressure', 'tireRl'], 'tyreStatusDriverRear')
+    tire_rr = _tire_pressure(['tirePressureRr', 'tyrePressureRr', 'rrTirePressure', 'tireRr'], 'tyreStatusPassengerRear')
     latitude = coerce_number(get_first(vtm_payload, status_payload, position_payload, vehicle_dict,
                                          *nested_subs, keys=['latitude', 'lat', 'vehicleLat']))
     longitude = coerce_number(get_first(vtm_payload, status_payload, position_payload, vehicle_dict,
