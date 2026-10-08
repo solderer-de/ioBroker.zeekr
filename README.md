@@ -272,6 +272,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.56
+
+- More curated states: odometer, tyre pressure (kPa to bar) and temperature, 12V battery, doors/windows/trunk/hood, service distance/days, repair mode, derived isLocked; raw duplication removed from object tree
+
 ### 0.1.55
 
 - Raw layer: every vehicle value as its own state under `all.*` (objects become channels, arrays JSON)
