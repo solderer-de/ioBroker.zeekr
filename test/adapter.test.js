@@ -92,6 +92,7 @@ print(json.dumps(payload))
     assert.equal(payload.latitude, 51.3429106);
     assert.equal(payload.longitude, 12.3867253);
     assert.equal(payload.engineStatus, 'engine-off');
+    assert.ok(!('raw' in payload), 'no duplicated raw container');
 });
 
 test('ensureBaseObjects creates the root info and vehicles channels', async () => {

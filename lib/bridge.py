@@ -215,17 +215,6 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     charge_plan_payload = charge_plan if isinstance(charge_plan, dict) else {}
     travel_plan_payload = travel_plan if isinstance(travel_plan, dict) else {}
     journey_payload = journey_summary if isinstance(journey_summary, dict) else {}
-    combined_payload = {
-        'vehicle': vehicle_dict,
-        'status': status_payload,
-        'charging': charging_payload,
-        'remote': remote_payload,
-        'vtm': vtm_payload,
-        'limit': limit_payload,
-        'chargePlan': charge_plan_payload,
-        'travelPlan': travel_plan_payload,
-        'journey': journey_payload,
-    }
 
     # additionalVehicleStatus (drivingSafetyStatus, electricVehicleStatus,
     # climateStatus) liegt teils eine Ebene tiefer -> als Fallback mit einbeziehen.
@@ -415,7 +404,6 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'chargePlanRaw': charge_plan_payload,
         'travelPlanRaw': travel_plan_payload,
         'journeySummary': journey_payload,
-        'raw': combined_payload,
     }
 
 
