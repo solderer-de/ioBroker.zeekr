@@ -88,6 +88,8 @@ On app 3.1.0 and newer, static extraction is severely limited: the HMAC keys can
 
 ### Runtime keys via Frida (step by step, one-time job)
 
+> **Not needed for app 2.x:** overseas 2.x APKs (e.g. 2.9.9) still contain all keys statically — upload the pair and you are done, no Frida, no root, no second device. The steps below are only for app 3.1.0+ where static extraction cannot recover everything.
+
 `prod_secret`, `vin_key` and `vin_iv` only exist decrypted inside the running app (iWall/`libiwallca.so`), so no static tool can read them. You dump them once from a rooted device; afterwards the rooted device is never needed again. Based on [mescon/zeekr-7x-home-assistant](https://github.com/mescon/zeekr-7x-home-assistant) (QUICKSTART + EMULATOR guides).
 
 **You need:** a rooted arm64 Android (cheap second-hand phone with Magisk, or a rooted emulator — see below), a PC with Python + `adb`, and a second Zeekr account with the car shared to it (create/share it in your normal app; never use your daily account for extraction).
