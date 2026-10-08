@@ -8,6 +8,7 @@ const {
     collectSecretBackup,
     parseSecretBackup,
     computeSecretsPresence,
+    resolveInstanceDataDir,
     SECRET_BACKUP_TYPE,
 } = require('../lib/adapter');
 
@@ -1245,4 +1246,49 @@ test('computeSecretsPresence reports groups without values', () => {
         passwordPublicKey: false,
         vinKeys: false,
     });
+});
+
+test('resolveInstanceDataDir prefers the real instance dir, rejects junk', () => {
+    const path = require('node:path');
+    const fakeLoader = () => ({
+        getAbsoluteInstanceDataDir: namespace => path.join('/data', namespace),
+    });
+    const dir = resolveInstanceDataDir('zeekr.0', fakeLoader);
+    assert.ok(dir && path.isAbsolute(dir), `expected absolute dir, got ${dir}`);
+    assert.ok(dir.endsWith('zeekr.0'), `expected namespace suffix, got ${dir}`);
+    assert.equal(resolveInstanceDataDir(), null);
+    assert.equal(resolveInstanceDataDir(''), null);
+    assert.equal(resolveInstanceDataDir(123), null);
+    assert.equal(
+        resolveInstanceDataDir('zeekr.0', () => {
+            throw new Error('no core');
+        }),
+        null,
+    );
+});
+
+test('applyBackupData restores secrets into config and presence states', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = { username: '', password: '', countryCode: 'AU' };
+    let written = null;
+    adapter.getObjectAsync = async () => ({ native: { username: '', password: '' } });
+    adapter.extendObjectAsync = async (id, obj) => {
+        written = obj.native;
+    };
+    const count = await adapter.applyBackupData(
+        parseSecretBackup({
+            type: SECRET_BACKUP_TYPE,
+            version: 1,
+            secrets: { password: 's3cret', hmacAccessKey: 'ak', hmacSecretKey: 'sk' },
+            identity: { username: 'user@example.com', countryCode: 'DE' },
+        }),
+    );
+    assert.equal(count, 3);
+    assert.equal(adapter.config.password, 's3cret');
+    assert.equal(adapter.config.countryCode, 'DE');
+    assert.equal(written.hmacAccessKey, 'ak');
+    const hmac = await adapter.getStateAsync('info.secretsPresent.hmac');
+    assert.equal(hmac.val, true);
+    const vin = await adapter.getStateAsync('info.secretsPresent.vinKeys');
+    assert.equal(vin.val, false);
 });

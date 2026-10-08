@@ -65,8 +65,10 @@
       <div class="row" id="backupRow">
         <button id="exportBtn" type="button" disabled>4. Export secrets backup</button>
         <button id="importBtn" type="button" disabled>5. Import secrets backup</button>
+        <input id="backupFile" type="file" accept=".json,application/json" />
         <div class="status" id="backupStatus"></div>
       </div>
+      <div class="hint">Export downloads the backup to this PC and stores it on the host. Import uses the selected file if you chose one, otherwise the host file. After import, restart the instance.</div>
       <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>4. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
       <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
     </div>
@@ -317,15 +319,29 @@
           .then(function () { btn.disabled = false; });
       }
 
+      function downloadJson(filename, obj) {
+        var blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          URL.revokeObjectURL(a.href);
+          a.remove();
+        }, 1000);
+      }
+
       function runBackupExport(instance) {
         var btn = document.getElementById('exportBtn');
         btn.disabled = true;
         setStatus('backupStatus', 'Exporting secrets backup…');
         sendTo(instance, 'exportSecrets', {})
           .then(function (res) {
+            downloadJson('zeekr-secrets-backup.json', res.backup);
             setStatus(
               'backupStatus',
-              'Backup written (' + res.secretCount + ' secrets): ' + res.path + ' — PLAINTEXT file, store it safely.',
+              'Backup downloaded (' + res.secretCount + ' secrets) and stored on host: ' + res.path,
               'ok',
             );
           })
@@ -336,6 +352,38 @@
       function runBackupImport(instance) {
         var btn = document.getElementById('importBtn');
         btn.disabled = true;
+        var picked = document.getElementById('backupFile').files[0];
+        if (picked) {
+          setStatus('backupStatus', 'Importing backup from this PC…');
+          var reader = new FileReader();
+          reader.onerror = function () {
+            setStatus('backupStatus', 'Import failed: cannot read file', 'err');
+            btn.disabled = false;
+          };
+          reader.onload = function () {
+            var data = null;
+            try {
+              data = JSON.parse(String(reader.result));
+            } catch (e) {
+              setStatus('backupStatus', 'Import failed: not valid JSON', 'err');
+              btn.disabled = false;
+              return;
+            }
+            sendTo(instance, 'importSecretsData', { backup: data })
+              .then(function (res) {
+                setStatus(
+                  'backupStatus',
+                  'Imported ' + res.secretCount + ' secrets from this PC. Restart the instance to use them.',
+                  'ok',
+                );
+                refreshBackupButtons(instance);
+              })
+              .catch(function (err) { setStatus('backupStatus', 'Import failed: ' + err.message, 'err'); })
+              .then(function () { btn.disabled = false; });
+          };
+          reader.readAsText(picked);
+          return;
+        }
         setStatus('backupStatus', 'Importing secrets backup…');
         sendTo(instance, 'importSecrets', {})
           .then(function (res) {
