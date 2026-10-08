@@ -63,8 +63,8 @@
         <div class="status" id="testStatus"></div>
       </div>
       <div class="row" id="backupRow">
-        <button id="exportBtn" type="button">4. Export secrets backup</button>
-        <button id="importBtn" type="button">5. Import secrets backup</button>
+        <button id="exportBtn" type="button" disabled>4. Export secrets backup</button>
+        <button id="importBtn" type="button" disabled>5. Import secrets backup</button>
         <div class="status" id="backupStatus"></div>
       </div>
       <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>4. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
@@ -185,6 +185,7 @@
         socket.on('connect', function () {
           document.getElementById('uploadBtn').disabled = false;
           setStatus('baseApkStatus', 'Connected. Select both APK files, then upload.');
+          refreshBackupButtons(currentInstance());
         });
         socket.on('connect_error', function () {
           setStatus('baseApkStatus', 'Connection failed. Are you logged in to ioBroker?', 'err');
@@ -264,6 +265,30 @@
         return (el && el.value) || 'zeekr.0';
       }
 
+      function refreshBackupButtons(instance) {
+        var exportBtn = document.getElementById('exportBtn');
+        var importBtn = document.getElementById('importBtn');
+        exportBtn.disabled = true;
+        importBtn.disabled = true;
+        setStatus('backupStatus', 'Checking stored keys…');
+        sendTo(instance, 'getSecretsPresence', {})
+          .then(function (res) {
+            var count = res && typeof res.secretCount === 'number' ? res.secretCount : 0;
+            var where = res && res.backupPath ? ' Backup file: ' + res.backupPath + '.' : '';
+            if (count > 0) {
+              exportBtn.disabled = false;
+              setStatus('backupStatus', count + ' secret(s) stored — ready to export.' + where);
+            } else {
+              setStatus('backupStatus', 'No keys stored yet — run extraction first.' + where);
+            }
+            importBtn.disabled = false;
+          })
+          .catch(function (err) {
+            setStatus('backupStatus', 'Presence check failed: ' + err.message, 'err');
+            importBtn.disabled = false;
+          });
+      }
+
       document.getElementById('exportBtn').onclick = function () {
         runBackupExport(currentInstance());
       };
@@ -319,6 +344,7 @@
               'Imported ' + res.secretCount + ' secrets from ' + res.path + '. Restart the instance to use them.',
               'ok',
             );
+            refreshBackupButtons(instance);
           })
           .catch(function (err) { setStatus('backupStatus', 'Import failed: ' + err.message, 'err'); })
           .then(function () { btn.disabled = false; });
