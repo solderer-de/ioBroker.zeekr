@@ -1365,6 +1365,28 @@ test('saveBackupFileQuiet and restoreMissingSecretsFromBackup roundtrip gaps', a
     assert.equal(await empty.restoreMissingSecretsFromBackup(), 0);
 });
 
+test('syncAllVehicleStates exposes every leaf, objects become channels', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    await adapter.syncAllVehicleStates('vehicles.car1', {
+        batteryLevel: 97,
+        isCharging: false,
+        name: 'Car',
+        chargingState: { chargerState: '0', nested: { deep: 1 } },
+        tripList: [{ distance: 12 }],
+        missing: null,
+    });
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.batteryLevel')).val, 97);
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.isCharging')).val, false);
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.name')).val, 'Car');
+    // Objects must never become state values (state-DB crash class).
+    assert.equal(await adapter.getStateAsync('vehicles.car1.all.chargingState'), null);
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.chargingState.chargerState')).val, '0');
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.chargingState.nested.deep')).val, 1);
+    // Arrays become JSON strings, nulls stay visible.
+    assert.match((await adapter.getStateAsync('vehicles.car1.all.tripList')).val, /"distance":12/);
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.missing')).val, null);
+});
+
 test('writeSecretsToObject prefers updateConfig (encrypted server roundtrip)', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     adapter.config = {};
