@@ -130,6 +130,8 @@ Uploaded APKs live in the same instance data folder (`apks/` subdirectory) and s
 
 The backup file is never committed (see `.gitignore`) and is never uploaded anywhere by the adapter.
 
+The adapter additionally auto-saves the backup file on every start (whenever secrets are present) and refills gaps from it: `iobroker url` reinstalls rewrite the instance object and drop adapter-stored secrets (visible as `from: system.host.iobroker.cli` with empty values) — the next start restores them automatically. Only empty fields are ever refilled; to clear secrets permanently, delete the backup file too.
+
 ## Configuration
 
 The adapter exposes the following configuration fields:
