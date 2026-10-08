@@ -1292,3 +1292,41 @@ test('applyBackupData restores secrets into config and presence states', async (
     const vin = await adapter.getStateAsync('info.secretsPresent.vinKeys');
     assert.equal(vin.val, false);
 });
+
+test('saveBackupFileQuiet and restoreMissingSecretsFromBackup roundtrip gaps', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const target = require('node:path').join(
+        fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-backup-')),
+        'secrets-backup.json',
+    );
+    const makeAdapter = config => {
+        const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+        adapter.config = { ...config, secretsBackupPath: target };
+        adapter.getObjectAsync = async () => ({ native: {} });
+        adapter.extendObjectAsync = async () => {};
+        return adapter;
+    };
+    const full = makeAdapter({
+        username: 'user@example.com',
+        password: 's3cret',
+        countryCode: 'DE',
+        hmacAccessKey: 'ak',
+        hmacSecretKey: 'sk',
+        prodSecret: 'ps',
+    });
+    assert.equal(await full.saveBackupFileQuiet(), 4);
+    assert.ok(fs.existsSync(target));
+    const wiped = makeAdapter({ username: '', password: '', countryCode: 'AU' });
+    assert.equal(await wiped.restoreMissingSecretsFromBackup(), 5);
+    assert.equal(wiped.config.password, 's3cret');
+    assert.equal(wiped.config.hmacAccessKey, 'ak');
+    assert.equal(wiped.config.countryCode, 'AU');
+    // Nothing missing anymore — second run restores nothing.
+    assert.equal(await wiped.restoreMissingSecretsFromBackup(), 0);
+    // Empty config + no file → 0, no crash.
+    fs.rmSync(target);
+    const empty = makeAdapter({});
+    assert.equal(await empty.saveBackupFileQuiet(), 0);
+    assert.equal(await empty.restoreMissingSecretsFromBackup(), 0);
+});
