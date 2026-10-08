@@ -239,19 +239,29 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
             for sub in add.values():
                 if isinstance(sub, dict) and sub not in nested_subs:
                     nested_subs.append(sub)
+    # basicVehicleStatus (speed, engineStatus) und position (lat/lon) liegen
+    # ebenfalls verschachtelt (EU/Overseas-API) — explizit als Quelle.
+    basic_payload = status_payload.get('basicVehicleStatus')
+    if not isinstance(basic_payload, dict):
+        basic_payload = {}
+    position_payload = basic_payload.get('position')
+    if not isinstance(position_payload, dict):
+        position_payload = {}
     name = get_first(vehicle_dict, status_payload, charging_payload, remote_payload,
                      keys=['vehicleName', 'displayName', 'name', 'modelName'], default='Vehicle')
     vin = get_first(vehicle_dict, status_payload,
                     keys=['vin', 'VIN', 'vehicleId', 'vehicle_id'], default='') or ''
-    battery = coerce_number(get_first(vehicle_dict, status_payload, charging_payload,
-                                      keys=['batteryLevel', 'battery_level', 'stateOfCharge', 'soc']))
-    range_km = coerce_number(get_first(vehicle_dict, status_payload,
-                                       keys=['rangeKm', 'range_km', 'drivingRange', 'remainingRange', 'distanceToEmpty']))
+    battery = coerce_number(get_first(vehicle_dict, status_payload, charging_payload, *nested_subs,
+                                      keys=['batteryLevel', 'battery_level', 'stateOfCharge', 'soc', 'chargeLevel']))
+    range_km = coerce_number(get_first(vehicle_dict, status_payload, *nested_subs,
+                                       keys=['rangeKm', 'range_km', 'drivingRange', 'remainingRange',
+                                             'distanceToEmpty', 'distanceToEmptyOnBatteryOnly',
+                                             'distanceToEmptyOnBattery', 'remainingMileage']))
     odometer = coerce_number(get_first(vehicle_dict, status_payload,
                                        keys=['odometerKm', 'odometer_km', 'mileage', 'odometerValue']))
     charge_power = coerce_number(get_first(charging_payload, status_payload,
                                            keys=['chargePower', 'chargingPower', 'chargingPowerKw']))
-    current_speed = coerce_number(get_first(vehicle_dict, status_payload,
+    current_speed = coerce_number(get_first(vehicle_dict, status_payload, *nested_subs, basic_payload,
                                             keys=['currentSpeed', 'vehicleSpeed', 'travelSpeed', 'speed']))
     plugged_in = get_first(charging_payload, status_payload, vehicle_dict,
                            keys=['pluggedIn', 'isPluggedIn', 'chargingCableConnected'])
@@ -300,8 +310,10 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     tire_fr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureFr', 'tyrePressureFr', 'frTirePressure', 'tireFr']))
     tire_rl = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRl', 'tyrePressureRl', 'rlTirePressure', 'tireRl']))
     tire_rr = coerce_number(get_first(vtm_payload, status_payload, keys=['tirePressureRr', 'tyrePressureRr', 'rrTirePressure', 'tireRr']))
-    latitude = coerce_number(get_first(vtm_payload, status_payload, vehicle_dict, keys=['latitude', 'lat', 'vehicleLat']))
-    longitude = coerce_number(get_first(vtm_payload, status_payload, vehicle_dict, keys=['longitude', 'lon', 'lng', 'vehicleLon']))
+    latitude = coerce_number(get_first(vtm_payload, status_payload, position_payload, vehicle_dict,
+                                         *nested_subs, keys=['latitude', 'lat', 'vehicleLat']))
+    longitude = coerce_number(get_first(vtm_payload, status_payload, position_payload, vehicle_dict,
+                                        *nested_subs, keys=['longitude', 'lon', 'lng', 'vehicleLon']))
     battery_12v = coerce_number(get_first(vtm_payload, status_payload, keys=['battery12v', 'voltage12v', 'lowVoltageBattery', 'auxBattery']))
     last_trip = coerce_number(get_first(journey_payload, keys=['lastTripDistanceKm', 'lastTripDistance', 'lastDistance']))
     if last_trip is None:
@@ -338,7 +350,7 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     traveled_distance = coerce_number(get_first(
         status_payload, vtm_payload, vehicle_dict, *nested_subs,
         keys=['traveledDistance', 'tripDistance', 'totalTripDistance']))
-    engine_status = get_first(status_payload, vtm_payload, *nested_subs,
+    engine_status = get_first(status_payload, vtm_payload, *nested_subs, basic_payload,
                               keys=['engineStatus', 'runningStatus'])
     if not isinstance(engine_status, str):
         engine_status = str(engine_status) if engine_status is not None else ''

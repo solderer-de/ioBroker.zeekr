@@ -60,6 +60,40 @@ print(json.dumps(payload))
     assert.equal(payload.lockState, 'locked');
 });
 
+test('bridge normalization reads EU overseas nested fields', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle(
+    {'vehicleName': 'Vehicle', 'vin': 'L6TZC2S57TN148853'},
+    {'basicVehicleStatus': {'position': {'latitude': '51.3429106', 'longitude': '12.3867253'}, 'speed': 0, 'engineStatus': 'engine-off'},
+     'additionalVehicleStatus': {'electricVehicleStatus': {'chargeLevel': '97.0', 'distanceToEmptyOnBatteryOnly': '648', 'isCharging': False}}},
+    {},
+    {}
+)
+print(json.dumps(payload))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+
+    assert.equal(result.status, 0, result.stderr.toString());
+    const payload = JSON.parse(result.stdout.toString());
+    assert.equal(payload.batteryLevel, 97);
+    assert.equal(payload.rangeKm, 648);
+    assert.equal(payload.latitude, 51.3429106);
+    assert.equal(payload.longitude, 12.3867253);
+    assert.equal(payload.engineStatus, 'engine-off');
+});
+
 test('ensureBaseObjects creates the root info and vehicles channels', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     await adapter.ensureBaseObjects();
