@@ -251,6 +251,19 @@
           "xl": 12,
           "text": "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5."
         },
+        "_backupLink": {
+          "type": "staticLink",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "label": "Secrets backup & restore (opens APK page)",
+          "href": "/adapter/zeekr/upload.html",
+          "target": "_blank",
+          "button": true,
+          "variant": "outlined"
+        },
         "hmacAccessKey": {
           "type": "password",
           "xs": 12,

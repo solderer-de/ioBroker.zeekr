@@ -62,5 +62,6 @@
   "Warning: the connection test shows green without a real account. Turn off for real use.": "Uwaga: test połączenia jest zielony bez prawdziwego konta. Wyłącz do normalnego użytku.",
   "Charging costs and smart charging. See README section “Energy, costs and smart charging”.": "Koszty ładowania i inteligentne ładowanie. Patrz README „Energy, costs and smart charging”.",
   "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5.": "Zapisanych wartości nigdy tu nie pokazujemy — ioBroker ze względów bezpieczeństwa ukrywa chronione sekrety. Obecność widać w stanach info.secretsPresent. Kopia i przywrócenie przez „Upload APKs from this PC”, sekcje 4 i 5.",
-  "Upload APKs from this PC (no file transfer needed)": "Prześlij APK z tego komputera (bez przesyłania plików)"
+  "Upload APKs from this PC (no file transfer needed)": "Prześlij APK z tego komputera (bez przesyłania plików)",
+  "Secrets backup & restore (opens APK page)": "Kopia i przywracanie (otwiera stronę APK)"
 }
