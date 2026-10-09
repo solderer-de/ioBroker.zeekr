@@ -1487,6 +1487,32 @@ test('saveBackupFileQuiet and restoreMissingSecretsFromBackup roundtrip gaps', a
     assert.equal(await empty.restoreMissingSecretsFromBackup(), 0);
 });
 
+test('toggle switches translate into momentary commands and mirror status', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = { username: 'u', password: 'p', countryCode: 'DE' };
+    await adapter.setStateChangedAsync('vehicles.car1.vin', 'VIN1', true);
+    const calls = [];
+    adapter.runBridge = async (action, payload) => {
+        calls.push({ action, ...payload });
+        return { ok: true };
+    };
+    await adapter.handleControlWrite('zeekr.0.vehicles.car1.control.climateToggle', true);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].command, 'start');
+    assert.equal(calls[0].serviceId, 'ZAF');
+    await adapter.handleControlWrite('zeekr.0.vehicles.car1.control.lockToggle', false);
+    assert.equal(calls.length, 2);
+    assert.equal(calls[1].command, 'stop');
+    // Mirror: poll writes toggle states from live status.
+    adapter.runBridge = async () => ({
+        vehicles: [{ name: 'Car', vin: 'VIN1', climateOn: true, isLocked: false, isCharging: false }],
+    });
+    adapter.config.mockMode = true;
+    await adapter.pollVehicles();
+    assert.equal((await adapter.getStateAsync('vehicles.vin1.control.climateToggle')).val, true);
+    assert.equal((await adapter.getStateAsync('vehicles.vin1.control.lockToggle')).val, false);
+});
+
 test('audit: every payload leaf lands in datapoints with correct value and type', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     adapter.config = { mockMode: true, countryCode: 'DE' };
