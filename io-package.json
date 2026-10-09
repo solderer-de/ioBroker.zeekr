@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.58",
+    "version": "0.1.59",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.59": {
+        "en": "ABRP upload: battery SoC and position are sent to A Better Routeplanner after every poll (new ABRP tab with API key and per-VIN user tokens).",
+        "de": "ABRP-Upload: Batterie-SoC und Position gehen nach jedem Poll an A Better Routeplanner (neuer ABRP-Tab mit API-Key und User-Token pro VIN).",
+        "ru": "Загрузка в ABRP: SoC и позиция отправляются после каждого опроса (новая вкладка ABRP).",
+        "pt": "Envio ao ABRP: SoC e posição após cada poll (novo separador ABRP).",
+        "nl": "ABRP-upload: SoC en positie na elke poll (nieuw ABRP-tabblad).",
+        "fr": "Envoi ABRP : SoC et position après chaque poll (nouvel onglet ABRP).",
+        "it": "Invio ABRP: SoC e posizione dopo ogni poll (nuova scheda ABRP).",
+        "es": "Envío a ABRP: SoC y posición tras cada poll (nueva pestaña ABRP).",
+        "pl": "Wysyłanie do ABRP: SoC i pozycja po każdym odpytywaniu (nowa zakładka ABRP).",
+        "uk": "Надсилання в ABRP: SoC і позиція після кожного опитування (нова вкладка ABRP).",
+        "zh-cn": "ABRP上传：每次轮询后发送电池SoC和位置（新增ABRP选项卡）。"
+      },
       "0.1.58": {
         "en": "Climate status fix: remotely started air conditioning is detected via preClimateActive, the climate switch no longer jumps back to off while running.",
         "de": "Klima-Status-Fix: fern gestartete Klimatisierung wird über preClimateActive erkannt, der Klima-Schalter springt nicht mehr auf Aus zurück.",
@@ -278,6 +291,9 @@
     "homeRadiusM": 150,
     "smartChargeEnabled": false,
     "smartChargeDeparture": "",
+    "abrpEnabled": false,
+    "abrpApiKey": "",
+    "abrpUserTokens": "",
     "apkOldBasePath": "",
     "apkOldArm64Path": "",
     "secretsBackupPath": ""
@@ -290,7 +306,9 @@
     "prodSecret",
     "prodSecretCandidates",
     "vinKey",
-    "vinIv"
+    "vinIv",
+    "abrpApiKey",
+    "abrpUserTokens"
   ],
   "encryptedNative": [
     "password",
@@ -300,7 +318,9 @@
     "prodSecret",
     "prodSecretCandidates",
     "vinKey",
-    "vinIv"
+    "vinIv",
+    "abrpApiKey",
+    "abrpUserTokens"
   ],
   "objects": [],
   "instanceObjects": [

@@ -63,5 +63,10 @@
   "Charging costs and smart charging. See README section “Energy, costs and smart charging”.": "Laadkosten en slim laden. Zie README “Energy, costs and smart charging”.",
   "Stored values are never shown here — ioBroker hides protected secrets for security. Presence is visible as info.secretsPresent states. Backup and restore via “Upload APKs from this PC”, sections 4 and 5.": "Opgeslagen waarden worden hier nooit getoond — ioBroker verbergt beschermde secrets om veiligheidsredenen. Aanwezigheid is zichtbaar als info.secretsPresent-states. Back-up en herstel via “Upload APKs from this PC”, secties 4 en 5.",
   "Upload APKs from this PC (no file transfer needed)": "APK's vanaf deze pc uploaden (geen bestandsoverdracht nodig)",
-  "Secrets backup & restore (opens APK page)": "Back-up & herstel (opent APK-pagina)"
+  "Secrets backup & restore (opens APK page)": "Back-up & herstel (opent APK-pagina)",
+  "Send battery SoC and position to A Better Routeplanner after every poll. API key: free telemetry key from abetterrouteplanner.com/resources/api. User token per car: ABRP app, live data / generic. See README section “ABRP upload”.": "Stuur SoC en positie na elke poll naar A Better Routeplanner. API key: gratis telemetrie-key via abetterrouteplanner.com/resources/api. Token per auto: ABRP-app, live data / generic. Zie README “ABRP upload”.",
+  "Enable ABRP upload": "ABRP-upload inschakelen",
+  "ABRP API key (telemetry key)": "ABRP API-key (telemetrie)",
+  "User tokens per VIN (JSON)": "Tokens per VIN (JSON)",
+  "Example: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}": "Voorbeeld: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}"
 }

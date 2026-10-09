@@ -437,6 +437,49 @@
         }
       }
     },
+    "abrp": {
+      "type": "panel",
+      "label": "ABRP",
+      "items": {
+        "_hint": {
+          "type": "staticText",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12,
+          "text": "Send battery SoC and position to A Better Routeplanner after every poll. API key: free telemetry key from abetterrouteplanner.com/resources/api. User token per car: ABRP app, live data / generic. See README section “ABRP upload”."
+        },
+        "abrpEnabled": {
+          "type": "checkbox",
+          "label": "Enable ABRP upload",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "abrpApiKey": {
+          "type": "password",
+          "label": "ABRP API key (telemetry key)",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "abrpUserTokens": {
+          "type": "text",
+          "label": "User tokens per VIN (JSON)",
+          "help": "Example: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        }
+      }
+    },
     "advanced": {
       "type": "panel",
       "label": "Advanced",

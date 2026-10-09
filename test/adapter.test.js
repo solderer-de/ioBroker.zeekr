@@ -4,6 +4,7 @@ const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 
 const { createDeviceBaseId, ZeekrAdapter, suggestRegionForCountry, getErrorHint } = require('../lib/adapter');
+const ABRP = require('../lib/abrp');
 const {
     collectSecretBackup,
     parseSecretBackup,
@@ -1731,4 +1732,67 @@ test('instance object access always uses absolute Foreign IDs (no shadow objects
         ['foreign-extend', 'system.adapter.zeekr.0'],
         ['foreign-get', 'system.adapter.zeekr.0'],
     ]);
+});
+
+test('ABRP parses VIN token map tolerantly', () => {
+    assert.deepEqual(ABRP.parseAbrpTokens(''), {});
+    assert.deepEqual(ABRP.parseAbrpTokens('not json'), {});
+    assert.deepEqual(ABRP.parseAbrpTokens('[1,2]'), {});
+    assert.deepEqual(ABRP.parseAbrpTokens('{"a": 1}'), {});
+    assert.deepEqual(ABRP.parseAbrpTokens('{" vin1 ": " tok ", "VIN2": 5}'), { VIN1: 'tok' });
+});
+
+test('ABRP builds telemetry with ABRP sign conventions', () => {
+    const { tlm, hasSoc } = ABRP.buildAbrpTelemetry(
+        {
+            batteryLevel: 64,
+            isCharging: true,
+            chargePower: 11,
+            currentSpeed: 0,
+            latitude: 51.3,
+            longitude: 12.38,
+            odometerKm: 32,
+            rangeKm: 420,
+            lastUpdated: '1791561735134',
+        },
+        { capacityKwh: 100, nowMs: 1791561735134 },
+    );
+    assert.equal(hasSoc, true);
+    assert.equal(tlm.utc, 1791561735);
+    assert.equal(tlm.soc, 64);
+    assert.equal(tlm.power, -11);
+    assert.equal(tlm.is_charging, 1);
+    assert.equal(tlm.is_parked, 1);
+    assert.equal(tlm.lat, 51.3);
+    assert.equal(tlm.est_battery_range, 420);
+    assert.equal(tlm.capacity, 100);
+});
+
+test('ABRP omits unknown values instead of faking them', () => {
+    const { tlm, hasSoc } = ABRP.buildAbrpTelemetry({ batteryLevel: null }, { nowMs: 1000 });
+    assert.equal(hasSoc, false);
+    assert.ok(!('soc' in tlm));
+    assert.ok(!('power' in tlm));
+    assert.ok(!('lat' in tlm));
+    assert.ok(!('is_parked' in tlm));
+    assert.equal(tlm.is_charging, 0);
+    assert.equal(tlm.utc, 1);
+});
+
+test('ABRP send URL carries key, token and encoded payload', () => {
+    const url = ABRP.buildAbrpSendUrl('AK', 'TOK', { utc: 1, soc: 64 });
+    const parsed = new URL(url);
+    assert.equal(`${parsed.protocol}//${parsed.hostname}${parsed.pathname}`, 'https://api.iternio.com/1/tlm/send');
+    assert.equal(parsed.searchParams.get('api_key'), 'AK');
+    assert.equal(parsed.searchParams.get('token'), 'TOK');
+    assert.deepEqual(JSON.parse(parsed.searchParams.get('tlm')), { utc: 1, soc: 64 });
+});
+
+test('ABRP post resolves injected transport and catches throws', async () => {
+    const ok = await ABRP.postAbrpTelemetry('https://x', async () => ({ ok: true, status: 200, body: '{"status":"ok"}' }));
+    assert.equal(ok.ok, true);
+    const failed = await ABRP.postAbrpTelemetry('https://x', async () => {
+        throw new Error('boom');
+    });
+    assert.equal(failed.ok, false);
 });

@@ -188,6 +188,16 @@ Entries without location match everywhere; entries without `from`/`to` match any
 
 `isHome` reflects the configured home zone. With `smartChargeEnabled` and a departure time, the adapter starts/pauses charging via `RCS` so the car charges in the cheapest matching window before departure (`smartCharge.state` shows `charge`/`wait`/`idle`).
 
+## ABRP upload
+
+The adapter can push the battery SoC (plus position, speed and range when known) to [A Better Routeplanner](https://abetterrouteplanner.com) after every poll, using the Iternio telemetry endpoint `https://api.iternio.com/1/tlm/send`:
+
+1. API key: free telemetry key from `abetterrouteplanner.com/resources/api` (“Manage your telemetry API keys”) — identifies this application.
+2. User token per car: ABRP app → live data / generic (or OAuth2) — identifies your vehicle.
+3. Adapter settings, ABRP tab: enable the upload, paste the API key and the tokens as JSON (`{"VIN": "user-token"}`).
+
+Both keys are stored in `protectedNative` (never as states). Sent payload: `utc`, `soc`, `power` (negative while charging), `speed`, `lat`/`lon`, `is_charging`, `is_parked`, `odometer`, `est_battery_range`, `capacity`. Diagnosis via `info.abrpLastSend`, `info.abrpLastResult`, `info.abrpLastError`; a `sendAbrpTelemetry` message triggers an immediate upload.
+
 ## History recommendation
 
 Log these states in InfluxDB/SQL for charts and long-term statistics: `status.batteryLevel`, `status.rangeKm`, `status.odometerKm`, `status.chargePower`, `energy.monthKwh`, `energy.monthCost`, `trips.count`.
@@ -272,6 +282,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.59
+
+- ABRP upload: SoC, position, speed and range go to A Better Routeplanner after every poll (ABRP tab: telemetry API key + per-VIN user tokens in protectedNative, `sendAbrpTelemetry` message for manual upload)
 
 ### 0.1.58
 
