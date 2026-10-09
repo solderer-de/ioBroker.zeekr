@@ -298,6 +298,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.64
+
+- CI lint fix only (same ABRP single-token feature as 0.1.63, whose tag missed the lint gate and never reached npm)
+
 ### 0.1.63
 
 - ABRP usability: single-car setups paste just the user token (VIN comes from the vehicle data), per-VIN map only for several cars
