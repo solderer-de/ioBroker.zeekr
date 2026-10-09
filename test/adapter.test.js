@@ -172,6 +172,37 @@ print(json.dumps(payload))
     assert.ok(!('steeringHeatingActive' in payload), 'no unreliable steering flag');
 });
 
+test('bridge maps nested preClimateActive to climateOn', () => {
+    const run = status => {
+        const result = spawnSync(
+            PYTHON,
+            [
+                '-c',
+                `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle({'vin': 'V1'}, ${status}, {}, {})
+print(json.dumps(payload))
+`,
+            ],
+            { cwd: path.join(__dirname, '..') },
+        );
+        assert.equal(result.status, 0, result.stderr.toString());
+        return JSON.parse(result.stdout.toString());
+    };
+
+    const on = run(`{'additionalVehicleStatus': {'climateStatus': {'preClimateActive': True}}}`);
+    assert.equal(on.climateOn, true);
+    const off = run(`{'additionalVehicleStatus': {'climateStatus': {'preClimateActive': False}}}`);
+    assert.equal(off.climateOn, false);
+    const missing = run(`{'additionalVehicleStatus': {'climateStatus': {}}}`);
+    assert.equal(missing.climateOn, false);
+});
+
 test('bridge derives door/window booleans from safety fields', () => {
     const result = spawnSync(
         PYTHON,

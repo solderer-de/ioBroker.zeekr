@@ -272,6 +272,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.58
+
+- Climate status fix: remotely started air conditioning is detected via nested `preClimateActive` — the climate switch mirrors the real running state instead of jumping back to off
+
 ### 0.1.57
 
 - Security fix: instance config access uses Foreign (absolute) object IDs only — a relative-ID bug wrote plaintext secrets into a shadow object instead of the instance config

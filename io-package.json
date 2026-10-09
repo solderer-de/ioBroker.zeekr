@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.57",
+    "version": "0.1.58",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.58": {
+        "en": "Climate status fix: remotely started air conditioning is detected via preClimateActive, the climate switch no longer jumps back to off while running.",
+        "de": "Klima-Status-Fix: fern gestartete Klimatisierung wird über preClimateActive erkannt, der Klima-Schalter springt nicht mehr auf Aus zurück.",
+        "ru": "Фикс статуса климата: удалённый запуск определяется через preClimateActive, переключатель больше не сбрасывается.",
+        "pt": "Correção do clima: arranque remoto detetado via preClimateActive, o interruptor já não volta a off.",
+        "nl": "Klimaatfix: op afstand gestarte airco via preClimateActive gedetecteerd, schakelaar springt niet meer terug.",
+        "fr": "Correctif clim : démarrage à distance détecté via preClimateActive, l'interrupteur ne rebascule plus.",
+        "it": "Fix stato clima: avvio remoto rilevato via preClimateActive, l'interruttore non torna più su off.",
+        "es": "Corrección del clima: arranque remoto detectado vía preClimateActive, el interruptor ya no vuelve a off.",
+        "pl": "Poprawka klimy: zdalny start wykrywany przez preClimateActive, przełącznik już nie cofa się.",
+        "uk": "Фікс статусу клімату: віддалений запуск визначається через preClimateActive, перемикач більше не скидається.",
+        "zh-cn": "空调状态修复：通过preClimateActive检测远程启动，开关不再跳回关闭。"
+      },
       "0.1.57": {
         "en": "Security fix: instance config is written with absolute IDs only (no more shadow objects with plaintext secrets).",
         "de": "Security-Fix: Instanz-Config nur mit absoluten IDs (keine Schatten-Objekte mit Klartext-Secrets mehr).",

@@ -338,8 +338,12 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
             is_locked_bool = False
     else:
         is_locked_bool = coerce_bool(is_locked)
-    climate_on = get_first(remote_payload, status_payload,
-                           keys=['climateOn', 'hvacOn', 'airConditioning'])
+    # Fern gestartete Klimatisierung meldet das Auto als preClimateActive
+    # tief in additionalVehicleStatus.climateStatus -> nested_subs nötig
+    # (Top-Level-Keys climateOn/hvacOn/airConditioning bleiben als Fallback).
+    climate_on = get_first(remote_payload, status_payload, *nested_subs,
+                           keys=['climateOn', 'hvacOn', 'airConditioning',
+                                 'preClimateActive'])
     last_updated = get_first(vehicle_dict, status_payload, charging_payload,
                              keys=['lastUpdated', 'updatedAt', 'updateTime'])
     if not isinstance(last_updated, str):
