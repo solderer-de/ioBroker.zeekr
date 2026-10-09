@@ -298,6 +298,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.65
+
+- ABRP trims pasted API key whitespace (copy-paste artifacts no longer cause 401)
+
 ### 0.1.64
 
 - CI lint fix only (same ABRP single-token feature as 0.1.63, whose tag missed the lint gate and never reached npm)

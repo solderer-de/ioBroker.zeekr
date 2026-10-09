@@ -1854,3 +1854,21 @@ test('ABRP push warns on invalid token JSON instead of failing silently', async 
     assert.equal(warnings.length, 1);
     assert.match(warnings[0], /neither a token nor valid/);
 });
+
+test('ABRP push trims pasted API key whitespace', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.setStateChangedAsync = async () => {};
+    adapter.config = { abrpEnabled: true, abrpApiKey: '  key-with-space  ', abrpUserTokens: 'tok' };
+    const realPost = ABRP.postAbrpTelemetry;
+    let seenUrl = '';
+    ABRP.postAbrpTelemetry = async url => {
+        seenUrl = url;
+        return { ok: true, status: 200, body: '{"status":"ok"}' };
+    };
+    try {
+        await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
+    } finally {
+        ABRP.postAbrpTelemetry = realPost;
+    }
+    assert.match(seenUrl, /api_key=key-with-space(&|$)/);
+});
