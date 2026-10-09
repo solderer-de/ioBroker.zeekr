@@ -238,6 +238,7 @@ For each open pair, try the listed variant and report whether the car executes i
 - The repository includes GitHub Actions for CI and release creation.
 - Releases are automated with `release-please`; publishing a release triggers the asset build workflow.
 - The release workflow builds a tar archive and attaches it to the GitHub release automatically.
+- npm publishing needs no local token: pushing a version tag (`vX.Y.Z`) runs the Test-and-Release deploy job, which publishes to npm via trusted publishing. Never `npm publish` manually, never commit tokens.
 - A scheduled upstream sync workflow checks the reference repository for new commits and opens a tracking issue when changes are detected.
 
 ## Roadmap
