@@ -1735,12 +1735,28 @@ test('instance object access always uses absolute Foreign IDs (no shadow objects
     ]);
 });
 
-test('ABRP parses VIN token map tolerantly', () => {
-    assert.deepEqual(ABRP.parseAbrpTokens(''), {});
-    assert.deepEqual(ABRP.parseAbrpTokens('not json'), {});
-    assert.deepEqual(ABRP.parseAbrpTokens('[1,2]'), {});
-    assert.deepEqual(ABRP.parseAbrpTokens('{"a": 1}'), {});
-    assert.deepEqual(ABRP.parseAbrpTokens('{" vin1 ": " tok ", "VIN2": 5}'), { VIN1: 'tok' });
+test('ABRP parses token field tolerantly', () => {
+    assert.deepEqual(ABRP.parseAbrpTokens(''), { map: {}, isSingle: false });
+    assert.deepEqual(ABRP.parseAbrpTokens('not json'), { map: { '*': 'not json' }, isSingle: true });
+    assert.deepEqual(ABRP.parseAbrpTokens('[1,2]'), { map: {}, isSingle: false });
+    assert.deepEqual(ABRP.parseAbrpTokens('{"a": 1}'), { map: {}, isSingle: false });
+    assert.deepEqual(ABRP.parseAbrpTokens('{" vin1 ": " tok ", "VIN2": 5}'), {
+        map: { VIN1: 'tok' },
+        isSingle: false,
+    });
+    // Broken maps must not silently become a single token.
+    assert.deepEqual(ABRP.parseAbrpTokens('{"VIN1": "tok",}'), { map: {}, isSingle: false });
+    assert.deepEqual(ABRP.parseAbrpTokens('VIN1: tok'), { map: {}, isSingle: false });
+});
+
+test('ABRP assigns tokens without VIN typing for a single car', () => {
+    const single = ABRP.parseAbrpTokens('tok-from-app');
+    assert.equal(ABRP.selectAbrpToken(single, 'vin1', 1), 'tok-from-app');
+    assert.equal(ABRP.selectAbrpToken(single, 'vin1', 2), '');
+    const map = ABRP.parseAbrpTokens('{"VIN1": "tok1"}');
+    assert.equal(ABRP.selectAbrpToken(map, 'vin1', 1), 'tok1');
+    assert.equal(ABRP.selectAbrpToken(map, 'vin1', 3), 'tok1');
+    assert.equal(ABRP.selectAbrpToken(map, 'other', 1), '');
 });
 
 test('ABRP builds telemetry with ABRP sign conventions', () => {
@@ -1833,8 +1849,8 @@ test('ABRP push warns on invalid token JSON instead of failing silently', async 
         warnings.push(message);
     };
     adapter.setStateChangedAsync = async () => {};
-    adapter.config = { abrpEnabled: true, abrpApiKey: 'k', abrpUserTokens: 'not-json' };
+    adapter.config = { abrpEnabled: true, abrpApiKey: 'k', abrpUserTokens: '{"broken":}' };
     await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
     assert.equal(warnings.length, 1);
-    assert.match(warnings[0], /not valid/);
+    assert.match(warnings[0], /neither a token nor valid/);
 });

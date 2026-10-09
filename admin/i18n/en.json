@@ -67,6 +67,6 @@
   "Send battery SoC and position to A Better Routeplanner after every poll. API key: free telemetry key from abetterrouteplanner.com/resources/api. User token per car: ABRP app, live data / generic. See README section “ABRP upload”.": "Send battery SoC and position to A Better Routeplanner after every poll. API key: free telemetry key from abetterrouteplanner.com/resources/api. User token per car: ABRP app, live data / generic. See README section “ABRP upload”.",
   "Enable ABRP upload": "Enable ABRP upload",
   "ABRP API key (telemetry key)": "ABRP API key (telemetry key)",
-  "User tokens per VIN (JSON)": "User tokens per VIN (JSON)",
-  "Example: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}": "Example: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}"
+  "User token from ABRP app": "User token from ABRP app",
+  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}"
 }

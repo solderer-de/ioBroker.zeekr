@@ -199,7 +199,7 @@ The adapter can push the battery SoC (plus position, speed and range when known)
 3. ioBroker Admin → Instances → `zeekr.0` → ABRP tab:
    - Enable “Enable ABRP upload”.
    - “ABRP API key”: paste the telemetry key from step 2.
-   - “User tokens per VIN”: paste exactly `{"VIN": "user-token"}` — uppercase VIN, straight double quotes, one entry per car separated by commas. Your VIN is shown for example in the object tree under `zeekr.0.vehicles.*`.
+   - “User token from ABRP app”: paste exactly the token from step 1 — nothing else, no VIN (the adapter knows its vehicles). Only with several cars use a per-VIN map instead: `{"VIN": "token", ...}`.
    - Save. Both keys land in `protectedNative` (never in states or logs).
 4. Wait for the next poll (at most one polling interval) or trigger an immediate upload with a `sendAbrpTelemetry` message to `zeekr.0`.
 5. Verify: `info.abrpLastSend` shows timestamp, VIN and SoC; `info.abrpLastResult` shows the server answer (`{"status":"ok",...}` — a `missing: ...` hint only lists optional fields and is normal); `info.abrpLastError` must stay empty.
@@ -297,6 +297,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.63
+
+- ABRP usability: single-car setups paste just the user token (VIN comes from the vehicle data), per-VIN map only for several cars
 
 ### 0.1.62
 

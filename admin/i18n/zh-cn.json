@@ -67,6 +67,6 @@
   "Send battery SoC and position to A Better Routeplanner after every poll. API key: free telemetry key from abetterrouteplanner.com/resources/api. User token per car: ABRP app, live data / generic. See README section “ABRP upload”.": "每次轮询后将电池SoC和位置发送到A Better Routeplanner。API密钥：在abetterrouteplanner.com/resources/api获取免费遥测密钥。每辆车的用户令牌：ABRP应用，实时数据/Generic。见README“ABRP upload”部分。",
   "Enable ABRP upload": "启用ABRP上传",
   "ABRP API key (telemetry key)": "ABRP API密钥（遥测）",
-  "User tokens per VIN (JSON)": "每VIN用户令牌（JSON）",
-  "Example: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}": "示例：{\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}"
+  "User token from ABRP app": "ABRP应用用户令牌",
+  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "一辆车：仅粘贴用户令牌（无需VIN）。多辆车：{\"VIN\": \"token\", ...}"
 }

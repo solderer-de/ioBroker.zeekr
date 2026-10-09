@@ -470,8 +470,8 @@
         },
         "abrpUserTokens": {
           "type": "text",
-          "label": "User tokens per VIN (JSON)",
-          "help": "Example: {\"L6TZC2S57TN148853\": \"user-token-from-abrp-app\"}",
+          "label": "User token from ABRP app",
+          "help": "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}",
           "xs": 12,
           "sm": 12,
           "md": 12,
