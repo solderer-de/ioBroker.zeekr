@@ -5,5 +5,5 @@
   "path": "core/src/main/java/com/openzeekr/app/remote/Repositories.kt",
   "message": "fix(ota/session): shared-account OTA error (#23) + token-expiry re-login prompt (#22)",
   "updated_at": "2026-10-04T18:29:30Z",
-  "checked_at": "2026-10-08T13:48:30.971368+00:00"
+  "checked_at": "2026-10-09T13:33:18.043838+00:00"
 }
