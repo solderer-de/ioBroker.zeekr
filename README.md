@@ -190,13 +190,28 @@ Entries without location match everywhere; entries without `from`/`to` match any
 
 ## ABRP upload
 
-The adapter can push the battery SoC (plus position, speed and range when known) to [A Better Routeplanner](https://abetterrouteplanner.com) after every poll, using the Iternio telemetry endpoint `https://api.iternio.com/1/tlm/send`:
+The adapter can push the battery SoC (plus position, speed and range when known) to [A Better Routeplanner](https://abetterrouteplanner.com) after every poll, using the Iternio telemetry endpoint `https://api.iternio.com/1/tlm/send`.
 
-1. API key: free telemetry key from `abetterrouteplanner.com/resources/api` (“Manage your telemetry API keys”) — identifies this application.
-2. User token per car: ABRP app → live data / generic (or OAuth2) — identifies your vehicle.
-3. Adapter settings, ABRP tab: enable the upload, paste the API key and the tokens as JSON (`{"VIN": "user-token"}`).
+### Setup step by step
 
-Both keys are stored in `protectedNative` (never as states). Sent payload: `utc`, `soc`, `power` (negative while charging), `speed`, `lat`/`lon`, `is_charging`, `is_parked`, `odometer`, `est_battery_range`, `capacity`. Diagnosis via `info.abrpLastSend`, `info.abrpLastResult`, `info.abrpLastError`; a `sendAbrpTelemetry` message triggers an immediate upload.
+1. ABRP app: create one user token per car (Settings → live data → Generic). Copy the token.
+2. Browser: open `abetterrouteplanner.com/resources/api` → “Manage your telemetry API keys” → create a free telemetry key. Copy the key.
+3. ioBroker Admin → Instances → `zeekr.0` → ABRP tab:
+   - Enable “Enable ABRP upload”.
+   - “ABRP API key”: paste the telemetry key from step 2.
+   - “User tokens per VIN”: paste exactly `{"VIN": "user-token"}` — uppercase VIN, straight double quotes, one entry per car separated by commas. Your VIN is shown for example in the object tree under `zeekr.0.vehicles.*`.
+   - Save. Both keys land in `protectedNative` (never in states or logs).
+4. Wait for the next poll (at most one polling interval) or trigger an immediate upload with a `sendAbrpTelemetry` message to `zeekr.0`.
+5. Verify: `info.abrpLastSend` shows timestamp, VIN and SoC; `info.abrpLastResult` shows the server answer (`{"status":"ok",...}` — a `missing: ...` hint only lists optional fields and is normal); `info.abrpLastError` must stay empty.
+
+### Troubleshooting
+
+- No `abrpLast*` states appear at all: upload disabled, API key empty, or the tokens field is not valid JSON / has no entry for this VIN — the adapter then skips silently (debug log only).
+- Server error or HTTP 401: API key or user token wrong — recreate both and re-paste them.
+- ABRP shows stale data: telemetry older than a few minutes counts as stale; while driving the adapter polls every 60 s automatically.
+- Privacy: while enabled, SoC, position and speed go to the ABRP cloud on every poll.
+
+Sent payload details: `utc`, `soc`, `power` (negative while charging), `speed`, `lat`/`lon`, `is_charging`, `is_parked`, `odometer`, `est_battery_range`, `capacity`. Diagnosis via `info.abrpLastSend`, `info.abrpLastResult`, `info.abrpLastError`; a `sendAbrpTelemetry` message triggers an immediate upload.
 
 ## History recommendation
 
