@@ -166,10 +166,10 @@ print(json.dumps(payload))
     assert.equal(result.status, 0, result.stderr.toString());
     const payload = JSON.parse(result.stdout.toString());
     assert.equal(payload.seatHeatingActive, false);
-    assert.equal(payload.steeringHeatingActive, true);
     assert.equal(payload.defrostActive, false);
     assert.equal(payload.ventActive, false);
     assert.equal(payload.batteryPreheatActive, false);
+    assert.ok(!('steeringHeatingActive' in payload), 'no unreliable steering flag');
 });
 
 test('bridge derives door/window booleans from safety fields', () => {
@@ -1541,6 +1541,9 @@ test('toggle switches translate into momentary commands and mirror status', asyn
     await adapter.handleControlWrite('zeekr.0.vehicles.car1.control.seatHeatToggle', true);
     assert.equal(calls.length, 3);
     assert.equal(calls[2].serviceId, 'ZAF');
+    await adapter.handleControlWrite('zeekr.0.vehicles.car1.control.sentryToggle', true);
+    assert.equal(calls.length, 4);
+    assert.equal(calls[3].serviceId, 'RSM');
     // Mirror: poll writes toggle states from live status.
     adapter.runBridge = async () => ({
         vehicles: [{ name: 'Car', vin: 'VIN1', climateOn: true, isLocked: false, isCharging: false }],

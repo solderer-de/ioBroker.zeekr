@@ -301,9 +301,9 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     # versteht alle beobachteten Formen (true/false, 0/1, "0"/"2"/"").
     seat_heating = any(coerce_bool(get_first(status_payload, vtm_payload, *nested_subs, keys=[key]))
                        for key in ['drvHeatSts', 'passHeatingSts', 'rlHeatingSts', 'rrHeatingSts'])
-    steering_heating = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
-                                             keys=['steerWhlHeatingSts', 'steeringHeating',
-                                                   'steeringWheelHeating']))
+    # NOTE: steerWhlHeatingSts looks like a state but reports the sticky level
+    # (e.g. "2" while heating is actually off) — unusable, deliberately ignored.
+    # The raw value stays visible in the all.* layer for future research.
     defrost_active = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
                                            keys=['defrost', 'defrostActive', 'defrosting']))
     vent_active = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
@@ -471,7 +471,6 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'hoodOpen': hood_open,
         'windowsOpen': windows_open,
         'seatHeatingActive': seat_heating,
-        'steeringHeatingActive': steering_heating,
         'defrostActive': defrost_active,
         'ventActive': vent_active,
         'batteryPreheatActive': battery_preheat,
