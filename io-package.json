@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.61",
+    "version": "0.1.62",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.62": {
+        "en": "ABRP warns loudly when the token field is not valid JSON instead of skipping silently.",
+        "de": "ABRP warnt sichtbar bei ungültigem Token-JSON statt still zu pausieren.",
+        "ru": "ABRP предупреждает о неверном JSON токенов вместо тихого пропуска.",
+        "pt": "ABRP avisa com JSON de tokens inválido em vez de ignorar em silêncio.",
+        "nl": "ABRP waarschuwt bij ongeldige token-JSON in plaats van stil over te slaan.",
+        "fr": "ABRP avertit si le JSON des tokens est invalide au lieu d'ignorer en silence.",
+        "it": "ABRP avvisa se il JSON dei token non è valido invece di saltare in silenzio.",
+        "es": "ABRP avisa con JSON de tokens inválido en vez de omitir en silencio.",
+        "pl": "ABRP ostrzega przy nieprawidłowym JSON tokenów zamiast cichego pomijania.",
+        "uk": "ABRP попереджає про недійсний JSON токенів замість тихого пропуску.",
+        "zh-cn": "令牌JSON无效时ABRP会发出警告，而不是静默跳过。"
+      },
       "0.1.61": {
         "en": "ABRP diagnostics: startup census and presence states show whether API key and user tokens arrived (values never logged).",
         "de": "ABRP-Diagnose: Start-Census und Presence-States zeigen, ob API-Key und User-Token ankamen (Werte werden nie geloggt).",

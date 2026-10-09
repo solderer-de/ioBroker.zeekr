@@ -298,6 +298,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.62
+
+- ABRP logs a warning when the token field is not valid `{"VIN": "token"}` JSON instead of skipping silently
+
 ### 0.1.61
 
 - ABRP diagnostics: startup log census (`ABRP: enabled/apiKey/userTokens`) and `info.abrpApiKeyPresent`/`info.abrpUserTokensPresent` states prove which credentials the process received (presence only, never values)

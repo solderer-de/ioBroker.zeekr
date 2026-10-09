@@ -1825,3 +1825,16 @@ test('ABRP push skips silently without enable/key/token', async () => {
     await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
     assert.deepEqual(writes, []);
 });
+
+test('ABRP push warns on invalid token JSON instead of failing silently', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const warnings = [];
+    adapter.log.warn = message => {
+        warnings.push(message);
+    };
+    adapter.setStateChangedAsync = async () => {};
+    adapter.config = { abrpEnabled: true, abrpApiKey: 'k', abrpUserTokens: 'not-json' };
+    await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /not valid/);
+});
