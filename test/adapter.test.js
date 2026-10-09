@@ -9,6 +9,7 @@ const {
     collectSecretBackup,
     parseSecretBackup,
     computeSecretsPresence,
+    computeAbrpPresence,
     resolveInstanceDataDir,
     SECRET_BACKUP_TYPE,
 } = require('../lib/adapter');
@@ -1799,4 +1800,28 @@ test('ABRP post resolves injected transport and catches throws', async () => {
         throw new Error('boom');
     });
     assert.equal(failed.ok, false);
+});
+
+test('ABRP presence helper never exposes values', () => {
+    assert.deepEqual(computeAbrpPresence({}), { apiKey: false, userTokens: false });
+    assert.deepEqual(computeAbrpPresence({ abrpApiKey: 'k', abrpUserTokens: '{"V":"t"}' }), {
+        apiKey: true,
+        userTokens: true,
+    });
+    assert.deepEqual(computeAbrpPresence({ abrpApiKey: '  ' }), { apiKey: false, userTokens: false });
+});
+
+test('ABRP push skips silently without enable/key/token', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const writes = [];
+    adapter.setStateChangedAsync = async (id, value) => {
+        writes.push([id, value]);
+    };
+    adapter.config = { abrpEnabled: false, abrpApiKey: 'k', abrpUserTokens: '{"V":"t"}' };
+    await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
+    adapter.config = { abrpEnabled: true, abrpApiKey: '', abrpUserTokens: '{"V":"t"}' };
+    await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
+    adapter.config = { abrpEnabled: true, abrpApiKey: 'k', abrpUserTokens: '{"OTHER":"t"}' };
+    await adapter.pushAbrpTelemetry([{ vin: 'V', batteryLevel: 50 }]);
+    assert.deepEqual(writes, []);
 });

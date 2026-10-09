@@ -298,6 +298,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.61
+
+- ABRP diagnostics: startup log census (`ABRP: enabled/apiKey/userTokens`) and `info.abrpApiKeyPresent`/`info.abrpUserTokensPresent` states prove which credentials the process received (presence only, never values)
+
 ### 0.1.60
 
 - CI formatting fix only (same ABRP upload as 0.1.59, whose tag failed the lint gate and never reached npm)

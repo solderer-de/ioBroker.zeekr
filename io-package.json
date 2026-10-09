@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.60",
+    "version": "0.1.61",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.61": {
+        "en": "ABRP diagnostics: startup census and presence states show whether API key and user tokens arrived (values never logged).",
+        "de": "ABRP-Diagnose: Start-Census und Presence-States zeigen, ob API-Key und User-Token ankamen (Werte werden nie geloggt).",
+        "ru": "Диагностика ABRP: census и presence показывают наличие ключей (без значений).",
+        "pt": "Diagnóstico ABRP: census e presence mostram se as chaves chegaram (sem valores).",
+        "nl": "ABRP-diagnose: census en presence tonen of sleutels aankwamen (zonder waarden).",
+        "fr": "Diagnostic ABRP : census et presence indiquent si les clés sont arrivées (sans valeurs).",
+        "it": "Diagnostica ABRP: census e presence mostrano se le chiavi sono arrivate (senza valori).",
+        "es": "Diagnóstico ABRP: census y presence muestran si llegaron las claves (sin valores).",
+        "pl": "Diagnostyka ABRP: census i presence pokazują, czy klucze dotarły (bez wartości).",
+        "uk": "Діагностика ABRP: census і presence показують, чи надійшли ключі (без значень).",
+        "zh-cn": "ABRP诊断：启动普查和presence状态显示密钥是否到达（从不记录值）。"
+      },
       "0.1.60": {
         "en": "CI formatting fix (no functional changes, same ABRP upload as 0.1.59).",
         "de": "CI-Formatfix (keine Funktionsänderung, gleicher ABRP-Upload wie 0.1.59).",
