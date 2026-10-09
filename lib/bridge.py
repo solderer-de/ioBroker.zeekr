@@ -297,6 +297,20 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     trunk_locked = _is_locked(get_first(status_payload, vtm_payload, *nested_subs, keys=['trunkLockStatus']))
     hood_open = _is_open(get_first(status_payload, vtm_payload, *nested_subs,
                                    keys=['engineHoodOpenStatus', 'hoodOpenStatus', 'bonnetOpenStatus']))
+    # Komfort-Status (Sitz/Lenkrad/Defrost/Lüftung/Akku-Vorwärmung): coerce_bool
+    # versteht alle beobachteten Formen (true/false, 0/1, "0"/"2"/"").
+    seat_heating = any(coerce_bool(get_first(status_payload, vtm_payload, *nested_subs, keys=[key]))
+                       for key in ['drvHeatSts', 'passHeatingSts', 'rlHeatingSts', 'rrHeatingSts'])
+    steering_heating = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
+                                             keys=['steerWhlHeatingSts', 'steeringHeating',
+                                                   'steeringWheelHeating']))
+    defrost_active = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
+                                           keys=['defrost', 'defrostActive', 'defrosting']))
+    vent_active = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
+                                        keys=['ventilateStatus', 'ventilationActive', 'ventActive']))
+    battery_preheat = coerce_bool(get_first(status_payload, vtm_payload, *nested_subs,
+                                            keys=['hvBatteryPreHeatingActive', 'batteryPreheatActive',
+                                                  'batteryPreheating']))
     central_locking = get_first(
         status_payload, vtm_payload, vehicle_dict, *nested_subs,
         keys=['centralLockingStatus', 'doorLockStatus'])
@@ -456,6 +470,11 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'trunkLocked': trunk_locked,
         'hoodOpen': hood_open,
         'windowsOpen': windows_open,
+        'seatHeatingActive': seat_heating,
+        'steeringHeatingActive': steering_heating,
+        'defrostActive': defrost_active,
+        'ventActive': vent_active,
+        'batteryPreheatActive': battery_preheat,
         'avgPowerConsumption': avg_consumption,
         'traveledDistanceKm': traveled_distance,
         'engineStatus': engine_status,

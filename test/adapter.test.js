@@ -137,6 +137,41 @@ print(json.dumps(payload))
     assert.equal(payload.repairModeActive, true);
 });
 
+test('bridge normalizes comfort active flags', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle(
+    {'vin': 'V1'},
+    {'additionalVehicleStatus': {
+        'maintenanceStatus': {},
+        'climateStatus': {'drvHeatSts': 0, 'steerWhlHeatingSts': '2', 'defrost': '0', 'ventilateStatus': ''}}},
+    {},
+    {}
+)
+print(json.dumps(payload))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+
+    assert.equal(result.status, 0, result.stderr.toString());
+    const payload = JSON.parse(result.stdout.toString());
+    assert.equal(payload.seatHeatingActive, false);
+    assert.equal(payload.steeringHeatingActive, true);
+    assert.equal(payload.defrostActive, false);
+    assert.equal(payload.ventActive, false);
+    assert.equal(payload.batteryPreheatActive, false);
+});
+
 test('bridge derives door/window booleans from safety fields', () => {
     const result = spawnSync(
         PYTHON,
@@ -1503,6 +1538,9 @@ test('toggle switches translate into momentary commands and mirror status', asyn
     await adapter.handleControlWrite('zeekr.0.vehicles.car1.control.lockToggle', false);
     assert.equal(calls.length, 2);
     assert.equal(calls[1].command, 'stop');
+    await adapter.handleControlWrite('zeekr.0.vehicles.car1.control.seatHeatToggle', true);
+    assert.equal(calls.length, 3);
+    assert.equal(calls[2].serviceId, 'ZAF');
     // Mirror: poll writes toggle states from live status.
     adapter.runBridge = async () => ({
         vehicles: [{ name: 'Car', vin: 'VIN1', climateOn: true, isLocked: false, isCharging: false }],
