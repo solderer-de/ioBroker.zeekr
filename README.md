@@ -283,6 +283,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.60
+
+- CI formatting fix only (same ABRP upload as 0.1.59, whose tag failed the lint gate and never reached npm)
+
 ### 0.1.59
 
 - ABRP upload: SoC, position, speed and range go to A Better Routeplanner after every poll (ABRP tab: telemetry API key + per-VIN user tokens in protectedNative, `sendAbrpTelemetry` message for manual upload)

@@ -1789,7 +1789,11 @@ test('ABRP send URL carries key, token and encoded payload', () => {
 });
 
 test('ABRP post resolves injected transport and catches throws', async () => {
-    const ok = await ABRP.postAbrpTelemetry('https://x', async () => ({ ok: true, status: 200, body: '{"status":"ok"}' }));
+    const ok = await ABRP.postAbrpTelemetry('https://x', async () => ({
+        ok: true,
+        status: 200,
+        body: '{"status":"ok"}',
+    }));
     assert.equal(ok.ok, true);
     const failed = await ABRP.postAbrpTelemetry('https://x', async () => {
         throw new Error('boom');
