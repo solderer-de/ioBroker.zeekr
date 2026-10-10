@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import datetime
 import json
 import os
 import sys
@@ -388,11 +389,50 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
             break
     battery_12v = coerce_number(get_first(vtm_payload, status_payload, main_battery_payload,
                                           keys=['battery12v', 'voltage12v', 'lowVoltageBattery', 'auxBattery', 'voltage']))
+    # Journey-Liste: API liefert {total, list:[...]} (HA liest .data),
+    # ältere Shapes nutzen 'trips'. Koordinaten gehören nicht in
+    # kuratierte States -> schlanke Records ohne lat/lon.
+    trip_candidates = [journey_payload.get('list'), journey_payload.get('data'),
+                       journey_payload.get('trips')]
+    trip_list_raw = []
+    for candidate in trip_candidates:
+        if isinstance(candidate, list) and candidate:
+            trip_list_raw = candidate
+            break
+    else:
+        for candidate in trip_candidates:
+            if isinstance(candidate, list):
+                trip_list_raw = candidate
+                break
+    trip_count = journey_payload.get('total') or journey_payload.get('count') or len(trip_list_raw)
+    try:
+        trip_count = int(trip_count)
+    except (TypeError, ValueError):
+        trip_count = len(trip_list_raw)
+
+    def slim_trip(record):
+        if not isinstance(record, dict):
+            return None
+        duration_s = coerce_number(record.get('duration'))
+        return {
+            'tripId': record.get('tripId'),
+            'startTime': record.get('startTime'),
+            'endTime': record.get('endTime'),
+            'distanceKm': coerce_number(record.get('traveledDistance', record.get('distance'))),
+            'durationMin': round(duration_s / 60.0, 1) if duration_s is not None else None,
+            'avgSpeedKmh': coerce_number(record.get('avgSpeed')),
+            'consumptionKwh100km': coerce_number(
+                record.get('electricConsumption', record.get('energyConsumption'))),
+        }
+
+    slim_trips = [slim for slim in (slim_trip(item) for item in trip_list_raw) if slim]
+    # Neueste zuerst (API liefert meist so, aber nicht garantiert).
+    slim_trips.sort(key=lambda item: item.get('startTime') or 0, reverse=True)
+    recent_trips = slim_trips[:5]
+    latest = recent_trips[0] if recent_trips else {}
     last_trip = coerce_number(get_first(journey_payload, keys=['lastTripDistanceKm', 'lastTripDistance', 'lastDistance']))
-    if last_trip is None:
-        trips = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else None
-        if trips:
-            last_trip = coerce_number((trips[0] or {}).get('distance') if isinstance(trips[0], dict) else None)
+    if last_trip is None and latest.get('distanceKm') is not None:
+        last_trip = latest.get('distanceKm')
     win_positions = []
     for win_key in ['winPosDriver', 'winPosPassenger', 'winPosDriverRear', 'winPosPassengerRear']:
         win_positions.append(coerce_number(get_first(
@@ -431,12 +471,18 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
     repair_mode = get_first(
         status_payload, vtm_payload, *nested_subs,
         keys=['repairModeActive', 'repairMode'])
-    trip_list = journey_payload.get('trips') if isinstance(journey_payload.get('trips'), list) else []
-    trip_count = journey_payload.get('total') or journey_payload.get('count') or len(trip_list)
-    try:
-        trip_count = int(trip_count)
-    except (TypeError, ValueError):
-        trip_count = len(trip_list)
+    last_trip_start = latest.get('startTime')
+    last_trip_end = latest.get('endTime')
+
+    def iso_ms(value):
+        if isinstance(value, bool):
+            return ''
+        if isinstance(value, (int, float)) and value > 0:
+            try:
+                return datetime.datetime.fromtimestamp(value / 1000.0).isoformat(timespec='seconds')
+            except (OverflowError, OSError, ValueError):
+                return ''
+        return ''
 
     return {
         'name': name,
@@ -487,7 +533,12 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'daysToService': service_days,
         'repairModeActive': coerce_bool(repair_mode),
         'tripCount': trip_count,
-        'tripList': trip_list,
+        'tripList': recent_trips,
+        'lastTripStartTime': iso_ms(last_trip_start),
+        'lastTripEndTime': iso_ms(last_trip_end),
+        'lastTripDurationMin': latest.get('durationMin'),
+        'lastTripAvgSpeedKmh': latest.get('avgSpeedKmh'),
+        'lastTripConsumptionKwh100km': latest.get('consumptionKwh100km'),
         'status': status_payload,
         'chargingStatus': charging_payload,
         'remoteControlState': remote_payload,

@@ -10,6 +10,7 @@ const {
     parseSecretBackup,
     computeSecretsPresence,
     computeAbrpPresence,
+    resolveVehicleModel,
     resolveInstanceDataDir,
     SECRET_BACKUP_TYPE,
 } = require('../lib/adapter');
@@ -1880,4 +1881,92 @@ test('io-package news stays within the bot gates', () => {
     const entries = Object.keys(ioPkg.common.news || {});
     // CI schema allows 20, the repository bot truncates at 7 (E1032).
     assert.ok(entries.length <= 7, `news has ${entries.length} entries, bot allows 7`);
+});
+
+test('bridge maps journey list shape to recent trips without coordinates', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = module.normalize_vehicle(
+    {'vin': 'V1'},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {'total': 2, 'list': [
+        {'tripId': 1, 'startTime': 1791000000000, 'endTime': 1791000900000,
+         'traveledDistance': 12.5, 'duration': 900, 'avgSpeed': 50,
+         'electricConsumption': 18.2, 'startLatitude': 51.0, 'startLongitude': 12.0},
+        {'tripId': 2, 'startTime': 1791100000000, 'endTime': 1791100600000,
+         'distance': 7.0, 'duration': 600, 'avgSpeed': 42,
+         'energyConsumption': 17.5, 'endLatitude': 51.1, 'endLongitude': 12.1},
+    ]},
+)
+print(json.dumps(payload))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+
+    assert.equal(result.status, 0, result.stderr.toString());
+    const payload = JSON.parse(result.stdout.toString());
+    assert.equal(payload.tripCount, 2);
+    assert.equal(payload.tripList.length, 2);
+    // Newest first regardless of API order.
+    assert.equal(payload.tripList[0].tripId, 2);
+    assert.equal(payload.tripList[0].distanceKm, 7.0);
+    assert.ok(!('startLatitude' in payload.tripList[0]), 'no coordinates in curated trips');
+    assert.ok(!('endLongitude' in payload.tripList[1]), 'no coordinates in curated trips');
+    assert.equal(payload.lastTripDistanceKm, 7.0);
+    assert.equal(payload.lastTripDurationMin, 10.0);
+    assert.equal(payload.lastTripAvgSpeedKmh, 42);
+    assert.equal(payload.lastTripConsumptionKwh100km, 17.5);
+    assert.match(payload.lastTripStartTime, /^2026-/);
+});
+
+test('bridge tolerates empty and legacy journey shapes', () => {
+    const run = journey => {
+        const result = spawnSync(
+            PYTHON,
+            [
+                '-c',
+                `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+print(json.dumps(module.normalize_vehicle({'vin': 'V1'}, {}, {}, {}, {}, {}, {}, {}, ${journey})))
+`,
+            ],
+            { cwd: path.join(__dirname, '..') },
+        );
+        assert.equal(result.status, 0, result.stderr.toString());
+        return JSON.parse(result.stdout.toString());
+    };
+    const empty = run('{}');
+    assert.equal(empty.tripCount, 0);
+    assert.deepEqual(empty.tripList, []);
+    assert.equal(empty.lastTripDistanceKm, null);
+    const legacy = run("{'trips': [{'distance': 10}], 'total': 3}");
+    assert.equal(legacy.tripCount, 3);
+    assert.equal(legacy.lastTripDistanceKm, 10);
+});
+
+test('resolveVehicleModel prefers config over payload', () => {
+    assert.equal(resolveVehicleModel({}, { vehicleModel: ' 7GT ' }), '7GT');
+    assert.equal(resolveVehicleModel({ modelName: 'X' }, { vehicleModel: '' }), 'X');
+    assert.equal(resolveVehicleModel({}, {}), '');
 });

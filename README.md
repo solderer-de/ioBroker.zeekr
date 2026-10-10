@@ -163,9 +163,9 @@ The adapter creates a vehicle channel for each discovered vehicle with the follo
 
 - `status`: battery, range, odometer, charging power, speed, plug state, charging state, lock state, climate state, charge limit, tire pressures, GPS, 12V battery, central locking, doors/trunk open states, consumption, engine/maintenance states, and timestamps
 - `control`: command payload, service ID, send button, typed buttons (lock, climate, charge, windows, sunshade, lights), writable charge limit, climate temp/duration, charge/travel plan inputs, last command, and last result
-- `trips`: trip count, last trip distance, and trip list (logbook)
+- `trips`: trip count, last trip distance/start/end/duration/average speed/consumption, and recent trip list (logbook, last 5 without coordinates)
 - `raw`: raw payloads from the bridge
-- `details`: additional metadata such as model information
+- `details`: additional metadata; `details.model` shows the configured vehicle model (Advanced tab) because the API exposes no model name
 
 Polling is adaptive: charging or driving vehicles are polled every 60s (min 30s), idle ones at the configured interval. Unexpected charging stops and newly opened doors trigger the alert webhook (rate-limited).
 
@@ -302,6 +302,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.69
+
+- Trips: journey payload shapes (`list`/`data`/`trips`) mapped to count, recent trips and last-trip distance/start/end/duration/speed/consumption (no coordinates); `details.model` shows the configured vehicle model (API exposes none)
 
 ### 0.1.68
 
