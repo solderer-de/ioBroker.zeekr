@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.65",
+    "version": "0.1.66",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.66": {
+        "en": "Bot issues: trunk unlock uses start (upstream fix), 079012 token-expiry hint, repochecker text fixes.",
+        "de": "Bot-Issues: Kofferraum-Unlock mit start (Upstream-Fix), 079012-Hinweis, Repochecker-Texte.",
+        "ru": "Бот-задачи: trunk unlock через start, хинт 079012, тексты repochecker.",
+        "pt": "Issues do bot: trunk unlock com start, dica 079012, textos.",
+        "nl": "Bot-issues: trunk unlock met start, 079012-hint, teksten.",
+        "fr": "Tickets bot : trunk unlock en start, astuce 079012, textes.",
+        "it": "Issue bot: trunk unlock con start, hint 079012, testi.",
+        "es": "Issues del bot: trunk unlock con start, pista 079012, textos.",
+        "pl": "Zgłoszenia bota: trunk unlock przez start, hint 079012, teksty.",
+        "uk": "Задачі бота: trunk unlock через start, хінт 079012, тексти.",
+        "zh-cn": "机器人问题：trunk unlock改用start、079012提示、文本修复。"
+      },
       "0.1.65": {
         "en": "ABRP trims pasted API key whitespace (copy-paste artifacts no longer cause 401).",
         "de": "ABRP schneidet Leerzeichen am API-Key ab (Copy-Paste-Reste geben kein 401 mehr).",

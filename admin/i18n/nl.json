@@ -47,7 +47,6 @@
   "Home radius (m)": "Straal thuis (m)",
   "Smart charging (cheapest window)": "Slim laden (goedkoopste venster)",
   "Departure time (HH:MM)": "Vertrektijd (HH:MM)",
-  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Voorbeeld met locatie en tijdvenster: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
   "Older base APK (optional, e.g. app 3.0.x)": "Oudere base-APK (optioneel, bijv. app 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Als de huidige app (bijv. 3.1.0) sleutels verbergt, worden ontbrekende uit dit oudere paar gehaald.",
   "Older arm64 APK (optional)": "Oudere arm64-APK (optioneel)",
@@ -68,5 +67,6 @@
   "Enable ABRP upload": "ABRP-upload inschakelen",
   "ABRP API key (telemetry key)": "ABRP API-key (telemetrie)",
   "User token from ABRP app": "Gebruikerstoken uit ABRP-app",
-  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Eén auto: plak alleen het token (geen VIN nodig). Meerdere auto's: {\"VIN\": \"token\", ...}"
+  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Eén auto: plak alleen het token (geen VIN nodig). Meerdere auto's: {\"VIN\": \"token\", ...}",
+  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, zie README “Energy, costs and smart charging” voor het formaat."
 }

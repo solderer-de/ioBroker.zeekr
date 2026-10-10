@@ -47,7 +47,6 @@
   "Home radius (m)": "家庭半径（米）",
   "Smart charging (cheapest window)": "智能充电（最便宜时段）",
   "Departure time (HH:MM)": "出发时间（HH:MM）",
-  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "包含地点和时间窗口的示例：[{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
   "Older base APK (optional, e.g. app 3.0.x)": "旧版base APK（可选，例如3.0.x应用）",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "如果当前应用（如3.1.0）隐藏密钥，则从此旧版本对中获取缺失的密钥。",
   "Older arm64 APK (optional)": "旧版arm64 APK（可选）",
@@ -68,5 +67,6 @@
   "Enable ABRP upload": "启用ABRP上传",
   "ABRP API key (telemetry key)": "ABRP API密钥（遥测）",
   "User token from ABRP app": "ABRP应用用户令牌",
-  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "一辆车：仅粘贴用户令牌（无需VIN）。多辆车：{\"VIN\": \"token\", ...}"
+  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "一辆车：仅粘贴用户令牌（无需VIN）。多辆车：{\"VIN\": \"token\", ...}",
+  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON，格式见README“Energy, costs and smart charging”部分。"
 }

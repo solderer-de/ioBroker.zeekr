@@ -132,7 +132,7 @@ Uploaded APKs live in the same instance data folder (`apks/` subdirectory) and s
 
 The backup file is never committed (see `.gitignore`) and is never uploaded anywhere by the adapter.
 
-The adapter additionally auto-saves the backup file on every start (whenever secrets are present) and refills gaps from it: `iobroker url` reinstalls rewrite the instance object and drop adapter-stored secrets (visible as `from: system.host.iobroker.cli` with empty values) — the next start restores them automatically. Only empty fields are ever refilled; to clear secrets permanently, delete the backup file too.
+The adapter additionally auto-saves the backup file on every start (whenever secrets are present) and refills gaps from it: reinstalling the adapter rewrites the instance object and drops adapter-stored secrets (visible as `from: system.host.iobroker.cli` with empty values) — the next start restores them automatically. Only empty fields are ever refilled; to clear secrets permanently, delete the backup file too.
 
 ## Configuration
 
@@ -239,6 +239,7 @@ Additional buttons marked `(experimental)` come from Smali research in [borconi/
 Confirmed since the last update (openzeekr moved to the same values, conflicts resolved):
 
 - windows/sunshade: `RWS` + lowercase targets (`window`, `ventilate`, `sunshade`, `sunroof`) — our values were correct
+- trunk unlock: `start`/`RDU`/`target=trunk` (upstream #162, live-tested on 7X — our `stop` corrected)
 - climate/comfort: unified `ZAF` service (`AC`, `DF`, `SH.11`, `SW`) — our values were correct
 - flash/honk: lowercase `rhl` key — our values were correct
 
@@ -253,7 +254,7 @@ Known caveats:
 
 For each open pair, try the listed variant and report whether the car executes it (check `control.lastResult` plus the car itself):
 
-1. Trunk unlock: `stop`/`RDU`/`target=trunk`
+1. Trunk unlock: `start`/`RDU`/`target=trunk`
 2. Frunk: `start`/`RDU`/`target=hood`
 3. Battery preheat: `start`/`ZAN`
 4. Charge current 16 A: `start`/`RCS`/`rcs.ac.current=16`
@@ -297,6 +298,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.66
+
+- Trunk unlock corrected to `start` (upstream zeekr_homeassistant #162, live-tested on 7X); new 079012 token-expiry hint; repochecker text fixes (tariffs help without JSON blob, no install-from-GitHub wording)
 
 ### 0.1.65
 
