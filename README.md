@@ -149,6 +149,10 @@ The adapter exposes the following configuration fields:
 - `vinIv`
 - `pollingInterval`
 - `vehicleFilter`
+- `vehicleModel` (optional, shown as `details.model` — the API exposes no model name)
+- `abrpEnabled`, `abrpApiKey`, `abrpUserTokens` (see “ABRP upload” below)
+- `mockMode` (boolean, connection test without a real account)
+- `alertWebhook` (optional, error alerts)
 - `pythonBinary` (optional)
 - `autoExtractSecrets` (boolean)
 - `apkBasePath` / `apkArm64Path` (optional)
@@ -157,13 +161,17 @@ The adapter exposes the following configuration fields:
 - `extractRegion`
 - `debug` (boolean)
 
+### Shared account trade-off
+
+Using a second (shared) account for the adapter avoids 079021 session fights with the app — recommended. But the server restricts some endpoints to the owner account: OTA update checks fail on shared keys (openzeekr #23 pattern), and the journey log likely does too (`trips.count` stays 0 while the app shows drives). If trips stay empty, that is the probable cause, not a mapping bug.
+
 ## Datapoints
 
 The adapter creates a vehicle channel for each discovered vehicle with the following subchannels:
 
 - `status`: battery, range, odometer, charging power, speed, plug state, charging state, lock state, climate state, charge limit, tire pressures, GPS, 12V battery, central locking, doors/trunk open states, consumption, engine/maintenance states, and timestamps
 - `control`: command payload, service ID, send button, typed buttons (lock, climate, charge, windows, sunshade, lights), writable charge limit, climate temp/duration, charge/travel plan inputs, last command, and last result
-- `trips`: trip count, last trip distance/start/end/duration/average speed/consumption, and recent trip list (logbook, last 5 without coordinates)
+- `trips`: trip count, last trip distance/start/end/duration/average speed/consumption, recent trip list (logbook, last 5 without coordinates), and fetch status (`trips.fetchJson`: ok/total/payload keys — empty when the server sends nothing, e.g. on shared accounts, see above)
 - `raw`: raw payloads from the bridge
 - `details`: additional metadata; `details.model` shows the configured vehicle model (Advanced tab) because the API exposes no model name
 
@@ -265,6 +273,7 @@ For each open pair, try the listed variant and report whether the car executes i
 - Releases are automated with `release-please`; publishing a release triggers the asset build workflow.
 - The release workflow builds a tar archive and attaches it to the GitHub release automatically.
 - npm publishing needs no local token: pushing a version tag (`vX.Y.Z`) runs the Test-and-Release deploy job, which publishes to npm via trusted publishing. Never `npm publish` manually, never commit tokens.
+- `common.news` keeps at most 7 entries (repository bot truncates, E1032): on release, drop the oldest entries — full history stays in the changelog below.
 - A scheduled upstream sync workflow checks the reference repository for new commits and opens a tracking issue when changes are detected.
 
 ## Roadmap
