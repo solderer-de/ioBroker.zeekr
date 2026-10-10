@@ -303,6 +303,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.70
+
+- Journey fetch status (`trips.fetchJson`: ok/total/keys, no sensitive values) to diagnose empty trip logs
+
 ### 0.1.69
 
 - Trips: journey payload shapes (`list`/`data`/`trips`) mapped to count, recent trips and last-trip distance/start/end/duration/speed/consumption (no coordinates); `details.model` shows the configured vehicle model (API exposes none)

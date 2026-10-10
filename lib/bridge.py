@@ -409,6 +409,14 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         trip_count = int(trip_count)
     except (TypeError, ValueError):
         trip_count = len(trip_list_raw)
+    # Fetch-Status ohne sensible Werte (Keys + total): zeigt, ob die API
+    # überhaupt Daten liefert und in welcher Form (Diagnose, kein Tracking).
+    journey_keys = sorted(str(key) for key in journey_payload.keys())[:20]
+    journey_fetch = {
+        'ok': bool(journey_payload),
+        'total': journey_payload.get('total'),
+        'keys': journey_keys,
+    }
 
     def slim_trip(record):
         if not isinstance(record, dict):
@@ -534,6 +542,7 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'repairModeActive': coerce_bool(repair_mode),
         'tripCount': trip_count,
         'tripList': recent_trips,
+        'journeyFetch': journey_fetch,
         'lastTripStartTime': iso_ms(last_trip_start),
         'lastTripEndTime': iso_ms(last_trip_end),
         'lastTripDurationMin': latest.get('durationMin'),

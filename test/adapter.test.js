@@ -1970,3 +1970,31 @@ test('resolveVehicleModel prefers config over payload', () => {
     assert.equal(resolveVehicleModel({ modelName: 'X' }, { vehicleModel: '' }), 'X');
     assert.equal(resolveVehicleModel({}, {}), '');
 });
+
+test('bridge reports journey fetch status without sensitive values', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+full = module.normalize_vehicle({'vin': 'V1'}, {}, {}, {}, {}, {}, {}, {},
+    {'total': 1, 'list': [{'startTime': 1}], 'debugInfo': 'x'})
+empty = module.normalize_vehicle({'vin': 'V1'}, {}, {}, {}, {}, {}, {}, {}, {})
+print(json.dumps({'full': full['journeyFetch'], 'empty': empty['journeyFetch']}))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+    assert.equal(result.status, 0, result.stderr.toString());
+    const out = JSON.parse(result.stdout.toString());
+    assert.equal(out.full.ok, true);
+    assert.equal(out.full.total, 1);
+    assert.deepEqual(out.full.keys, ['debugInfo', 'list', 'total']);
+    assert.equal(out.empty.ok, false);
+});
