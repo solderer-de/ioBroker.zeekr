@@ -515,6 +515,40 @@
           "label": "Vehicle filter",
           "help": "Part of name or VIN. Empty = all."
         },
+        "vehicleModel": {
+          "type": "text",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6,
+          "label": {
+            "en": "Vehicle model (e.g. 7GT, optional)",
+            "de": "Fahrzeugmodell (z.B. 7GT, optional)",
+            "ru": "Модель авто (напр. 7GT, необязательно)",
+            "pt": "Modelo do carro (ex. 7GT, opcional)",
+            "nl": "Automodel (bijv. 7GT, optioneel)",
+            "fr": "Modèle du véhicule (ex. 7GT, optionnel)",
+            "it": "Modello veicolo (es. 7GT, opzionale)",
+            "es": "Modelo del coche (ej. 7GT, opcional)",
+            "pl": "Model auta (np. 7GT, opcjonalnie)",
+            "uk": "Модель авто (напр. 7GT, необов'язково)",
+            "zh-cn": "车辆型号（例如7GT，可选）"
+          },
+          "help": {
+            "en": "The API exposes no model name, so details.model shows this value when set.",
+            "de": "Die API liefert keinen Modellnamen, daher zeigt details.model diesen Wert, wenn gesetzt.",
+            "ru": "API не даёт названия модели, поэтому details.model показывает это значение.",
+            "pt": "A API não expõe o modelo, por isso details.model mostra este valor.",
+            "nl": "De API geeft geen modelnaam, dus toont details.model deze waarde.",
+            "fr": "L'API n'expose pas de modèle, details.model affiche donc cette valeur.",
+            "it": "L'API non espone il modello, quindi details.model mostra questo valore.",
+            "es": "La API no expone el modelo, así que details.model muestra este valor.",
+            "pl": "API nie podaje modelu, więc details.model pokazuje tę wartość.",
+            "uk": "API не дає назви моделі, тому details.model показує це значення.",
+            "zh-cn": "API不提供型号，因此details.model显示此值。"
+          }
+        },
         "secretsBackupPath": {
           "type": "text",
           "xs": 12,

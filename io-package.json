@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.68",
+    "version": "0.1.69",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.69": {
+        "en": "Trips: journey log mapped to recent trips and last-trip stats; details.model shows the configured vehicle model.",
+        "de": "Fahrten: Journey-Log auf Recent-Trips und Letzte-Fahrt-Werte gemappt; details.model zeigt das konfigurierte Modell.",
+        "ru": "Поездки: журнал mapped на последние поездки; details.model показывает настроенную модель.",
+        "pt": "Viagens: registo mapeado para viagens recentes; details.model mostra o modelo configurado.",
+        "nl": "Ritten: journaal gemapt naar recente ritten; details.model toont het ingestelde model.",
+        "fr": "Trajets : journal mappé vers trajets récents ; details.model affiche le modèle configuré.",
+        "it": "Viaggi: registro mappato sui viaggi recenti; details.model mostra il modello configurato.",
+        "es": "Viajes: registro mapeado a viajes recientes; details.model muestra el modelo configurado.",
+        "pl": "Trasy: dziennik zmapowany na ostatnie trasy; details.model pokazuje skonfigurowany model.",
+        "uk": "Поїздки: журнал змаповано на останні поїздки; details.model показує налаштовану модель.",
+        "zh-cn": "行程：日志映射到最近行程；details.model显示配置的车型。"
+      },
       "0.1.68": {
         "en": "Bot fixes: trimmed news history, ABRP tab label, fuller translations.",
         "de": "Bot-Fixes: News-Verlauf gekürzt, ABRP-Tab-Label, vollständigere Übersetzungen.",
@@ -151,19 +164,6 @@
         "pl": "ABRP ostrzega przy nieprawidłowym JSON tokenów zamiast cichego pomijania.",
         "uk": "ABRP попереджає про недійсний JSON токенів замість тихого пропуску.",
         "zh-cn": "令牌JSON无效时ABRP会发出警告，而不是静默跳过。"
-      },
-      "0.1.61": {
-        "en": "ABRP diagnostics: startup census and presence states show whether API key and user tokens arrived (values never logged).",
-        "de": "ABRP-Diagnose: Start-Census und Presence-States zeigen, ob API-Key und User-Token ankamen (Werte werden nie geloggt).",
-        "ru": "Диагностика ABRP: census и presence показывают наличие ключей (без значений).",
-        "pt": "Diagnóstico ABRP: census e presence mostram se as chaves chegaram (sem valores).",
-        "nl": "ABRP-diagnose: census en presence tonen of sleutels aankwamen (zonder waarden).",
-        "fr": "Diagnostic ABRP : census et presence indiquent si les clés sont arrivées (sans valeurs).",
-        "it": "Diagnostica ABRP: census e presence mostrano se le chiavi sono arrivate (senza valori).",
-        "es": "Diagnóstico ABRP: census y presence muestran si llegaron las claves (sin valores).",
-        "pl": "Diagnostyka ABRP: census i presence pokazują, czy klucze dotarły (bez wartości).",
-        "uk": "Діагностика ABRP: census і presence показують, чи надійшли ключі (без значень).",
-        "zh-cn": "ABRP诊断：启动普查和presence状态显示密钥是否到达（从不记录值）。"
       }
     }
   },
@@ -187,6 +187,7 @@
     "extractRegion": "EM",
     "pollingInterval": 300,
     "vehicleFilter": "",
+    "vehicleModel": "",
     "pythonBinary": "",
     "alertWebhook": "",
     "debug": false,
