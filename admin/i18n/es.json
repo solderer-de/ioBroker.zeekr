@@ -47,7 +47,6 @@
   "Home radius (m)": "Radio de casa (m)",
   "Smart charging (cheapest window)": "Carga inteligente (ventana barata)",
   "Departure time (HH:MM)": "Hora de salida (HH:MM)",
-  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Ejemplo con ubicación y ventana de tiempo: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
   "Older base APK (optional, e.g. app 3.0.x)": "APK base antiguo (opcional, ej. app 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Si la app actual (ej. 3.1.0) oculta claves, las faltantes se toman de este par antiguo.",
   "Older arm64 APK (optional)": "APK arm64 antiguo (opcional)",
@@ -68,5 +67,6 @@
   "Enable ABRP upload": "Activar envío a ABRP",
   "ABRP API key (telemetry key)": "Clave API ABRP (telemetría)",
   "User token from ABRP app": "Token de usuario de la app ABRP",
-  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Un coche: pega solo el token (sin VIN). Varios coches: {\"VIN\": \"token\", ...}"
+  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Un coche: pega solo el token (sin VIN). Varios coches: {\"VIN\": \"token\", ...}",
+  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, ver el formato en la sección README “Energy, costs and smart charging”."
 }

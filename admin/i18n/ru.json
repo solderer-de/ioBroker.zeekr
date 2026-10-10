@@ -47,7 +47,6 @@
   "Home radius (m)": "Радиус дома (м)",
   "Smart charging (cheapest window)": "Умная зарядка (дешёвое окно)",
   "Departure time (HH:MM)": "Время выезда (ЧЧ:ММ)",
-  "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]": "Пример с местом и окном времени: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
   "Older base APK (optional, e.g. app 3.0.x)": "Старый base APK (необязательно, напр. приложение 3.0.x)",
   "If the current app (e.g. 3.1.0) hides keys, missing ones are taken from this older pair.": "Если текущее приложение (напр. 3.1.0) скрывает ключи, недостающие берутся из этой старой пары.",
   "Older arm64 APK (optional)": "Старый arm64 APK (необязательно)",
@@ -68,5 +67,6 @@
   "Enable ABRP upload": "Включить загрузку в ABRP",
   "ABRP API key (telemetry key)": "ABRP API-ключ (телеметрия)",
   "User token from ABRP app": "Токен из приложения ABRP",
-  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Одна машина: вставьте только токен (VIN не нужен). Несколько: {\"VIN\": \"token\", ...}"
+  "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Одна машина: вставьте только токен (VIN не нужен). Несколько: {\"VIN\": \"token\", ...}",
+  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, формат см. в README “Energy, costs and smart charging”."
 }

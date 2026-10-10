@@ -360,6 +360,7 @@ test('getErrorHint maps known Zeekr errors to German hints', () => {
     assert.match(getErrorHint('079025 Signature authentication failed'), /prod_secret/);
     assert.match(getErrorHint('Decrypt X-VIN failed'), /VIN/);
     assert.match(getErrorHint('079021 session'), /second.*account/i);
+    assert.match(getErrorHint('079012 Token expired'), /sign in again/i);
 });
 
 test('jsonConfig parses and covers every native key', () => {
@@ -861,7 +862,7 @@ test('mock object tree has no missing parents and valid button roles (E1008/E300
 test('experimental commands exist for new openzeekr actions', () => {
     const { EXPERIMENTAL_COMMANDS } = require('../lib/adapter');
     assert.deepEqual(EXPERIMENTAL_COMMANDS.trunkUnlock, {
-        command: 'stop',
+        command: 'start',
         serviceId: 'RDU',
         setting: { serviceParameters: [{ key: 'target', value: 'trunk' }] },
     });

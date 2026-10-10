@@ -381,7 +381,7 @@
         "tariffsJson": {
           "type": "text",
           "label": "Tariffs JSON (chargers + time windows)",
-          "help": "Example, location + time window: [{\"name\":\"home-night\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200,\"pricePerKwh\":0.25,\"from\":\"22:00\",\"to\":\"06:00\"}]",
+          "help": "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.",
           "xs": 12,
           "sm": 12,
           "md": 12,
