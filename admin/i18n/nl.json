@@ -68,5 +68,6 @@
   "ABRP API key (telemetry key)": "ABRP API-key (telemetrie)",
   "User token from ABRP app": "Gebruikerstoken uit ABRP-app",
   "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Eén auto: plak alleen het token (geen VIN nodig). Meerdere auto's: {\"VIN\": \"token\", ...}",
-  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, zie README “Energy, costs and smart charging” voor het formaat."
+  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, zie README “Energy, costs and smart charging” voor het formaat.",
+  "ABRP": "ABRP"
 }

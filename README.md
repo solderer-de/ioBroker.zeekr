@@ -283,6 +283,10 @@ For each open pair, try the listed variant and report whether the car executes i
 4. Set the charge limit to e.g. 80 and cross-check `status.chargingLimit`.
 5. Report results as an issue (model, app version, region) so defaults can be refined.
 
+### Object dump for repository review
+
+The repochecker object-structure check accepts only a plain JSON **object** at root: `{ "<id>": { "_id": "<id>", ... }, ... }` — every value must carry `_id` identical to its key (an array or missing `_id` fails with E3001/E3002). Redact before attaching: VIN (upper- and lowercase device IDs), account email (`username`), home coordinates (`homeLat`/`homeLon`) and all `protectedNative` secret values (password, HMAC, prodSecret, VIN key/IV, ABRP keys) — structure only, never values.
+
 ## Disclaimer
 
 Unofficial community project. Not affiliated with Zeekr or Geely.
@@ -298,6 +302,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.68
+
+- Repository bot fixes: news trimmed to 7 entries (dropped versions stay in this changelog), ABRP tab label in translations, fuller news translations
 
 ### 0.1.67
 

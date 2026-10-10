@@ -68,5 +68,6 @@
   "ABRP API key (telemetry key)": "ABRP API密钥（遥测）",
   "User token from ABRP app": "ABRP应用用户令牌",
   "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "一辆车：仅粘贴用户令牌（无需VIN）。多辆车：{\"VIN\": \"token\", ...}",
-  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON，格式见README“Energy, costs and smart charging”部分。"
+  "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON，格式见README“Energy, costs and smart charging”部分。",
+  "ABRP": "ABRP"
 }

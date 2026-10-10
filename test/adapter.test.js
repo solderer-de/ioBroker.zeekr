@@ -1874,9 +1874,10 @@ test('ABRP push trims pasted API key whitespace', async () => {
     assert.match(seenUrl, /api_key=key-with-space(&|$)/);
 });
 
-test('io-package news stays within the 20-entry CI gate', () => {
+test('io-package news stays within the bot gates', () => {
     const fs = require('node:fs');
     const ioPkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'io-package.json'), 'utf8'));
     const entries = Object.keys(ioPkg.common.news || {});
-    assert.ok(entries.length <= 20, `news has ${entries.length} entries, CI allows 20`);
+    // CI schema allows 20, the repository bot truncates at 7 (E1032).
+    assert.ok(entries.length <= 7, `news has ${entries.length} entries, bot allows 7`);
 });
