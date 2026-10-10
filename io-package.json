@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.66",
+    "version": "0.1.67",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.67": {
+        "en": "CI fix: news trimmed to 20 entries (schema gate) plus a test guarding the limit.",
+        "de": "CI-Fix: News auf 20 Einträge gekürzt (Schema-Gate) plus Test für das Limit.",
+        "ru": "CI фикс: news урезаны до 20 записей плюс тест лимита.",
+        "pt": "Correção CI: news reduzido para 20 entradas mais teste do limite.",
+        "nl": "CI-fix: news teruggebracht tot 20 items plus limiettest.",
+        "fr": "Correctif CI : news limité à 20 entrées plus test de limite.",
+        "it": "Fix CI: news ridotte a 20 voci più test del limite.",
+        "es": "Corrección CI: news recortado a 20 entradas más prueba del límite.",
+        "pl": "Poprawka CI: news do 20 wpisów plus test limitu.",
+        "uk": "Фікс CI: news скорочено до 20 записів плюс тест ліміту.",
+        "zh-cn": "CI修复：news精简至20条并增加限制测试。"
+      },
       "0.1.66": {
         "en": "Bot issues: trunk unlock uses start (upstream fix), 079012 token-expiry hint, repochecker text fixes.",
         "de": "Bot-Issues: Kofferraum-Unlock mit start (Upstream-Fix), 079012-Hinweis, Repochecker-Texte.",
@@ -320,32 +333,6 @@
         "pl": "ESLint, tłumaczenia panelu, automerge dependabota.",
         "uk": "ESLint, переклади адмінки, автомердж dependabot.",
         "zh-cn": "ESLint、管理界面翻译、dependabot自动合并。"
-      },
-      "0.1.47": {
-        "en": "Repository listing fixes.",
-        "de": "Korrekturen für das Repository-Listing.",
-        "ru": "Исправления для листинга репозитория.",
-        "pt": "Correções para a listagem do repositório.",
-        "nl": "Fixes voor de repositorylijst.",
-        "fr": "Corrections pour le référencement.",
-        "it": "Correzioni per l'elenco repository.",
-        "es": "Correcciones para el listado del repositorio.",
-        "pl": "Poprawki listy repozytorium.",
-        "uk": "Виправлення для лістингу репозиторію.",
-        "zh-cn": "仓库列表修复。"
-      },
-      "0.1.46": {
-        "en": "Correct Zeekr logo icon.",
-        "de": "Korrektes Zeekr-Logo als Icon.",
-        "ru": "Правильный значок Zeekr.",
-        "pt": "Ícone Zeekr correto.",
-        "nl": "Correct Zeekr-pictogram.",
-        "fr": "Icône Zeekr correcte.",
-        "it": "Icona Zeekr corretta.",
-        "es": "Icono de Zeekr correcto.",
-        "pl": "Poprawna ikona Zeekr.",
-        "uk": "Правильний значок Zeekr.",
-        "zh-cn": "正确的Zeekr图标。"
       }
     }
   },

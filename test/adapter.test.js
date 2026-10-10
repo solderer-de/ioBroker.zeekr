@@ -1873,3 +1873,10 @@ test('ABRP push trims pasted API key whitespace', async () => {
     }
     assert.match(seenUrl, /api_key=key-with-space(&|$)/);
 });
+
+test('io-package news stays within the 20-entry CI gate', () => {
+    const fs = require('node:fs');
+    const ioPkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'io-package.json'), 'utf8'));
+    const entries = Object.keys(ioPkg.common.news || {});
+    assert.ok(entries.length <= 20, `news has ${entries.length} entries, CI allows 20`);
+});

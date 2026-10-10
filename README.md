@@ -299,6 +299,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.67
+
+- CI fix: `common.news` trimmed to the 20-entry schema gate (oldest entry stays in this changelog) plus a unit test guarding the limit
+
 ### 0.1.66
 
 - Trunk unlock corrected to `start` (upstream zeekr_homeassistant #162, live-tested on 7X); new 079012 token-expiry hint; repochecker text fixes (tariffs help without JSON blob, no install-from-GitHub wording)
