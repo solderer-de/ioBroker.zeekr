@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.70",
+    "version": "0.1.71",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,18 +74,18 @@
       }
     ],
     "news": {
-      "0.1.70": {
-        "en": "Journey fetch status for diagnosing empty trip logs (keys and total only, no sensitive values).",
-        "de": "Journey-Fetch-Status zur Diagnose leerer Fahrtenlogs (nur Keys und Total, keine sensiblen Werte).",
-        "ru": "Статус получения поездок для диагностики пустых журналов.",
-        "pt": "Estado da leitura de viagens para diagnosticar registos vazios.",
-        "nl": "Ophaalstatus van ritten voor diagnose van lege ritlogs.",
-        "fr": "Statut de lecture des trajets pour diagnostiquer les journaux vides.",
-        "it": "Stato lettura viaggi per diagnosticare registri vuoti.",
-        "es": "Estado de lectura de viajes para diagnosticar registros vacíos.",
-        "pl": "Status pobierania tras do diagnostyki pustych dzienników.",
-        "uk": "Статус отримання поїздок для діагностики порожніх журналів.",
-        "zh-cn": "行程获取状态，用于诊断空行程日志。"
+      "0.1.71": {
+        "en": "Self-sufficient venv bootstrap without system pip (get-pip.py instead of OS packages).",
+        "de": "Autarker Venv-Bootstrap ohne System-pip (get-pip.py statt OS-Pakete).",
+        "ru": "Автономный venv без системного pip (get-pip.py).",
+        "pt": "Bootstrap venv autossuficiente sem pip do sistema (get-pip.py).",
+        "nl": "Zelfvoorzienende venv-bootstrap zonder systeem-pip (get-pip.py).",
+        "fr": "Bootstrap venv autonome sans pip système (get-pip.py).",
+        "it": "Bootstrap venv autonomo senza pip di sistema (get-pip.py).",
+        "es": "Bootstrap venv autosuficiente sin pip del sistema (get-pip.py).",
+        "pl": "Samowystarczalny venv bez systemowego pipa (get-pip.py).",
+        "uk": "Автономний venv без системного pip (get-pip.py).",
+        "zh-cn": "自给自足的venv引导，无需系统pip（get-pip.py）。"
       },
       "0.1.69": {
         "en": "Trips: journey log mapped to recent trips and last-trip stats; details.model shows the configured vehicle model.",

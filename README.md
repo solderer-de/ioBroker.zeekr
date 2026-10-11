@@ -23,7 +23,7 @@ This repository contains an ioBroker adapter for [Zeekr electric vehicles](https
 
 No manual Python package installation is required. The adapter creates a local virtual environment on first run and installs the Zeekr dependency automatically.
 
-On Debian/Ubuntu hosts and containers (e.g. buanet images after a Python upgrade) the venv bootstrap needs `ensurepip`: if the log shows `Python dependency setup failed` with `ensurepip`, install the OS package and restart the instance (the adapter `.venv` directory is rebuilt automatically):
+On Debian/Ubuntu hosts and containers the venv bootstrap is self-sufficient: the venv is created without system pip and pip is bootstrapped via the official get-pip.py (network is required for PyPI anyway). Only if the `venv` Python module itself is missing you need the OS package and an instance restart (the adapter `.venv` directory is rebuilt automatically):
 
 ```bash
 apt-get update && apt-get install -y python3-venv
@@ -317,6 +317,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.71
+
+- Self-sufficient venv bootstrap: venv is created without system pip, pip comes via official get-pip.py — no OS packages needed (only the `venv` module itself, if missing)
 
 ### 0.1.70
 

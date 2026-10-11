@@ -1998,3 +1998,45 @@ print(json.dumps({'full': full['journeyFetch'], 'empty': empty['journeyFetch']})
     assert.deepEqual(out.full.keys, ['debugInfo', 'list', 'total']);
     assert.equal(out.empty.ok, false);
 });
+
+test('bridge venv bootstrap needs no system pip', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+import sys
+import urllib.request
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+report = {}
+# No venv configured: strict no-op, never touches the network.
+import os
+os.environ.pop('ZEEKR_VENV', None)
+report['noop'] = module.ensure_runtime_dependencies() is None
+# pip already present: early return, no download attempted.
+report['earlyReturn'] = module._bootstrap_venv_pip(sys.executable) is None
+# Download failure surfaces as RuntimeError (no silent pass, no crash).
+def boom(*args, **kwargs):
+    raise IOError('offline')
+urllib.request.urlopen = boom
+try:
+    module._bootstrap_venv_pip('/nonexistent/python')
+    report['downloadFailure'] = 'no-raise'
+except RuntimeError as exc:
+    report['downloadFailure'] = str(exc)[:60]
+print(json.dumps(report))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+    assert.equal(result.status, 0, result.stderr.toString());
+    const report = JSON.parse(result.stdout.toString());
+    assert.equal(report.noop, true);
+    assert.equal(report.earlyReturn, true);
+    assert.match(report.downloadFailure, /get-pip.py download failed/);
+});

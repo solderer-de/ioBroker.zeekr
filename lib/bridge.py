@@ -60,8 +60,12 @@ def ensure_runtime_dependencies():
         return
     if not os.path.isdir(venv_dir):
         if venv is None:
-            return
-        venv.EnvBuilder(with_pip=True, clear=False, symlinks=True).create(venv_dir)
+            raise RuntimeError(
+                'Python venv module missing — on Debian/Ubuntu install '
+                'python3-venv, delete the adapter .venv directory and restart.')
+        # with_pip=False: never touches ensurepip (missing on Debian slim).
+        # pip is bootstrapped below via get-pip.py instead.
+        venv.EnvBuilder(with_pip=False, clear=False, symlinks=True).create(venv_dir)
     if os.name == 'nt':
         python_exe = os.path.join(venv_dir, 'Scripts', 'python.exe')
     else:
@@ -69,16 +73,59 @@ def ensure_runtime_dependencies():
     if not os.path.exists(python_exe):
         return
     import subprocess
-    # A venv created without ensurepip support (e.g. missing python3-venv on
-    # Debian) has no pip at all — bootstrap it instead of crashing.
-    probe = subprocess.run([python_exe, '-m', 'pip', '--version'], capture_output=True, timeout=60)
-    if probe.returncode != 0:
-        subprocess.check_call([python_exe, '-m', 'ensurepip', '--default-pip'], timeout=120)
+    _bootstrap_venv_pip(python_exe)
     # Pinned install from requirements.txt (single source of truth).
     # Falls back to a pinned version if requirements.txt is missing.
     req_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'requirements.txt')
     target = ['-r', req_file] if os.path.exists(req_file) else ['zeekr-ev-api==0.1.15']
     subprocess.check_call([python_exe, '-m', 'pip', 'install', '--quiet', '--disable-pip-version-check'] + target, timeout=180)
+
+
+GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
+
+
+def _bootstrap_venv_pip(python_exe):
+    """pip ins venv bringen ohne ensurepip (Debian slim, frische Container).
+
+    Nutzt den offiziellen get-pip.py-Bootstrap statt Systempaketen — Netz
+    ist ohnehin Pflicht (PyPI). Wirft RuntimeError mit klarer Ursache.
+    """
+    import subprocess
+    import tempfile
+    import urllib.request
+    try:
+        probe = subprocess.run([python_exe, '-m', 'pip', '--version'], capture_output=True, timeout=60)
+    except OSError:
+        probe = None
+    if probe is not None and probe.returncode == 0:
+        return
+    try:
+        with urllib.request.urlopen(GET_PIP_URL, timeout=120) as response:
+            installer = response.read()
+    except Exception as exc:
+        raise RuntimeError(f'get-pip.py download failed: {exc}') from exc
+    if len(installer) < 100000:
+        raise RuntimeError('get-pip.py download looks truncated')
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(suffix='get-pip.py', delete=False) as tmp:
+            tmp.write(installer)
+            tmp_path = tmp.name
+        subprocess.check_call([python_exe, tmp_path], timeout=180)
+    except Exception as exc:
+        raise RuntimeError(f'pip bootstrap failed: {exc}') from exc
+    finally:
+        if tmp_path:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+    try:
+        verify = subprocess.run([python_exe, '-m', 'pip', '--version'], capture_output=True, timeout=60)
+    except OSError as exc:
+        raise RuntimeError(f'pip bootstrap failed: {exc}') from exc
+    if verify.returncode != 0:
+        raise RuntimeError('pip bootstrap failed: pip still missing afterwards')
 
 
 def get_first(*sources, keys, default=None):
