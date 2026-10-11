@@ -23,6 +23,12 @@ This repository contains an ioBroker adapter for [Zeekr electric vehicles](https
 
 No manual Python package installation is required. The adapter creates a local virtual environment on first run and installs the Zeekr dependency automatically.
 
+On Debian/Ubuntu hosts and containers (e.g. buanet images after a Python upgrade) the venv bootstrap needs `ensurepip`: if the log shows `Python dependency setup failed` with `ensurepip`, install the OS package and restart the instance (the adapter `.venv` directory is rebuilt automatically):
+
+```bash
+apt-get update && apt-get install -y python3-venv
+```
+
 ## Development
 
 Run the test suite locally:
