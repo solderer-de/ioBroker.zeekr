@@ -83,22 +83,38 @@ def _find_output_json(base_apk: Path, arm64_apk: Path, output_path: str | None) 
     return None
 
 
-EXTRACTOR_REPO = 'https://github.com/wysie/zeekr_key_extractor.git'
-# Pinned for reproducibility; bump deliberately after manual verification.
-EXTRACTOR_COMMIT = os.environ.get('ZEEKR_EXTRACTOR_COMMIT') or 'main'
+EXTRACTOR_SOURCE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'extractor', 'zeekr_extract_secrets.py')
+# Vendored snapshot (reviewed): wysie/zeekr_key_extractor @ 4fff1aa3 (MIT, see
+# lib/extractor/LICENSE). No git clone at runtime — copy from the repo.
+# Bump deliberately: replace the vendored file + LICENSE at the new commit
+# after manual verification.
+EXTRACTOR_VERSION = '4fff1aa3f0489f160af91530bd148fecf4607f3b'
 EXTRACTOR_DEPS = ['capstone==5.0.9', 'pyelftools==0.33']
 
 
-def _clone_extractor(extractor_dir: Path) -> None:
-    if (extractor_dir / 'zeekr_extract_secrets.py').exists():
-        return
-    extractor_dir.mkdir(parents=True, exist_ok=True)
-    subprocess.check_call(
-        ['git', 'clone', '--depth', '1', '--branch', EXTRACTOR_COMMIT, EXTRACTOR_REPO, str(extractor_dir)]
-        if EXTRACTOR_COMMIT not in ('main', 'master', '')
-        else ['git', 'clone', '--depth', '1', EXTRACTOR_REPO, str(extractor_dir)],
-        timeout=120,
-    )
+def _provide_extractor(extractor_dir):
+    """Stage the vendored extractor into the writable instance dir.
+
+    No network, no git — the script is reviewed repository content.
+    Overwrites stale copies (e.g. old git clones) so the pinned version
+    always runs.
+    """
+    dest_dir = Path(extractor_dir)
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    target = dest_dir / 'zeekr_extract_secrets.py'
+    try:
+        with open(EXTRACTOR_SOURCE, 'rb') as src:
+            wanted = src.read()
+    except OSError as exc:
+        raise RuntimeError(f'vendored extractor missing: {exc}')
+    if not wanted:
+        raise RuntimeError('vendored extractor is empty')
+    try:
+        if target.exists() and target.read_bytes() == wanted:
+            return
+        target.write_bytes(wanted)
+    except OSError as exc:
+        raise RuntimeError(f'cannot stage extractor: {exc}')
 
 
 def _ensure_dependencies(python_binary: str, extractor_dir: Path) -> None:
@@ -320,7 +336,7 @@ def main() -> int:
 
     extractor_dir = Path(payload.get('extractorDir') or os.path.join(os.path.dirname(__file__), '..', '.tools', 'zeekr_key_extractor'))
     try:
-        _clone_extractor(extractor_dir)
+        _provide_extractor(extractor_dir)
         _ensure_dependencies(python_binary, extractor_dir)
     except Exception as exc:  # pragma: no cover - runtime-specific path
         print(json.dumps({'ok': False, 'error': f'Failed to prepare the extractor: {exc}'}))

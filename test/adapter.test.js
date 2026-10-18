@@ -2022,7 +2022,49 @@ print(json.dumps({'full': full['journeyFetch'], 'empty': empty['journeyFetch']})
     assert.equal(out.empty.ok, false);
 });
 
-test('bridge venv bootstrap needs no system pip', () => {
+test('bridge venv bootstrap needs no system pip and no download', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import os
+import pathlib
+import sys
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+report = {}
+report['noEnvIsNoop'] = module.ensure_runtime_dependencies() if 'ZEEKR_VENV' not in os.environ else 'skipped-has-venv'
+report['earlyReturn'] = module._bootstrap_venv_pip(sys.executable) is None
+module._vendored_get_pip_path, real_path = (lambda: '/nonexistent/get-pip.py'), module._vendored_get_pip_path
+try:
+    module._bootstrap_venv_pip('/nonexistent/python')
+    report['missingVendored'] = 'no-raise'
+except RuntimeError as exc:
+    report['missingVendored'] = str(exc)[:60]
+finally:
+    module._vendored_get_pip_path = real_path
+report['vendoredSize'] = os.path.getsize(os.path.join('lib', 'get-pip.py'))
+src = open(pathlib.Path('lib', 'bridge.py'), encoding='utf-8').read()
+report['noDownload'] = 'urlopen' not in src and 'bootstrap.pypa.io' not in src
+print(json.dumps(report))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+    assert.equal(result.status, 0, result.stderr.toString());
+    const report = JSON.parse(result.stdout.toString());
+    assert.equal(report.noEnvIsNoop, null);
+    assert.equal(report.earlyReturn, true);
+    assert.match(report.missingVendored, /not shipped/);
+    assert.ok(report.vendoredSize > 1000000, 'vendored get-pip.py must be complete');
+    assert.equal(report.noDownload, true);
+});
+
+test('extractor is vendored, pinned and staged without network', () => {
     const result = spawnSync(
         PYTHON,
         [
@@ -2031,27 +2073,24 @@ test('bridge venv bootstrap needs no system pip', () => {
 import importlib.util
 import json
 import pathlib
-import sys
-import urllib.request
-spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+import tempfile
+spec = importlib.util.spec_from_file_location('extract_secrets', pathlib.Path('lib/extract_secrets.py'))
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 report = {}
-# No venv configured: strict no-op, never touches the network.
-import os
-os.environ.pop('ZEEKR_VENV', None)
-report['noop'] = module.ensure_runtime_dependencies() is None
-# pip already present: early return, no download attempted.
-report['earlyReturn'] = module._bootstrap_venv_pip(sys.executable) is None
-# Download failure surfaces as RuntimeError (no silent pass, no crash).
-def boom(*args, **kwargs):
-    raise IOError('offline')
-urllib.request.urlopen = boom
-try:
-    module._bootstrap_venv_pip('/nonexistent/python')
-    report['downloadFailure'] = 'no-raise'
-except RuntimeError as exc:
-    report['downloadFailure'] = str(exc)[:60]
+report['version'] = module.EXTRACTOR_VERSION
+with tempfile.TemporaryDirectory() as tmp:
+    module._provide_extractor(tmp)
+    staged = pathlib.Path(tmp, 'zeekr_extract_secrets.py')
+    report['staged'] = staged.exists()
+    with open(pathlib.Path('lib', 'extractor', 'zeekr_extract_secrets.py'), 'rb') as src:
+        report['identical'] = staged.read_bytes() == src.read()
+    staged.write_bytes(b'stale')
+    module._provide_extractor(tmp)
+    with open(pathlib.Path('lib', 'extractor', 'zeekr_extract_secrets.py'), 'rb') as src:
+        report['replaced'] = staged.read_bytes() == src.read()
+src = open(pathlib.Path('lib', 'extract_secrets.py'), encoding='utf-8').read()
+report['noGitClone'] = "'git', 'clone'" not in src and 'EXTRACTOR_REPO' not in src
 print(json.dumps(report))
 `,
         ],
@@ -2059,7 +2098,9 @@ print(json.dumps(report))
     );
     assert.equal(result.status, 0, result.stderr.toString());
     const report = JSON.parse(result.stdout.toString());
-    assert.equal(report.noop, true);
-    assert.equal(report.earlyReturn, true);
-    assert.match(report.downloadFailure, /get-pip.py download failed/);
+    assert.match(report.version, /^[0-9a-f]{40}$/);
+    assert.equal(report.staged, true);
+    assert.equal(report.identical, true);
+    assert.equal(report.replaced, true);
+    assert.equal(report.noGitClone, true);
 });

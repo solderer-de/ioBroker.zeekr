@@ -81,51 +81,32 @@ def ensure_runtime_dependencies():
     subprocess.check_call([python_exe, '-m', 'pip', 'install', '--quiet', '--disable-pip-version-check'] + target, timeout=180)
 
 
-GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
+def _vendored_get_pip_path():
+    here = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(here, 'get-pip.py')
 
 
 def _bootstrap_venv_pip(python_exe):
-    """pip ins venv bringen ohne ensurepip (Debian slim, frische Container).
+    """pip ins venv bringen ohne ensurepip und ohne Download.
 
-    Nutzt den offiziellen get-pip.py-Bootstrap statt Systempaketen — Netz
-    ist ohnehin Pflicht (PyPI). Wirft RuntimeError mit klarer Ursache.
+    Nutzt das geprüfte, im Repo versionierte get-pip.py (lib/get-pip.py) —
+    kein Laden von Code zur Laufzeit, kein Systempaket nötig. Nur der
+    *Inhalt* von PyPI-Paketen kommt weiter aus dem Netz (wie bisher).
     """
     import subprocess
-    import tempfile
-    import urllib.request
     try:
         probe = subprocess.run([python_exe, '-m', 'pip', '--version'], capture_output=True, timeout=60)
     except OSError:
         probe = None
     if probe is not None and probe.returncode == 0:
         return
+    installer_path = _vendored_get_pip_path()
+    if not os.path.isfile(installer_path):
+        raise RuntimeError('pip bootstrap missing: lib/get-pip.py is not shipped with the adapter')
     try:
-        with urllib.request.urlopen(GET_PIP_URL, timeout=120) as response:
-            installer = response.read()
-    except Exception as exc:
-        raise RuntimeError(f'get-pip.py download failed: {exc}') from exc
-    if len(installer) < 100000:
-        raise RuntimeError('get-pip.py download looks truncated')
-    tmp_path = None
-    try:
-        with tempfile.NamedTemporaryFile(suffix='get-pip.py', delete=False) as tmp:
-            tmp.write(installer)
-            tmp_path = tmp.name
-        subprocess.check_call([python_exe, tmp_path], timeout=180)
+        subprocess.check_call([python_exe, installer_path], timeout=180)
     except Exception as exc:
         raise RuntimeError(f'pip bootstrap failed: {exc}') from exc
-    finally:
-        if tmp_path:
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
-    try:
-        verify = subprocess.run([python_exe, '-m', 'pip', '--version'], capture_output=True, timeout=60)
-    except OSError as exc:
-        raise RuntimeError(f'pip bootstrap failed: {exc}') from exc
-    if verify.returncode != 0:
-        raise RuntimeError('pip bootstrap failed: pip still missing afterwards')
 
 
 def get_first(*sources, keys, default=None):

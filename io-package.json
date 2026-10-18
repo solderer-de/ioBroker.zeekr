@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.72",
+    "version": "0.1.73",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.73": {
+        "en": "No runtime code downloads: vendored get-pip.py and pinned extractor script.",
+        "de": "Keine Code-Downloads zur Laufzeit: get-pip.py und Extractor-Skript versioniert beigelegt.",
+        "ru": "Нет загрузки кода в рантайме: get-pip.py и экстрактор в репозитории.",
+        "pt": "Sem downloads de código em runtime: get-pip.py e extrator versionados.",
+        "nl": "Geen runtime-codedownloads: get-pip.py en extractor meegeleverd.",
+        "fr": "Pas de téléchargement de code à l'exécution : get-pip.py et extracteur versionnés.",
+        "it": "Nessun download di codice a runtime: get-pip.py ed estrattore versionati.",
+        "es": "Sin descargas de código en ejecución: get-pip.py y extractor versionados.",
+        "pl": "Brak pobierania kodu w runtime: get-pip.py i ekstraktor w repozytorium.",
+        "uk": "Жодних завантажень коду в рантаймі: get-pip.py та екстрактор версіоновані.",
+        "zh-cn": "运行时无代码下载：内置get-pip.py和提取器脚本。"
+      },
       "0.1.72": {
         "en": "Review fixes: no states with children in raw layer, non-deprecated power role.",
         "de": "Review-Fixes: keine States mit Kindern im Raw-Layer, nicht-deprecated Power-Rolle.",
@@ -151,19 +164,6 @@
         "pl": "ABRP przycina spacje wokół wklejonego klucza API (resztki kopiowania nie powodują już 401).",
         "uk": "ABRP обрізає пробіли навколо вставленого API-ключа (залишки копіювання більше не дають 401).",
         "zh-cn": "ABRP去除API密钥空白。"
-      },
-      "0.1.64": {
-        "en": "CI lint fix (same ABRP single-token feature as 0.1.63, whose tag missed the lint gate).",
-        "de": "CI-Lint-Fix (gleiche ABRP-Funktion wie 0.1.63, dessen Tag das Lint-Gate riss).",
-        "ru": "CI lint фикс (та же функция ABRP с одиночным токеном, что в 0.1.63, чей тег не прошёл lint-контроль).",
-        "pt": "Correção de lint do CI (mesma função ABRP da 0.1.63).",
-        "nl": "CI-lintfix (zelfde ABRP-functie met één token als 0.1.63, waarvan de tag de lint-controle miste).",
-        "fr": "Correctif lint CI (même fonction ABRP à token unique que 0.1.63, dont le tag a manqué le contrôle lint).",
-        "it": "Fix lint CI (stessa funzione ABRP a token singolo della 0.1.63, il cui tag ha mancato il controllo lint).",
-        "es": "Corrección de lint CI (misma función ABRP que 0.1.63).",
-        "pl": "Poprawka lint CI (ta sama funkcja ABRP z pojedynczym tokenem co 0.1.63, której tag nie przeszedł kontroli lint).",
-        "uk": "Фікс лінту CI (та сама функція ABRP з одним токеном, що в 0.1.63, чий тег не пройшов lint-контроль).",
-        "zh-cn": "CI lint修复（与0.1.63相同的ABRP功能）。"
       }
     }
   },

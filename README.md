@@ -23,7 +23,7 @@ This repository contains an ioBroker adapter for [Zeekr electric vehicles](https
 
 No manual Python package installation is required. The adapter creates a local virtual environment on first run and installs the Zeekr dependency automatically.
 
-On Debian/Ubuntu hosts and containers the venv bootstrap is self-sufficient: the venv is created without system pip and pip is bootstrapped via the official get-pip.py (network is required for PyPI anyway). Only if the `venv` Python module itself is missing you need the OS package and an instance restart (the adapter `.venv` directory is rebuilt automatically):
+On Debian/Ubuntu hosts and containers the venv bootstrap is self-sufficient: the venv is created without system pip and pip is bootstrapped from the vendored `lib/get-pip.py` — no downloads, no OS packages. Only if the `venv` Python module itself is missing you need the OS package and an instance restart (the adapter `.venv` directory is rebuilt automatically):
 
 ```bash
 apt-get update && apt-get install -y python3-venv
@@ -71,6 +71,8 @@ The adapter can automate the extraction flow from the upstream `zeekr_key_extrac
 
 - the full Zeekr base APK and the matching ARM64 split APK on the ioBroker host, or
 - a pre-generated `zeekr_secrets.json` file.
+
+The extractor script is bundled with the adapter at a pinned, reviewed upstream commit (`lib/extractor/`, MIT) — nothing is cloned or downloaded at runtime.
 
 ### How to obtain the APKs from a phone or emulator
 
@@ -317,6 +319,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.73
+
+- Review follow-up: no runtime code downloads (vendored `lib/get-pip.py`, pinned extractor script in `lib/extractor/` with MIT license, staged into the instance dir without git)
 
 ### 0.1.72
 
