@@ -318,6 +318,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.72
+
+- Review fixes: raw layer never creates states with children (type flips are cleaned up), avg consumption uses non-deprecated `value.power`
+
 ### 0.1.71
 
 - Self-sufficient venv bootstrap: venv is created without system pip, pip comes via official get-pip.py — no OS packages needed (only the `venv` module itself, if missing)
