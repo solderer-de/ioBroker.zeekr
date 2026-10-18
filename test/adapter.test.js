@@ -1692,6 +1692,29 @@ test('syncAllVehicleStates exposes every leaf, objects become channels', async (
     assert.equal((await adapter.getStateAsync('vehicles.car1.all.missing')).val, null);
 });
 
+test('syncAllVehicleStates removes a stale state before creating a channel', async () => {
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getObjectAsync = async id => adapter._objects.get(id) || null;
+    adapter.delObjectAsync = async id => {
+        adapter._objects.delete(id);
+        adapter._states.delete(id);
+    };
+    // First poll: scalar -> plain state.
+    await adapter.syncAllVehicleStates('vehicles.car1', { flip: 'x' });
+    assert.equal((await adapter.getObjectAsync('vehicles.car1.all.flip')).type, 'state');
+    // API flips to object: state must go, channel plus children take over.
+    await adapter.syncAllVehicleStates('vehicles.car1', { flip: { sub: 1 } });
+    assert.equal((await adapter.getObjectAsync('vehicles.car1.all.flip')).type, 'channel');
+    assert.equal((await adapter.getStateAsync('vehicles.car1.all.flip.sub')).val, 1);
+    // Invariant: no state object ever has children.
+    for (const [id, obj] of adapter._objects) {
+        if (obj && obj.type === 'state') {
+            const hasChild = [...adapter._objects.keys()].some(key => key !== id && key.startsWith(`${id}.`));
+            assert.ok(!hasChild, `${id} is a state with children`);
+        }
+    }
+});
+
 test('writeSecretsToObject prefers updateConfig (encrypted server roundtrip)', async () => {
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
     adapter.config = {};
