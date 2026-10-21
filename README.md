@@ -320,6 +320,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.75
+
+- Re-release of 0.1.74 (npm trusted-publishing retry): all admin translations completed, polling loop cleaned to a pure `setTimeout` chain (dead `setInterval` aliases removed), APK upload page backup check fixed (script syntax error)
+
 ### 0.1.74
 
 - Review follow-up: all admin translations completed (no English duplicates left), polling loop documented and cleaned to a pure `setTimeout` chain (dead `setInterval` aliases removed), APK upload page backup check fixed (script syntax error)

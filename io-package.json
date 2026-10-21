@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.74",
+    "version": "0.1.75",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.75": {
+        "en": "Re-release: all admin translations completed, polling loop uses a clean setTimeout chain (no setInterval), APK upload page backup check fixed.",
+        "de": "Re-Release: alle Admin-Übersetzungen vervollständigt, Poll-Loop nutzt eine saubere setTimeout-Kette (kein setInterval), Backup-Prüfung der APK-Upload-Seite korrigiert.",
+        "ru": "Повторный релиз: завершены все переводы админки, цикл опроса использует цепочку setTimeout (без setInterval), исправлена проверка бэкапа на странице загрузки APK.",
+        "pt": "Reedição: todas as traduções da administração concluídas, ciclo de consulta usa cadeia setTimeout (sem setInterval), verificação de backup da página de upload de APK corrigida.",
+        "nl": "Heruitgave: alle admin-vertalingen afgerond, poll-lus gebruikt een schone setTimeout-keten (geen setInterval), backupcontrole op de APK-uploadpagina hersteld.",
+        "fr": "Réédition : toutes les traductions admin complétées, boucle d'interrogation en chaîne setTimeout (sans setInterval), contrôle de sauvegarde de la page d'upload APK corrigé.",
+        "it": "Nuova uscita: completate tutte le traduzioni admin, ciclo di polling con catena setTimeout (senza setInterval), controllo backup della pagina di upload APK corretto.",
+        "es": "Reedición: completadas todas las traducciones del admin, bucle de sondeo con cadena setTimeout (sin setInterval), comprobación de copia de seguridad de la página de subida de APK corregida.",
+        "pl": "Ponowne wydanie: ukończono wszystkie tłumaczenia admina, pętla odpytywania na łańcuchu setTimeout (bez setInterval), poprawiono sprawdzanie kopii zapasowej na stronie wysyłania APK.",
+        "uk": "Повторний реліз: завершено всі переклади адмінки, цикл опитування на ланцюжку setTimeout (без setInterval), виправлено перевірку резервної копії на сторінці завантаження APK.",
+        "zh-cn": "重新发布：完成所有管理界面翻译，轮询循环使用 setTimeout 链（无 setInterval），修复 APK 上传页面的备份检查。"
+      },
       "0.1.74": {
         "en": "Review follow-up: all admin translations completed, polling loop uses a clean setTimeout chain (no setInterval).",
         "de": "Review-Nachbereitung: alle Admin-Übersetzungen vervollständigt, Poll-Loop nutzt eine saubere setTimeout-Kette (kein setInterval).",
@@ -151,19 +164,6 @@
         "pl": "Poprawki bota: skrócona historia news, etykieta zakładki ABRP, pełne tłumaczenia.",
         "uk": "Фікси бота: скорочено історію news, мітка вкладки ABRP, повні переклади.",
         "zh-cn": "机器人修复：精简news历史、ABRP选项卡标签、完整翻译。"
-      },
-      "0.1.67": {
-        "en": "CI fix: news trimmed to 20 entries (schema gate) plus a test guarding the limit.",
-        "de": "CI-Fix: News auf 20 Einträge gekürzt (Schema-Gate) plus Test für das Limit.",
-        "ru": "CI фикс: news урезаны до 20 записей плюс тест лимита.",
-        "pt": "Correção CI: news reduzido para 20 entradas mais teste do limite.",
-        "nl": "CI-fix: news teruggebracht tot 20 items plus limiettest.",
-        "fr": "Correctif CI : news limité à 20 entrées plus test de limite.",
-        "it": "Fix CI: news ridotte a 20 voci più test del limite.",
-        "es": "Corrección CI: news recortado a 20 entradas más prueba del límite.",
-        "pl": "Poprawka CI: news do 20 wpisów plus test limitu.",
-        "uk": "Фікс CI: news скорочено до 20 записів плюс тест ліміту.",
-        "zh-cn": "CI修复：news精简至20条并增加限制测试。"
       }
     }
   },
