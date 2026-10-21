@@ -9,7 +9,7 @@
   "Region": "Région",
   "EU accounts need EU. “Invalid access key” almost always means wrong region.": "Les comptes EU exigent EU. «Invalid access key» = presque toujours mauvaise région.",
   "EM – Emerging Markets": "EM – Marchés émergents",
-  "EU – Europe": "EU – Europe",
+  "EU – Europe": "UE – Europe",
   "SEA – Southeast Asia": "SEA – Asie du Sud-Est",
   "CN – China": "CN – Chine",
   "Extract missing keys automatically on start": "Extraire les clés manquantes automatiquement",
@@ -69,5 +69,5 @@
   "User token from ABRP app": "Token utilisateur de l'app ABRP",
   "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Une voiture : collez uniquement le token (pas de VIN). Plusieurs : {\"VIN\": \"token\", ...}",
   "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, voir la section README “Energy, costs and smart charging” pour le format.",
-  "ABRP": "ABRP"
+  "ABRP": "A Better Routeplanner"
 }

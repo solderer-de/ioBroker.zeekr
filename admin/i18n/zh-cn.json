@@ -19,14 +19,14 @@
   "Contains the HMAC keys. Not the xxhdpi file.": "包含HMAC密钥。不要用xxhdpi文件。",
   "Or: zeekr_secrets.json path (instead of APKs)": "或：zeekr_secrets.json路径（代替APK）",
   "Keys": "密钥",
-  "HMAC Access Key": "HMAC Access Key",
-  "HMAC Secret Key": "HMAC Secret Key",
-  "Password Public Key": "Password Public Key",
-  "Prod Secret": "Prod Secret",
+  "HMAC Access Key": "HMAC 访问密钥",
+  "HMAC Secret Key": "HMAC 密钥",
+  "Password Public Key": "密码公钥",
+  "Prod Secret": "Prod 密钥",
   "Prod secret candidates (comma separated)": "Prod-secret候选项（逗号分隔）",
   "If several are listed in zeekr_secrets.json, paste them all here.": "如果zeekr_secrets.json中有多个，请全部粘贴到此处。",
-  "VIN Key": "VIN Key",
-  "VIN IV": "VIN IV",
+  "VIN Key": "VIN 密钥",
+  "VIN IV": "VIN 初始向量",
   "Advanced": "高级",
   "Only needed for problems. Live hints: info.lastErrorHint.": "仅在出现问题时需要。实时提示：info.lastErrorHint。",
   "Poll interval (seconds)": "轮询间隔（秒）",
@@ -69,5 +69,5 @@
   "User token from ABRP app": "ABRP应用用户令牌",
   "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "一辆车：仅粘贴用户令牌（无需VIN）。多辆车：{\"VIN\": \"token\", ...}",
   "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON，格式见README“Energy, costs and smart charging”部分。",
-  "ABRP": "ABRP"
+  "ABRP": "A Better Routeplanner"
 }

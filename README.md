@@ -320,6 +320,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.74
+
+- Review follow-up: all admin translations completed (no English duplicates left), polling loop documented and cleaned to a pure `setTimeout` chain (dead `setInterval` aliases removed), APK upload page backup check fixed (script syntax error)
+
 ### 0.1.73
 
 - Review follow-up: no runtime code downloads (vendored `lib/get-pip.py`, pinned extractor script in `lib/extractor/` with MIT license, staged into the instance dir without git)

@@ -6,7 +6,7 @@
   "Password": "Hasło",
   "Country code (e.g. DE, AU)": "Kod kraju (np. DE, AU)",
   "EU countries suggest region EU automatically.": "Kraje EU automatycznie proponują region EU.",
-  "Region": "Region",
+  "Region": "Region rynku",
   "EU accounts need EU. “Invalid access key” almost always means wrong region.": "Konta EU wymagają EU. „Invalid access key” to prawie zawsze zły region.",
   "EM – Emerging Markets": "EM – Rynki wschodzące",
   "EU – Europe": "EU – Europa",
@@ -22,11 +22,11 @@
   "HMAC Access Key": "Klucz HMAC Access",
   "HMAC Secret Key": "Klucz HMAC Secret",
   "Password Public Key": "Klucz publiczny hasła",
-  "Prod Secret": "Prod Secret",
+  "Prod Secret": "Sekret Prod",
   "Prod secret candidates (comma separated)": "Kandydaci prod-secret (po przecinku)",
   "If several are listed in zeekr_secrets.json, paste them all here.": "Jeśli w zeekr_secrets.json jest kilka, wklej wszystkie tutaj.",
   "VIN Key": "Klucz VIN",
-  "VIN IV": "VIN IV",
+  "VIN IV": "Wektor inicjujący VIN",
   "Advanced": "Zaawansowane",
   "Only needed for problems. Live hints: info.lastErrorHint.": "Tylko w razie problemów. Wskazówki: info.lastErrorHint.",
   "Poll interval (seconds)": "Interwał (sekundy)",
@@ -69,5 +69,5 @@
   "User token from ABRP app": "Token użytkownika z aplikacji ABRP",
   "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Jedno auto: wklej tylko token (bez VIN). Wiele aut: {\"VIN\": \"token\", ...}",
   "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, format patrz README “Energy, costs and smart charging”.",
-  "ABRP": "ABRP"
+  "ABRP": "A Better Routeplanner"
 }

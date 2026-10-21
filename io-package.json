@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.73",
+    "version": "0.1.74",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.74": {
+        "en": "Review follow-up: all admin translations completed, polling loop uses a clean setTimeout chain (no setInterval).",
+        "de": "Review-Nachbereitung: alle Admin-Übersetzungen vervollständigt, Poll-Loop nutzt eine saubere setTimeout-Kette (kein setInterval).",
+        "ru": "Доработка ревью: завершены все переводы админки, цикл опроса использует цепочку setTimeout (без setInterval).",
+        "pt": "Revisão: todas as traduções da administração concluídas, ciclo de consulta usa cadeia setTimeout (sem setInterval).",
+        "nl": "Reviewvervolg: alle admin-vertalingen afgerond, poll-lus gebruikt een schone setTimeout-keten (geen setInterval).",
+        "fr": "Suite de revue : toutes les traductions admin complétées, la boucle d'interrogation utilise une chaîne setTimeout (sans setInterval).",
+        "it": "Follow-up revisione: completate tutte le traduzioni admin, il ciclo di polling usa una catena setTimeout (senza setInterval).",
+        "es": "Seguimiento de revisión: completadas todas las traducciones del admin, el bucle de sondeo usa una cadena setTimeout (sin setInterval).",
+        "pl": "Kontynuacja review: uzupełniono wszystkie tłumaczenia admina, pętla odpytywania używa łańcucha setTimeout (bez setInterval).",
+        "uk": "Продовження рев'ю: завершено всі переклади адмінки, цикл опитування використовує ланцюжок setTimeout (без setInterval).",
+        "zh-cn": "评审跟进：完成所有管理界面翻译，轮询循环使用 setTimeout 链（无 setInterval）。"
+      },
       "0.1.73": {
         "en": "No runtime code downloads: vendored get-pip.py and pinned extractor script.",
         "de": "Keine Code-Downloads zur Laufzeit: get-pip.py und Extractor-Skript versioniert beigelegt.",
@@ -151,19 +164,6 @@
         "pl": "Poprawka CI: news do 20 wpisów plus test limitu.",
         "uk": "Фікс CI: news скорочено до 20 записів плюс тест ліміту.",
         "zh-cn": "CI修复：news精简至20条并增加限制测试。"
-      },
-      "0.1.65": {
-        "en": "ABRP trims pasted API key whitespace (copy-paste artifacts no longer cause 401).",
-        "de": "ABRP schneidet Leerzeichen am API-Key ab (Copy-Paste-Reste geben kein 401 mehr).",
-        "ru": "ABRP обрезает пробелы вокруг вставленного API-ключа (остатки копирования больше не дают 401).",
-        "pt": "ABRP remove os espaços em volta da chave API colada (restos de copiar-colar já não causam 401).",
-        "nl": "ABRP trimt spaties rond de geplakte API-key (kopieer-plakresten veroorzaken geen 401 meer).",
-        "fr": "ABRP rogne les espaces autour de la clé API collée (les restes de copier-coller ne provoquent plus de 401).",
-        "it": "ABRP rifila gli spazi attorno alla chiave API incollata (i resti di copia-incolla non causano più 401).",
-        "es": "ABRP recorta los espacios en blanco de la clave API pegada (los restos de copiar-pegar ya no provocan 401).",
-        "pl": "ABRP przycina spacje wokół wklejonego klucza API (resztki kopiowania nie powodują już 401).",
-        "uk": "ABRP обрізає пробіли навколо вставленого API-ключа (залишки копіювання більше не дають 401).",
-        "zh-cn": "ABRP去除API密钥空白。"
       }
     }
   },

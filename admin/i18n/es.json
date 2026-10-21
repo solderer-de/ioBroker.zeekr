@@ -11,7 +11,7 @@
   "EM – Emerging Markets": "EM – Mercados emergentes",
   "EU – Europe": "EU – Europa",
   "SEA – Southeast Asia": "SEA – Sudeste Asiático",
-  "CN – China": "CN – China",
+  "CN – China": "CN – China continental",
   "Extract missing keys automatically on start": "Extraer claves faltantes automáticamente",
   "APK base.apk (path on host)": "APK base.apk (ruta)",
   "e.g. /opt/iobroker/iobroker-data/zeekr/base.apk": "p. ej. /opt/iobroker/iobroker-data/zeekr/base.apk",
@@ -22,7 +22,7 @@
   "HMAC Access Key": "Clave de acceso HMAC",
   "HMAC Secret Key": "Clave secreta HMAC",
   "Password Public Key": "Clave pública de contraseña",
-  "Prod Secret": "Prod Secret",
+  "Prod Secret": "Secreto de Prod",
   "Prod secret candidates (comma separated)": "Candidatos prod-secret (separados por coma)",
   "If several are listed in zeekr_secrets.json, paste them all here.": "Si hay varios en zeekr_secrets.json, péguelos aquí.",
   "VIN Key": "Clave VIN",
@@ -69,5 +69,5 @@
   "User token from ABRP app": "Token de usuario de la app ABRP",
   "Single car: paste the user token only (no VIN needed). Several cars: {\"VIN\": \"token\", ...}": "Un coche: pega solo el token (sin VIN). Varios coches: {\"VIN\": \"token\", ...}",
   "Tariffs JSON, see README section “Energy, costs and smart charging” for the format.": "Tariffs JSON, ver el formato en la sección README “Energy, costs and smart charging”.",
-  "ABRP": "ABRP"
+  "ABRP": "A Better Routeplanner"
 }

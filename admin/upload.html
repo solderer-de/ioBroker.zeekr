@@ -97,7 +97,7 @@
                 ),
               );
             }
-          }, timeoutMs || 30000);
+          }, timeoutMs || 120000);
           try {
             socket.emit('sendTo', instance, command, message, function (res) {
               if (done) {
@@ -267,7 +267,7 @@
         return (el && el.value) || 'zeekr.0';
       }
 
-      function refreshBackupButtons(instance) {
+      function refreshBackupButtons(instance, attempt) {
         var exportBtn = document.getElementById('exportBtn');
         var importBtn = document.getElementById('importBtn');
         exportBtn.disabled = true;
@@ -286,6 +286,11 @@
             importBtn.disabled = false;
           })
           .catch(function (err) {
+            if (!attempt && /timeout/.test(err.message)) {
+              setStatus('backupStatus', 'Adapter is starting up, retrying in 5s…');
+              setTimeout(function () { refreshBackupButtons(instance, 1); }, 5000);
+              return;
+            }
             setStatus('backupStatus', 'Presence check failed: ' + err.message, 'err');
             importBtn.disabled = false;
           });
