@@ -78,3 +78,55 @@ test('bridge mock works with pip-less venv (no traceback, exit 0)', () => {
     assert.equal(result.status, 0, result.stderr);
     assert.equal(JSON.parse(result.stdout).mock, true);
 });
+
+test('day entries accumulate and sum over ranges', () => {
+    const days = {};
+    E.addDayEntry(days, '2026-11-08', { kwh: 10.5, cost: 3.15, tripKm: 163, tripCount: 1 });
+    E.addDayEntry(days, '2026-11-08', { kwh: 2, bogus: 99 });
+    assert.equal(days['2026-11-08'].kwh, 12.5);
+    assert.equal(days['2026-11-08'].tripKm, 163);
+    assert.equal(days['2026-11-08'].bogus, undefined);
+    const week = E.sumDayRange(days, ['2026-11-02', '2026-11-08']);
+    assert.equal(week.kwh, 12.5);
+    assert.equal(week.tripCount, 1);
+    assert.match(E.dayKeyLocal(new Date(2026, 10, 9)), /^2026-11-09$/);
+    assert.equal(E.lastNDayKeys(3, new Date(2026, 10, 9)).length, 3);
+});
+
+test('zones parse and match first hit', () => {
+    const zones = E.parseZones('[{"name":"Office","lat":52.5,"lon":13.4},{"name":"Bad"}]');
+    assert.equal(zones.length, 1);
+    assert.equal(zones[0].radiusM, 150);
+    assert.equal(E.matchZone(zones, 52.5005, 13.4005), 'Office');
+    assert.equal(E.matchZone(zones, 48, 11), null);
+    assert.equal(E.matchZone(zones, null, 13), null);
+    assert.deepEqual(E.parseZones('broken'), []);
+});
+
+test('trip cost and CSV builders quote delimiters', () => {
+    assert.equal(E.tripCostKwh(38, 0.3), 11.4);
+    assert.equal(E.tripCostKwh(null, 0.3), 0);
+    assert.equal(E.tripCostKwh(5, null), 0);
+    const csv = E.sessionsToCsv([
+        { vin: 'V', startTime: 'a', endTime: 'b', kwh: 10, cost: 3, tariff: 'A;B', pricePerKwh: 0.3, lossKwh: 1 },
+    ]);
+    const lines = csv.split('\n');
+    assert.equal(lines[0], 'vin;startTime;endTime;kwh;cost;tariff;pricePerKwh;lossKwh');
+    assert.match(lines[1], /"A;B"/);
+    const trips = E.tripsToCsv([
+        {
+            vin: 'V',
+            startTime: 'a',
+            endTime: 'b',
+            distanceKm: 4,
+            durationMin: 13,
+            avgSpeedKmh: 17,
+            usedKwh: 1,
+            consumptionKwh100km: 25,
+            cost: 0.3,
+            startLevel: 83,
+            endLevel: 82,
+        },
+    ]);
+    assert.match(trips.split('\n')[0], /^vin;startTime;endTime;distanceKm/);
+});

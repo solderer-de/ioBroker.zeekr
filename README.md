@@ -202,9 +202,19 @@ Polling is adaptive: driving vehicles use `drivePollingInterval` (default 30s, m
 The API journey log is owner-only, so the adapter keeps its own logbook from poll data (`trips.own*`) — independent of `trips.*`:
 
 - Trip start on movement (`currentSpeed > 0`, running engine, or odometer jump ≥ 0.1 km); trip end after 3 parked polls. Engine-on idle without distance (< 0.2 km) is discarded, not logged.
-- `trips.ownList` (last 20), `trips.ownCount`, last-trip distance/start/end/duration/avg speed/consumption/energy, `trips.ownMonthKm`/`trips.ownMonthCount`. Survives restarts (instance data dir).
+- `trips.ownList` (last 20), `trips.ownCount`, last-trip distance/start/end/duration/avg speed/consumption/energy/cost, `trips.ownMonthKm`/`trips.ownMonthCount`/`trips.ownMonthUsedKwh`/`trips.ownMonthCost`, month consumption and cost per 100 km. Survives restarts (instance data dir).
 - No coordinates by default; enable `storeTripPositions` to also store rounded start/end positions.
 - Consumption/energy come from SoC delta × `batteryCapacityKwh` — set your real net capacity (e.g. 100 kWh for the 100 kWh pack, less for smaller packs), otherwise energy figures are wrong.
+
+### Display in VIS (and other visualisations)
+
+All display values are plain states — no VIS widgets are shipped (the adapter stays view-agnostic):
+
+- **Today/week at a glance:** `energy.todayKwh`/`todayCost`/`todayLossKwh`, `energy.weekKwh`/`weekCost`, `trips.ownTodayKm`/`ownTodayCount`, `trips.ownWeekKm`. Single numbers, ideal for info widgets or ECharts bars.
+- **Month:** `energy.monthKwh`/`monthCost`/`monthLossKwh`, `trips.ownMonthKm`/`ownMonthCount`/`ownMonthUsedKwh`/`ownMonthCost`, `trips.ownMonthConsumptionKwh100km`, `trips.ownMonthCostPer100km`.
+- **Tables:** `trips.ownList` and `energy.sessionsList` are JSON arrays (last 20) for table widgets (e.g. vis-inventwo table, Jarvis, or ECharts dataset). Trip entries carry start/end, distance, duration, energy, consumption and cost; sessions carry kWh, cost, tariff and price.
+- **History:** log `status.batteryLevel`, `all.chargePower`, `status.isCharging`, `status.pluggedIn` (already history-enabled on typical installs) for charge curves; `status.batterySoh` appears once the API delivers a plausible value (0 = unsupported, shown as empty).
+- **CSV export:** the APK page (“6. Download logbook CSV”) downloads `zeekr-trips.csv` + `zeekr-sessions.csv` for spreadsheets — same content as the JSON lists, semicolon-separated.
 
 ## Energy, costs and smart charging
 
@@ -340,6 +350,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.79
+
+- VIS data layer: today/week aggregates for charging and trips, charge session history (`energy.sessionsList`), per-trip and month costs, month consumption/cost per 100 km; new alerts (service due, tyre warning, low 12V, charge finished); battery SoH state; named geo zones (`zones.currentZone`); logbook CSV export on the APK page
 
 ### 0.1.78
 

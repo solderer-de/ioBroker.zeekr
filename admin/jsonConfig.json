@@ -417,6 +417,16 @@
           "lg": 6,
           "xl": 6
         },
+        "zonesJson": {
+          "type": "text",
+          "label": "Named geo zones JSON",
+          "help": "Optional list like [{\"name\":\"Office\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Shows as zones.currentZone.",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
         "smartChargeEnabled": {
           "type": "checkbox",
           "label": "Smart charging (cheapest window)",

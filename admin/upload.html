@@ -68,6 +68,10 @@
         <input id="backupFile" type="file" accept=".json,application/json" />
         <div class="status" id="backupStatus"></div>
       </div>
+      <div class="row" id="logbookRow">
+        <button id="logbookBtn" type="button">6. Download logbook CSV</button>
+        <div class="status" id="logbookStatus"></div>
+      </div>
       <div class="hint">Export downloads the backup to this PC and stores it on the host. Import uses the selected file if you chose one, otherwise the host file. After import, restart the instance.</div>
       <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>4. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
       <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
@@ -299,9 +303,43 @@
       document.getElementById('exportBtn').onclick = function () {
         runBackupExport(currentInstance());
       };
+      document.getElementById('logbookBtn').onclick = function () {
+        runLogbookExport(currentInstance());
+      };
       document.getElementById('importBtn').onclick = function () {
         runBackupImport(currentInstance());
       };
+
+      function downloadCsv(filename, text) {
+        var blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          URL.revokeObjectURL(a.href);
+          a.remove();
+        }, 1000);
+      }
+
+      function runLogbookExport(instance) {
+        var btn = document.getElementById('logbookBtn');
+        btn.disabled = true;
+        setStatus('logbookStatus', 'Exporting logbook…');
+        sendTo(instance, 'exportLogbook', {})
+          .then(function (res) {
+            downloadCsv('zeekr-trips.csv', res.tripsCsv || '');
+            downloadCsv('zeekr-sessions.csv', res.sessionsCsv || '');
+            setStatus(
+              'logbookStatus',
+              'Downloaded ' + res.tripCount + ' trips and ' + res.sessionCount + ' sessions.',
+              'ok',
+            );
+          })
+          .catch(function (err) { setStatus('logbookStatus', 'Export failed: ' + err.message, 'err'); })
+          .then(function () { btn.disabled = false; });
+      }
 
       function runTest(instance) {
         var btn = document.getElementById('testBtn');

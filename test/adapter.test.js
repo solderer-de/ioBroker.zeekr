@@ -2373,3 +2373,183 @@ test('own logbook discards engine-on idle without distance', async () => {
     const list = JSON.parse(adapter._states.get('vehicles.vidle.trips.ownList').val);
     assert.deepEqual(list, []);
 });
+
+test('alerts fire on charge finish, service, tyre and 12V edges only', async () => {
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    const alerts = [];
+    adapter.maybeTriggerAlert = msg => {
+        alerts.push(msg);
+    };
+    const car = overrides => ({
+        vin: 'VAL',
+        name: 'Car',
+        isCharging: false,
+        pluggedIn: true,
+        batteryLevel: 80,
+        chargingLimit: 100,
+        daysToService: 669,
+        distanceToService: 32000,
+        battery12v: 13,
+        tireWarning: false,
+        doorOpen: {},
+        ...overrides,
+    });
+    await adapter.checkSentryEvents([car({ isCharging: true })]);
+    assert.deepEqual(alerts, []);
+    // Unexpected stop still alerts.
+    await adapter.checkSentryEvents([car({})]);
+    assert.match(alerts[alerts.length - 1], /unexpectedly/);
+    // Charge finished.
+    await adapter.checkSentryEvents([car({ isCharging: true, batteryLevel: 79 })]);
+    await adapter.checkSentryEvents([car({ batteryLevel: 100 })]);
+    assert.match(alerts[alerts.length - 1], /finished/);
+    // Service due fires once, re-arms after recovery.
+    const n = alerts.length;
+    await adapter.checkSentryEvents([car({ daysToService: 10 })]);
+    assert.equal(alerts.length, n + 1);
+    assert.match(alerts[alerts.length - 1], /Service due/);
+    await adapter.checkSentryEvents([car({ daysToService: 10 })]);
+    assert.equal(alerts.length, n + 1);
+    await adapter.checkSentryEvents([car({ daysToService: 400, distanceToService: 40000 })]);
+    await adapter.checkSentryEvents([car({ distanceToService: 1500 })]);
+    assert.equal(alerts.length, n + 2);
+    // Tyre + 12V, each once.
+    await adapter.checkSentryEvents([car({ tireWarning: true, battery12v: 11.5 })]);
+    assert.equal(alerts.length, n + 4);
+    await adapter.checkSentryEvents([car({ tireWarning: true, battery12v: 11.5 })]);
+    assert.equal(alerts.length, n + 4);
+});
+
+test('charge sessions build a capped history plus day aggregates', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-hist-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    adapter.getStateAsync = async () => null;
+    const writes = {};
+    adapter.setObjectNotExistsAsync = async () => {};
+    adapter.setStateChangedAsync = async (id, val) => {
+        writes[id] = val;
+    };
+    const t0 = Date.now() - 3600000;
+    const samples = [0, 1].map(i => ({ ts: t0 + i * 3600000, chargePowerKw: 11, batteryLevelPct: 50 + i * 5 }));
+    await adapter.settleChargeSession('vehicles.v1', 'V1', samples, {
+        energy: E,
+        tariffs: [],
+        defaultPrice: 0.3,
+        capacity: 100,
+        efficiency: 88,
+        lat: 0,
+        lon: 0,
+    });
+    const sessions = JSON.parse(writes['vehicles.v1.energy.sessionsList']);
+    assert.equal(sessions.length, 1);
+    assert.equal(sessions[0].kwh, writes['vehicles.v1.energy.sessionKwh']);
+    assert.equal(writes['vehicles.v1.energy.todayKwh'], writes['vehicles.v1.energy.sessionKwh']);
+    assert.equal(writes['vehicles.v1.energy.weekKwh'], writes['vehicles.v1.energy.sessionKwh']);
+    // History survives restarts.
+    const second = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    second.getAdapterDataBaseDir = () => tmp;
+    const history = await second.ensureEnergyHistory();
+    assert.equal(history.sessions.length, 1);
+});
+
+test('zones track current zone and change time', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-zone-'));
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = { zonesJson: '[{"name":"Office","lat":52.5,"lon":13.4,"radiusM":500}]' };
+    const writes = {};
+    adapter.setObjectNotExistsAsync = async () => {};
+    adapter.setStateChangedAsync = async (id, val) => {
+        writes[id] = val;
+    };
+    const E = require('../lib/energy');
+    await adapter.updateZoneState('vehicles.v1', 'V1', { latitude: 52.5001, longitude: 13.4001 }, E);
+    assert.equal(writes['vehicles.v1.zones.currentZone'], 'Office');
+    assert.match(writes['vehicles.v1.zones.lastChange'], /^\d{4}-/);
+    delete writes['vehicles.v1.zones.lastChange'];
+    await adapter.updateZoneState('vehicles.v1', 'V1', { latitude: 52.5001, longitude: 13.4001 }, E);
+    assert.equal(writes['vehicles.v1.zones.lastChange'], undefined);
+    await adapter.updateZoneState('vehicles.v1', 'V1', { latitude: 48, longitude: 11 }, E);
+    assert.equal(writes['vehicles.v1.zones.currentZone'], '');
+});
+
+test('exportLogbook returns trips and sessions CSV', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-export-'));
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = { batteryCapacityKwh: 100 };
+    const car = (odo, speed) => ({
+        vin: 'VEXP',
+        name: 'Car',
+        odometerKm: odo,
+        currentSpeed: speed,
+        batteryLevel: 80,
+        engineStatus: 'engine-off',
+        latitude: 51.3,
+        longitude: 12.38,
+    });
+    await adapter.trackOwnTrips([car(10, 0)]);
+    await adapter.trackOwnTrips([car(12, 30)]);
+    await adapter.trackOwnTrips([car(14, 30)]);
+    await adapter.trackOwnTrips([car(14, 0)]);
+    await adapter.trackOwnTrips([car(14, 0)]);
+    await adapter.trackOwnTrips([car(14, 0)]);
+    let sent = null;
+    adapter.sendTo = (from, command, message) => {
+        sent = { command, message };
+    };
+    await adapter.onMessage({ command: 'exportLogbook', from: 'test', callback: 1 });
+    assert.equal(sent.command, 'exportLogbook');
+    assert.equal(sent.message.ok, true);
+    assert.equal(sent.message.tripCount, 1);
+    assert.match(sent.message.tripsCsv, /^vin;startTime;endTime;distanceKm/);
+    assert.match(sent.message.sessionsCsv, /^vin;startTime;endTime;kwh/);
+});
+
+test('bridge curates battery SoH plausibly and flags tyre warnings', () => {
+    const result = spawnSync(
+        PYTHON,
+        [
+            '-c',
+            `
+import importlib.util
+import json
+import pathlib
+spec = importlib.util.spec_from_file_location('bridge', pathlib.Path('lib/bridge.py'))
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+def norm(status, maintenance):
+    payload = module.normalize_vehicle(
+        {'vin': 'V1'}, {'additionalVehicleStatus': {'maintenanceStatus': maintenance}},
+        {}, {'additionalVehicleStatus': {'maintenanceStatus': maintenance}},
+        {}, {}, {}, {}, {})
+    return payload['batterySoh'], payload['tireWarning']
+ok_soh, _ = norm({}, {'mainBatteryStatus': {'stateOfHealth': 95}})
+zero_soh, _ = norm({}, {'mainBatteryStatus': {'stateOfHealth': 0}})
+_, warn = norm({}, {'tyrePreWarningDriver': 1, 'mainBatteryStatus': {}})
+_, calm = norm({}, {'tyrePreWarningDriver': 0, 'mainBatteryStatus': {}})
+print(json.dumps({'ok': ok_soh, 'zero': zero_soh, 'warn': warn, 'calm': calm}))
+`,
+        ],
+        { cwd: path.join(__dirname, '..') },
+    );
+    assert.equal(result.status, 0, result.stderr.toString());
+    const out = JSON.parse(result.stdout.toString());
+    assert.equal(out.ok, 95);
+    assert.equal(out.zero, null);
+    assert.equal(out.warn, true);
+    assert.equal(out.calm, false);
+});

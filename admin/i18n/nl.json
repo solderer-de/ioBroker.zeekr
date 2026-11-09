@@ -47,6 +47,8 @@
   "Home latitude": "Breedtegraad thuis",
   "Home longitude": "Lengtegraad thuis",
   "Home radius (m)": "Straal thuis (m)",
+  "Optional list like [{\"name\":\"Office\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Shows as zones.currentZone.": "Optionele lijst zoals [{\"name\":\"Kantoor\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Zichtbaar als zones.currentZone.",
+  "Named geo zones JSON": "Benoemde geo-zones JSON",
   "Smart charging (cheapest window)": "Slim laden (goedkoopste venster)",
   "Departure time (HH:MM)": "Vertrektijd (HH:MM)",
   "Older base APK (optional, e.g. app 3.0.x)": "Oudere base-APK (optioneel, bijv. app 3.0.x)",

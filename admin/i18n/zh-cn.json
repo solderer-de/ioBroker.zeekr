@@ -47,6 +47,8 @@
   "Home latitude": "家庭纬度",
   "Home longitude": "家庭经度",
   "Home radius (m)": "家庭半径（米）",
+  "Optional list like [{\"name\":\"Office\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Shows as zones.currentZone.": "可选列表如 [{\"name\":\"办公室\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]。显示为 zones.currentZone。",
+  "Named geo zones JSON": "命名地理围栏 JSON",
   "Smart charging (cheapest window)": "智能充电（最便宜时段）",
   "Departure time (HH:MM)": "出发时间（HH:MM）",
   "Older base APK (optional, e.g. app 3.0.x)": "旧版base APK（可选，例如3.0.x应用）",

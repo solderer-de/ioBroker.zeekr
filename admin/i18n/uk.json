@@ -47,6 +47,8 @@
   "Home latitude": "Широта дому",
   "Home longitude": "Довгота дому",
   "Home radius (m)": "Радіус дому (м)",
+  "Optional list like [{\"name\":\"Office\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Shows as zones.currentZone.": "Необовʼязковий список виду [{\"name\":\"Офіс\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Показується як zones.currentZone.",
+  "Named geo zones JSON": "Іменовані геозони JSON",
   "Smart charging (cheapest window)": "Розумне заряджання (дешеве вікно)",
   "Departure time (HH:MM)": "Час виїзду (ГГ:ХХ)",
   "Older base APK (optional, e.g. app 3.0.x)": "Старий base APK (необов’язково, напр. застосунок 3.0.x)",

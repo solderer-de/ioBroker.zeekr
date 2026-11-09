@@ -47,6 +47,8 @@
   "Home latitude": "Latitude domicile",
   "Home longitude": "Longitude domicile",
   "Home radius (m)": "Rayon domicile (m)",
+  "Optional list like [{\"name\":\"Office\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Shows as zones.currentZone.": "Liste optionnelle comme [{\"name\":\"Bureau\",\"lat\":52.5,\"lon\":13.4,\"radiusM\":200}]. Affiché comme zones.currentZone.",
+  "Named geo zones JSON": "Zones géo nommées JSON",
   "Smart charging (cheapest window)": "Charge intelligente (créneau pas cher)",
   "Departure time (HH:MM)": "Heure de départ (HH:MM)",
   "Older base APK (optional, e.g. app 3.0.x)": "Ancien APK de base (optionnel, ex. app 3.0.x)",

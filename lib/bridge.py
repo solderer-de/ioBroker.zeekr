@@ -422,6 +422,24 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
             break
     battery_12v = coerce_number(get_first(vtm_payload, status_payload, main_battery_payload,
                                           keys=['battery12v', 'voltage12v', 'lowVoltageBattery', 'auxBattery', 'voltage']))
+    # Battery health (SoH %) hides in maintenanceStatus.mainBatteryStatus.
+    # The API reports 0 when unsupported — only plausible 0 < SoH <= 100 passes.
+    battery_soh_raw = coerce_number(get_first(main_battery_payload,
+                                              keys=['stateOfHealth', 'soh', 'batterySoh', 'health']))
+    battery_soh = battery_soh_raw if battery_soh_raw is not None and 0 < battery_soh_raw <= 100 else None
+    # Any tyre pre-warning flag set (per-wheel 0/1) means a tyre warning.
+    tire_warning = False
+    for sub in nested_subs:
+        if not isinstance(sub, dict):
+            continue
+        for key, value in sub.items():
+            lowered = str(key).lower()
+            if 'tyreprewarning' in lowered or 'tireprewarning' in lowered:
+                if coerce_number(value) == 1:
+                    tire_warning = True
+                    break
+        if tire_warning:
+            break
     # Journey-Liste: API liefert {total, list:[...]} (HA liest .data),
     # ältere Shapes nutzen 'trips'. Koordinaten gehören nicht in
     # kuratierte States -> schlanke Records ohne lat/lon.
@@ -550,6 +568,8 @@ def normalize_vehicle(vehicle_info, status=None, charging_status=None, remote_st
         'latitude': latitude,
         'longitude': longitude,
         'battery12v': battery_12v,
+        'batterySoh': battery_soh,
+        'tireWarning': tire_warning,
         'chargePlan': charge_plan_payload,
         'travelPlan': travel_plan_payload,
         'lastTripDistanceKm': last_trip,
