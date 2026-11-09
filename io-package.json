@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.77",
+    "version": "0.1.78",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.78": {
+        "en": "Own logbook: engine-on idle without distance is no longer logged as a trip (trips require 0.2 km).",
+        "de": "Eigenes Fahrtenbuch: Motor-an ohne Strecke wird nicht mehr als Fahrt geloggt (Fahrten brauchen 0,2 km).",
+        "ru": "Собственный журнал: работа на холостом ходу без пробега больше не пишется как поездка (нужно 0,2 км).",
+        "pt": "Diário próprio: motor ligado sem distância já não conta como viagem (viagens exigem 0,2 km).",
+        "nl": "Eigen rittenlog: stationair draaien zonder afstand telt niet meer als rit (ritten vereisen 0,2 km).",
+        "fr": "Journal propre : moteur allumé sans distance n'est plus journalisé (trajets ≥ 0,2 km).",
+        "it": "Diario proprio: motore acceso senza distanza non è più un viaggio (servono 0,2 km).",
+        "es": "Diario propio: motor encendido sin distancia ya no cuenta como viaje (se exigen 0,2 km).",
+        "pl": "Własny dziennik: praca na postoju bez dystansu to nie trasa (wymagane 0,2 km).",
+        "uk": "Власний журнал: робота на холостому без дистанції більше не пишеться як поїздка (потрібно 0,2 км).",
+        "zh-cn": "自有行程记录：无里程的怠速不再记为行程（行程需满0.2公里）。"
+      },
       "0.1.77": {
         "en": "Own trip logbook (works with shared accounts): trips from speed/odometer with restart-proof storage, monthly distance, optional position storage; faster polling while driving with hysteresis.",
         "de": "Eigenes Fahrtenbuch (geht auch mit Zweit-Account): Fahrten aus Speed/Kilometerstand, neustartsicher, Monatskilometer, optionale Positionsspeicherung; schnelleres Polling während der Fahrt mit Hysterese.",
@@ -151,19 +164,6 @@
         "pl": "Poprawki review: brak stanów z dziećmi, nieprzestarzała rola.",
         "uk": "Фікси рев'ю: жодних станів з дітьми, не застаріла роль.",
         "zh-cn": "评审修复：原始层无带子状态， roles未弃用。"
-      },
-      "0.1.71": {
-        "en": "Self-sufficient venv bootstrap without system pip (get-pip.py instead of OS packages).",
-        "de": "Autarker Venv-Bootstrap ohne System-pip (get-pip.py statt OS-Pakete).",
-        "ru": "Автономный venv без системного pip (get-pip.py).",
-        "pt": "Bootstrap venv autossuficiente sem pip do sistema (get-pip.py).",
-        "nl": "Zelfvoorzienende venv-bootstrap zonder systeem-pip (get-pip.py).",
-        "fr": "Bootstrap venv autonome sans pip système (get-pip.py).",
-        "it": "Bootstrap venv autonomo senza pip di sistema (get-pip.py).",
-        "es": "Bootstrap venv autosuficiente sin pip del sistema (get-pip.py).",
-        "pl": "Samowystarczalny venv bez systemowego pipa (get-pip.py).",
-        "uk": "Автономний venv без системного pip (get-pip.py).",
-        "zh-cn": "自给自足的venv引导，无需系统pip（get-pip.py）。"
       }
     }
   },

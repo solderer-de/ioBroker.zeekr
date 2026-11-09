@@ -2342,3 +2342,34 @@ test('own logbook stores positions only with opt-in', async () => {
     assert.equal(list[0].startLat, 51.3457);
     assert.equal(list[0].endLon, 12.3812);
 });
+
+test('own logbook discards engine-on idle without distance', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-ownidle-'));
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = { batteryCapacityKwh: 100 };
+    const car = (odo, speed) => ({
+        vin: 'VIDLE',
+        name: 'Car',
+        odometerKm: odo,
+        currentSpeed: speed,
+        batteryLevel: 80,
+        engineStatus: 'running',
+        latitude: 51.3,
+        longitude: 12.38,
+    });
+    // Engine on, car never moves: 2 min idle must not become a trip.
+    await adapter.trackOwnTrips([car(200, 0)]);
+    await adapter.trackOwnTrips([car(200, 0)]);
+    await adapter.trackOwnTrips([car(200, 0)]);
+    await adapter.trackOwnTrips([car(200, 0)]);
+    await adapter.trackOwnTrips([car(200, 0)]);
+    assert.equal(adapter._states.get('vehicles.vidle.trips.ownCount').val, 0);
+    assert.equal(adapter._states.get('vehicles.vidle.trips.ownMonthCount').val, 0);
+    assert.equal(adapter._states.get('vehicles.vidle.trips.ownMonthKm').val, 0);
+    const list = JSON.parse(adapter._states.get('vehicles.vidle.trips.ownList').val);
+    assert.deepEqual(list, []);
+});
