@@ -2553,3 +2553,61 @@ print(json.dumps({'ok': ok_soh, 'zero': zero_soh, 'warn': warn, 'calm': calm}))
     assert.equal(out.warn, true);
     assert.equal(out.calm, false);
 });
+
+test('day history backfills from restored own trips once', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-backfill-'));
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const mk = () => {
+        const a = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+        a.getAdapterDataBaseDir = () => tmp;
+        a.config = { batteryCapacityKwh: 100, defaultPricePerKwh: 0.3 };
+        return a;
+    };
+    const first = mk();
+    first._ownTrips = new Map();
+    first._ownTrips.set('V1', {
+        list: [
+            {
+                startTime: new Date(Date.now() - 7200000).toISOString(),
+                endTime: new Date(Date.now() - 3600000).toISOString(),
+                distanceKm: 10,
+                durationMin: 30,
+                usedKwh: 2,
+            },
+        ],
+        totalCount: 1,
+        month: first.monthKey(),
+        monthKm: 10,
+        monthCount: 1,
+        monthUsedKwh: 0,
+        monthTripCost: 0,
+        active: null,
+        parkedCount: 0,
+        lastOdo: 100,
+        lastTs: Date.now(),
+    });
+    first._ownTripsRestored = true;
+    await first.persistOwnTrips();
+    const second = mk();
+    const car = {
+        vin: 'V1',
+        name: 'Car',
+        odometerKm: 110,
+        currentSpeed: 0,
+        batteryLevel: 78,
+        engineStatus: 'engine-off',
+        latitude: 51.3,
+        longitude: 12.38,
+    };
+    await second.trackOwnTrips([car]);
+    const history = await second.ensureEnergyHistory();
+    const E = require('../lib/energy');
+    const today = history.days[E.dayKeyLocal()];
+    assert.ok(today && today.tripKm === 10 && today.tripCount === 1);
+    // Second poll must not double-count.
+    await second.trackOwnTrips([car]);
+    const again = (await second.ensureEnergyHistory()).days[E.dayKeyLocal()];
+    assert.equal(again.tripKm, 10);
+});
