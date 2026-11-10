@@ -1,9 +1,9 @@
 {
   "repo": "borconi/openzeekr",
   "branch": "master",
-  "sha": "640cd3bab18eefeaadfd5d343092a1507ccfa071",
-  "path": "core/src/main/java/com/openzeekr/app/remote/Repositories.kt",
-  "message": "feat(notifications): per-category Android notification channels",
-  "updated_at": "2026-11-01T09:43:18Z",
-  "checked_at": "2026-11-09T16:42:12.116632+00:00"
+  "sha": "1b268260560c639f361c32af5a473af9001f671d",
+  "path": "core/src/main/java/com/openzeekr/app/remote/Command.kt",
+  "message": "release: 0.2.4",
+  "updated_at": "2026-11-10T13:23:28Z",
+  "checked_at": "2026-11-10T15:05:45.034893+00:00"
 }
