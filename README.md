@@ -395,22 +395,6 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 - Review follow-up: no runtime code downloads (vendored `lib/get-pip.py`, pinned extractor script in `lib/extractor/` with MIT license, staged into the instance dir without git)
 
-### 0.1.72
-
-- Review fixes: raw layer never creates states with children (type flips are cleaned up), avg consumption uses non-deprecated `value.power`
-
-### 0.1.71
-
-- Self-sufficient venv bootstrap: venv is created without system pip, pip comes via official get-pip.py — no OS packages needed (only the `venv` module itself, if missing)
-
-### 0.1.70
-
-- Journey fetch status (`trips.fetchJson`: ok/total/keys, no sensitive values) to diagnose empty trip logs
-
-### 0.1.69
-
-- Trips: journey payload shapes (`list`/`data`/`trips`) mapped to count, recent trips and last-trip distance/start/end/duration/speed/consumption (no coordinates); `details.model` shows the configured vehicle model (API exposes none)
-
 Older entries moved to [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 See [GitHub releases](https://github.com/solderer-de/ioBroker.zeekr/releases) for the full history. Releases are created automatically with release-please.

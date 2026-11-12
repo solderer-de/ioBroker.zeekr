@@ -2,6 +2,22 @@
 
 Moved here from `README.md` to keep the main changelog short (repochecker W6019). Newest first.
 
+### 0.1.72
+
+- Review fixes: raw layer never creates states with children (type flips are cleaned up), avg consumption uses non-deprecated `value.power`
+
+### 0.1.71
+
+- Self-sufficient venv bootstrap: venv is created without system pip, pip comes via official get-pip.py — no OS packages needed (only the `venv` module itself, if missing)
+
+### 0.1.70
+
+- Journey fetch status (`trips.fetchJson`: ok/total/keys, no sensitive values) to diagnose empty trip logs
+
+### 0.1.69
+
+- Trips: journey payload shapes (`list`/`data`/`trips`) mapped to count, recent trips and last-trip distance/start/end/duration/speed/consumption (no coordinates); `details.model` shows the configured vehicle model (API exposes none)
+
 ### 0.1.68
 
 - Repository bot fixes: news trimmed to 7 entries (dropped versions stay in the changelog history), ABRP tab label in translations, fuller news translations
