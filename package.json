@@ -2,7 +2,7 @@
   "name": "iobroker.zeekr",
   "version": "0.1.79",
   "description": "ioBroker adapter for Zeekr electric vehicles",
-  "author": "solderer-de <npm@schoebel-online.net>",
+  "author": "solderer-de <hagen_sc@web.de>",
   "license": "MIT",
   "main": "main.js",
   "keywords": [

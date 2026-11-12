@@ -401,6 +401,6 @@ See [GitHub releases](https://github.com/solderer-de/ioBroker.zeekr/releases) fo
 
 ## License
 
-Copyright (c) 2026 solderer-de <npm@schoebel-online.net>
+Copyright (c) 2026 solderer-de <hagen_sc@web.de>
 
 MIT — see [LICENSE](LICENSE). This is an unofficial community project, not affiliated with Zeekr or Geely.
