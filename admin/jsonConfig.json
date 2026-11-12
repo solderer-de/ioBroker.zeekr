@@ -258,7 +258,7 @@
           "md": 12,
           "lg": 12,
           "xl": 12,
-          "label": "Secrets backup & restore (opens APK page)",
+          "label": "Secrets backup & restore (opens upload page)",
           "href": "/adapter/zeekr/upload.html",
           "target": "_blank",
           "button": true,
@@ -601,17 +601,17 @@
             "zh-cn": "密钥备份路径（空=自动）"
           },
           "help": {
-            "en": "Empty = secrets-backup.json in the instance data folder. Used by Export/Import on the APK page, sections 4 and 5.",
-            "de": "Leer = secrets-backup.json im Instanz-Datenordner. Wird von Export/Import auf der APK-Seite, Abschnitte 4 und 5, verwendet.",
-            "ru": "Пусто = secrets-backup.json в папке данных инстанса. Используется экспортом/импортом на APK-странице, разделы 4 и 5.",
-            "pt": "Vazio = secrets-backup.json na pasta de dados. Usado por Exportar/Importar na página APK, secções 4 e 5.",
-            "nl": "Leeg = secrets-backup.json in de instancemap. Gebruikt door Exporteren/Importeren op de APK-pagina, secties 4 en 5.",
-            "fr": "Vide = secrets-backup.json dans le dossier de données. Utilisé par Exporter/Importer sur la page APK, sections 4 et 5.",
-            "it": "Vuoto = secrets-backup.json nella cartella dati. Usato da Esporta/Importa nella pagina APK, sezioni 4 e 5.",
-            "es": "Vacío = secrets-backup.json en la carpeta de datos. Usado por Exportar/Importar en la página APK, secciones 4 y 5.",
-            "pl": "Pusto = secrets-backup.json w folderze danych. Używane przez Eksport/Import na stronie APK, sekcje 4 i 5.",
-            "uk": "Порожньо = secrets-backup.json у папці даних. Використовується експортом/імпортом на APK-сторінці, розділи 4 і 5.",
-            "zh-cn": "空=实例数据文件夹中的secrets-backup.json。用于APK页面第4和5节的导出/导入。"
+            "en": "Empty = secrets-backup.json in the instance data folder. Used by Export/Import on the upload page, sections 4 and 5.",
+            "de": "Leer = secrets-backup.json im Instanz-Datenordner. Wird von Export/Import auf der Upload-Seite, Abschnitte 4 und 5, verwendet.",
+            "ru": "Пусто = secrets-backup.json в папке данных инстанса. Используется экспортом/импортом на странице загрузки, разделы 4 и 5.",
+            "pt": "Vazio = secrets-backup.json na pasta de dados. Usado por Exportar/Importar na página de envio, secções 4 e 5.",
+            "nl": "Leeg = secrets-backup.json in de instancemap. Gebruikt door Exporteren/Importeren op de uploadpagina, secties 4 en 5.",
+            "fr": "Vide = secrets-backup.json dans le dossier de données. Utilisé par Exporter/Importer sur la page d'envoi, sections 4 et 5.",
+            "it": "Vuoto = secrets-backup.json nella cartella dati. Usato da Esporta/Importa nella pagina di caricamento, sezioni 4 e 5.",
+            "es": "Vacío = secrets-backup.json en la carpeta de datos. Usado por Exportar/Importar en la página de subida, secciones 4 y 5.",
+            "pl": "Pusto = secrets-backup.json w folderze danych. Używane przez Eksport/Import na stronie przesyłania, sekcje 4 i 5.",
+            "uk": "Порожньо = secrets-backup.json у папці даних. Використовується експортом/імпортом на сторінці завантаження, розділи 4 і 5.",
+            "zh-cn": "空=实例数据文件夹中的secrets-backup.json。用于上传页面第4和5节的导出/导入。"
           }
         },
         "pythonBinary": {

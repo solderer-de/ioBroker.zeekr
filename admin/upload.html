@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Zeekr APK Upload</title>
+    <title>Zeekr APK, Backup & Logbook</title>
     <script src="../../lib/js/socket.io.js"></script>
     <style>
       body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #f3f6fb; color: #17212b; }
@@ -22,7 +22,7 @@
   </head>
   <body>
     <div class="box">
-      <h3>Zeekr APK Upload</h3>
+      <h3>Zeekr APK, Backup & Logbook</h3>
       <p class="hint">Uploads the APK files from this PC straight into the adapter storage on the ioBroker host. No file transfer or paths needed.</p>
       <div class="row">
         <label for="instance">Instance</label>
@@ -73,7 +73,7 @@
         <div class="status" id="logbookStatus"></div>
       </div>
       <div class="hint">Export downloads the backup to this PC and stores it on the host. Import uses the selected file if you chose one, otherwise the host file. After import, restart the instance.</div>
-      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>4. Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
+      <div class="hint" id="doneHint" style="display:none">Keys extracted. <strong>Restart the instance</strong> in the ioBroker admin (Instances → zeekr.0 → restart) so polling starts with the new secrets.<br /><span id="closeHint"></span> <button id="closeBtn" type="button" style="margin-top:8px">Back to settings</button></div>
       <div class="hint">Uploads land in the adapter storage; the instance settings show their paths after reload. Alternatively enter host paths in the settings and skip the upload.</div>
     </div>
     <script type="text/javascript">
