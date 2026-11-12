@@ -2611,3 +2611,43 @@ test('day history backfills from restored own trips once', async () => {
     const again = (await second.ensureEnergyHistory()).days[E.dayKeyLocal()];
     assert.equal(again.tripKm, 10);
 });
+
+test('sentry-on is blocked while positively unlocked (openzeekr #41)', async () => {
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const mk = () => {
+        const a = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+        a.config = { username: 'u', password: 'p', countryCode: 'DE' };
+        return a;
+    };
+    // Unlocked: bridge must not run, lastResult explains why.
+    const unlocked = mk();
+    let bridged = 0;
+    unlocked.runBridge = async () => {
+        bridged += 1;
+        return { ok: true };
+    };
+    unlocked.resolveVinForDevice = async () => 'VIN1';
+    await unlocked.setStateChangedAsync('vehicles.car1.status.isLocked', false, true);
+    await unlocked.handleControlWrite('zeekr.0.vehicles.car1.control.sentryOn', true);
+    assert.equal(bridged, 0);
+    assert.match((await unlocked.getStateAsync('vehicles.car1.control.lastResult')).val, /must be locked/);
+    // Locked: passes through.
+    const locked = mk();
+    locked.runBridge = async () => {
+        bridged += 1;
+        return { ok: true };
+    };
+    locked.resolveVinForDevice = async () => 'VIN1';
+    await locked.setStateChangedAsync('vehicles.car1.status.isLocked', true, true);
+    await locked.handleControlWrite('zeekr.0.vehicles.car1.control.sentryOn', true);
+    assert.equal(bridged, 1);
+    // Unknown lock state fails open.
+    const unknown = mk();
+    unknown.runBridge = async () => {
+        bridged += 1;
+        return { ok: true };
+    };
+    unknown.resolveVinForDevice = async () => 'VIN1';
+    await unknown.handleControlWrite('zeekr.0.vehicles.car1.control.sentryOn', true);
+    assert.equal(bridged, 2);
+});

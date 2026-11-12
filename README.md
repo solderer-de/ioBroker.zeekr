@@ -306,7 +306,7 @@ Confirmed since the last update (openzeekr moved to the same values, conflicts r
 Known caveats:
 
 - powered tailgate open/close (`RDU_2`/`RDL_2`) need the ecarx telematics transport (`PUT /remote-control/vehicle/telematics/{vin}`), which the `zeekr_ev_api` client does not speak — expect no effect via this adapter. Plain trunk unlock (`RDU`) uses the standard transport.
-- sentry mode needs the lowercase `rsm` key (uppercase is ignored by the car).
+- sentry mode needs the lowercase `rsm` key (uppercase is ignored by the car). The car must also be **locked** for Sentry-on (openzeekr #41: unlocked = silent no-op despite cloud 200) — the adapter refuses `sentryOn` while positively unlocked and reports it in `control.lastResult`.
 - glovebox/visitor/locker commands need a physical PIN (`0000` placeholder) and are intentionally **not** exposed as one-click buttons.
 - charge current (`control.chargeCurrent`, 6–32 A via `RCS`/`rcs.ac.current`) is experimental.
 
