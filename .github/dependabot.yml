@@ -3,9 +3,9 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: weekly
+      interval: daily
     cooldown:
-      default-days: 7
+      default-days: 1
     open-pull-requests-limit: 15
     ignore:
       - dependency-name: '@types/node'
@@ -15,12 +15,12 @@ updates:
     schedule:
       interval: weekly
     cooldown:
-      default-days: 7
+      default-days: 1
     open-pull-requests-limit: 15
   - package-ecosystem: github-actions
     directory: /.github/workflows
     schedule:
       interval: weekly
     cooldown:
-      default-days: 7
+      default-days: 1
     open-pull-requests-limit: 15
