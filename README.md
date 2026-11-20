@@ -369,6 +369,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.81
+
+- Month totals backfill from day history on updates (consistent month/session/day figures); aggregate states refresh in the same poll instead of the next one
+
 ### 0.1.80
 
 - Charge statistics hardened: session/month states are created once and never rewritten per poll (no more resets to 0, user price overrides survive); sessions settle only after two idle polls and only while plugged in (no phantom sessions from SoC noise); fragments under 15 min merge into one session; month totals reset on calendar rollover

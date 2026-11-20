@@ -731,7 +731,11 @@ print(json.dumps(p))
 });
 
 test('trackEnergy settles session with tariff cost and losses', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-tariff-'));
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
     adapter.config = {
         tariffsJson: JSON.stringify([{ name: 'home', pricePerKwh: 0.3 }]),
         defaultPricePerKwh: 0.3,
@@ -772,6 +776,10 @@ test('trackEnergy records standby drain while parked', async () => {
         smartChargeEnabled: false,
         smartChargeDeparture: '',
     };
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-standby-'));
+    adapter.getAdapterDataBaseDir = () => tmp;
     const base = { vin: 'VIN8', name: 'Car', isCharging: false, pluggedIn: false, currentSpeed: 0, chargePower: 0 };
     await adapter.trackEnergy([{ ...base, batteryLevel: 60 }]);
     await adapter.trackEnergy([{ ...base, batteryLevel: 59 }]);
@@ -780,7 +788,11 @@ test('trackEnergy records standby drain while parked', async () => {
 });
 
 test('smart charge starts and pauses via RCS', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-smart-'));
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
     adapter.config = {
         tariffsJson: JSON.stringify([
             { name: 'night', pricePerKwh: 0.2, from: '22:00', to: '06:00' },
@@ -2752,8 +2764,12 @@ test('contiguous charge fragments merge into one session', async () => {
 });
 
 test('settled session survives later polls (no per-poll clobber)', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-clobber-'));
     const { ZeekrAdapter } = require('../lib/adapter');
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
     adapter.config = { batteryCapacityKwh: 100, mockMode: true };
     const base = {
         name: 'Car',
@@ -2811,4 +2827,23 @@ test('month rollover resets totals only with a known marker', async () => {
     await fresh.rolloverEnergyMonth('vehicles.v1');
     assert.equal((await fresh.getStateAsync('vehicles.v1.energy.monthKwh')).val, 7);
     assert.equal((await fresh.getStateAsync('vehicles.v1.energy.month')).val, E.dayKeyLocal().slice(0, 7));
+});
+
+test('month backfills from day history when marker is missing', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-mback-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    const history = await adapter.ensureEnergyHistory();
+    const today = E.dayKeyLocal();
+    E.addDayEntry(history.days, today, { kwh: 12.5, cost: 3.75, lossKwh: 1 });
+    await adapter.persistEnergyHistory();
+    await adapter.rolloverEnergyMonth('vehicles.v1');
+    assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthKwh')).val, 12.5);
+    assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthCost')).val, 3.75);
+    assert.equal((await adapter.getStateAsync('vehicles.v1.energy.month')).val, today.slice(0, 7));
 });
