@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.82",
+    "version": "0.1.83",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.83": {
+        "en": "Month totals also heal when day history already holds charges but month states read 0 (update path).",
+        "de": "Monatssummen heilen auch, wenn die Tageshistorie bereits Ladevorgänge enthält, die Monats-States aber 0 zeigen (Update-Pfad).",
+        "ru": "Итоги месяца восстанавливаются, даже если дневная история уже содержит зарядки, а состояния месяцев — 0.",
+        "pt": "Totais mensais também recuperados quando o histórico diário já tem cargas mas os estados marcam 0.",
+        "nl": "Maandtotalen helen ook wanneer daghistorie al ladingen bevat maar maandstates 0 tonen.",
+        "fr": "Totaux mensuels restaurés même quand l'historique journalier contient déjà des charges.",
+        "it": "Totali mensili ripristinati anche quando la cronologia giornaliera contiene già ricariche.",
+        "es": "Totales mensuales también recuperados cuando el historial diario ya tiene cargas.",
+        "pl": "Sumy miesięczne leczone także, gdy historia dzienna ma już ładowania, a stany pokazują 0.",
+        "uk": "Місячні підсумки відновлюються, навіть якщо денна історія вже має зарядки, а стани — 0.",
+        "zh-cn": "即使日历史已有充电记录而月状态为0，也能恢复月累计。"
+      },
       "0.1.82": {
         "en": "Fix: charge sessions merge only with forward time gaps (no merging of out-of-order records).",
         "de": "Fix: Ladesessions mergen nur bei vorwärts laufender Zeit (kein Zusammenführen unsortierter Datensätze).",
@@ -151,19 +164,6 @@
         "pl": "Własny dziennik tras (działa ze współdzielonym kontem): trasy z prędkości/licznika, odporne na restarty, km miesięczne, opcjonalne pozycje; szybkie odpytywanie w trasie.",
         "uk": "Власний журнал поїздок (працює зі спільним акаунтом): поїздки зі швидкості/пробігу, переживають перезапуски, км за місяць, опційні координати; швидке опитування в русі.",
         "zh-cn": "自有行程记录（共享账号可用）：根据速度/里程识别行程，重启不丢失，月里程，可选位置存储；行驶中加快轮询。"
-      },
-      "0.1.76": {
-        "en": "Charge sessions survive restarts, missed short charges are reconstructed from SoC jumps, per-session price override for roaming tariffs, journey-log errors now visible for diagnosis.",
-        "de": "Ladesessions überleben Neustarts, verpasste Kurzladungen werden aus SoC-Sprüngen rekonstruiert, Preis-Override pro Session für Roaming-Tarife, Fahrtenbuch-Fehler jetzt zur Diagnose sichtbar.",
-        "ru": "Сессии зарядки переживают перезапуски, пропущенные короткие зарядки восстанавливаются по скачкам SoC, цена за сессию для роуминга, ошибки журнала поездок теперь видны.",
-        "pt": "Sessões de carga sobrevivem a reinícios, cargas curtas perdidas reconstruídas de saltos SoC, preço por sessão para roaming, erros do diário de bordo visíveis.",
-        "nl": "Laadsessies overleven herstarts, gemiste korte ladingen gereconstrueerd uit SoC-sprongen, prijs per sessie voor roaming, rittenlog-fouten zichtbaar.",
-        "fr": "Sessions de charge persistantes, recharges courtes manquées reconstruites depuis les sauts de SoC, prix par session pour l'itinérance, erreurs du journal visibles.",
-        "it": "Sessioni di ricarica persistenti, ricariche brevi perse ricostruite dai salti SoC, prezzo per sessione per roaming, errori del diario visibili.",
-        "es": "Sesiones de carga persistentes, cargas cortas perdidas reconstruidas de saltos SoC, precio por sesión para roaming, errores del diario visibles.",
-        "pl": "Sesje ładowania przetrwają restarty, pominięte krótkie ładowania odtwarzane ze skoków SoC, cena sesji dla roamingu, błędy dziennika widoczne.",
-        "uk": "Сесії зарядки переживають перезапуски, пропущені короткі зарядки відновлюються зі стрибків SoC, ціна сесії для роумінгу, помилки журналу видимі.",
-        "zh-cn": "充电会话在重启后保留，根据 SoC 跳变重建错过的短时充电，漫游按会话定价，行程日志错误可见。"
       }
     }
   },

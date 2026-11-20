@@ -369,6 +369,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.83
+
+- Month totals also heal when day history already holds charges but month states read 0 (update path from versions with per-poll resets)
+
 ### 0.1.82
 
 - Fix: charge sessions merge only with forward time gaps (no merging of out-of-order records)
