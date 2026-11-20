@@ -2851,3 +2851,30 @@ test('month backfills from day history when marker is missing', async () => {
     assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthCost')).val, 3.75);
     assert.equal((await adapter.getStateAsync('vehicles.v1.energy.month')).val, today.slice(0, 7));
 });
+
+test('month heals legacy zeros from day history', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-mheal-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    const history = await adapter.ensureEnergyHistory();
+    const today = E.dayKeyLocal();
+    E.addDayEntry(history.days, today, { kwh: 94.971, cost: 28.49, lossKwh: 5 });
+    await adapter.persistEnergyHistory();
+    await adapter.setObjectNotExistsAsync('vehicles.v1.energy.month', { type: 'state', common: {}, native: {} });
+    await adapter.setStateChangedAsync('vehicles.v1.energy.month', today.slice(0, 7), true);
+    await adapter.setObjectNotExistsAsync('vehicles.v1.energy.monthKwh', { type: 'state', common: {}, native: {} });
+    await adapter.setStateChangedAsync('vehicles.v1.energy.monthKwh', 0, true);
+    // Marker current, totals zeroed by the old per-poll rewrite: heal.
+    await adapter.rolloverEnergyMonth('vehicles.v1');
+    assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthKwh')).val, 94.971);
+    // Second run is a no-op (no longer zero).
+    E.addDayEntry(history.days, today, { kwh: 1 });
+    await adapter.persistEnergyHistory();
+    await adapter.rolloverEnergyMonth('vehicles.v1');
+    assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthKwh')).val, 94.971);
+});
