@@ -130,3 +130,14 @@ test('trip cost and CSV builders quote delimiters', () => {
     ]);
     assert.match(trips.split('\n')[0], /^vin;startTime;endTime;distanceKm/);
 });
+
+test('tariff shares accumulate and sum per month', () => {
+    const days = {};
+    E.addTariffShare(days, '2026-11-18', 'EnBW', 20, 15.9);
+    E.addTariffShare(days, '2026-11-18', 'EnBW', 2.5, 1.99);
+    E.addTariffShare(days, '2026-11-19', 'Ionity', 10, 7.9);
+    assert.deepEqual(days['2026-11-18'].tariffs, { EnBW: { kwh: 22.5, cost: 17.89 } });
+    const month = E.sumTariffs(days, ['2026-11-01', '2026-11-18', '2026-11-19']);
+    assert.deepEqual(month, { EnBW: { kwh: 22.5, cost: 17.89 }, Ionity: { kwh: 10, cost: 7.9 } });
+    assert.deepEqual(E.sumTariffs({}, ['2026-11-18']), {});
+});

@@ -2878,3 +2878,113 @@ test('month heals legacy zeros from day history', async () => {
     await adapter.rolloverEnergyMonth('vehicles.v1');
     assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthKwh')).val, 94.971);
 });
+
+test('metered session energy wins over the estimate', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-metered-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    const writes = {};
+    adapter.getStateAsync = async id => {
+        if (id.endsWith('energy.nextSessionKwh')) {
+            return { val: 63.5 };
+        }
+        return null;
+    };
+    adapter.setObjectNotExistsAsync = async () => {};
+    adapter.setStateChangedAsync = async (id, val) => {
+        writes[id] = val;
+    };
+    const t0 = Date.now() - 3600000;
+    const samples = [0, 1].map(i => ({ ts: t0 + i * 1800000, chargePowerKw: 11, batteryLevelPct: 50 + i * 2 }));
+    await adapter.settleChargeSession('vehicles.v1', 'V1', samples, {
+        energy: E,
+        tariffs: [],
+        defaultPrice: 0.3,
+        capacity: 100,
+        efficiency: 88,
+        lat: 0,
+        lon: 0,
+        pluggedIn: true,
+    });
+    // Measured 63.5 kWh beats the ~4 kWh estimate; cost follows the meter.
+    assert.equal(writes['vehicles.v1.energy.sessionKwh'], 63.5);
+    assert.equal(writes['vehicles.v1.energy.sessionCost'], 19.05);
+    assert.equal(writes['vehicles.v1.energy.nextSessionKwh'], 0);
+    const sessions = JSON.parse(writes['vehicles.v1.energy.sessionsList']);
+    assert.equal(sessions[0].measured, true);
+});
+
+test('retroactive session correction updates history, day and month', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-edit-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    adapter.setObjectNotExistsAsync = async () => {};
+    const states = {};
+    adapter.getStateAsync = async id => {
+        if (id.endsWith('energy.editSessionPrice')) {
+            return { val: states.editPrice || 0 };
+        }
+        if (id.endsWith('energy.editSessionKwh')) {
+            return { val: states.editKwh || 0 };
+        }
+        if (id.endsWith('energy.editSessionTariff')) {
+            return { val: states.editTariff || '' };
+        }
+        if (id.endsWith('energy.month')) {
+            return { val: E.dayKeyLocal().slice(0, 7) };
+        }
+        const m = id.match(/energy\.(monthKwh|monthCost|monthLossKwh)$/);
+        if (m) {
+            return { val: states[m[1]] || 0 };
+        }
+        return null;
+    };
+    const writes = {};
+    adapter.setStateChangedAsync = async (id, val) => {
+        writes[id] = val;
+    };
+    const t0 = Date.now() - 3600000;
+    const samples = [0, 1].map(i => ({ ts: t0 + i * 1800000, chargePowerKw: 11, batteryLevelPct: 50 + i * 5 }));
+    await adapter.settleChargeSession('vehicles.v1', 'V1', samples, {
+        energy: E,
+        tariffs: [],
+        defaultPrice: 0.3,
+        capacity: 100,
+        efficiency: 88,
+        lat: 0,
+        lon: 0,
+        pluggedIn: true,
+    });
+    const before = JSON.parse(writes['vehicles.v1.energy.sessionsList']);
+    assert.equal(before.length, 1);
+    const monthBefore = writes['vehicles.v1.energy.monthCost'];
+    // Invoice arrived: 0.79/kWh at Ionity instead of 0.30 default.
+    states.editPrice = 0.79;
+    states.editTariff = 'Ionity';
+    await adapter.applySessionEdits('vehicles.v1', 'V1', E);
+    const after = JSON.parse(writes['vehicles.v1.energy.sessionsList']);
+    assert.equal(after[0].pricePerKwh, 0.79);
+    assert.equal(after[0].tariff, 'Ionity');
+    assert.ok(after[0].cost > before[0].cost, `${after[0].cost} vs ${before[0].cost}`);
+    assert.ok(
+        Math.abs(writes['vehicles.v1.energy.monthCost'] - (monthBefore - before[0].cost + after[0].cost)) < 0.011,
+        JSON.stringify(writes['vehicles.v1.energy.monthCost']),
+    );
+    // Edit states reset.
+    assert.equal(writes['vehicles.v1.energy.editSessionPrice'], 0);
+    assert.equal(writes['vehicles.v1.energy.editSessionTariff'], '');
+    // monthByTariff follows the correction.
+    const byTariff = JSON.parse(writes['vehicles.v1.energy.monthByTariff']);
+    assert.ok(byTariff.Ionity && byTariff.Ionity.cost === after[0].cost, JSON.stringify(byTariff));
+    assert.ok(!byTariff.default || byTariff.default.kwh === 0, JSON.stringify(byTariff));
+});
