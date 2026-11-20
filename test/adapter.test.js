@@ -2219,8 +2219,12 @@ test('missed short charges settle from the SoC jump', async () => {
 });
 
 test('per-session price override wins over tariffs and resets', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-override-'));
     const E = require('../lib/energy');
     const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
     adapter.config = {};
     adapter.getStateAsync = async id => {
         if (id.endsWith('energy.nextSessionPrice')) {
