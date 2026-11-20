@@ -199,7 +199,7 @@ The adapter creates a vehicle channel for each discovered vehicle with the follo
 - `status`: battery, range, odometer, charging power, speed, plug state, charging state, lock state, climate state, charge limit, tire pressures, GPS, 12V battery, central locking, doors/trunk open states, consumption, engine/maintenance states, and timestamps
 - `control`: command payload, service ID, send button, typed buttons (lock, climate, charge, windows, sunshade, lights), writable charge limit, climate temp/duration, charge/travel plan inputs, last command, and last result
 - `trips`: API trip count, last trip distance/start/end/duration/average speed/consumption, recent trip list (logbook, last 5 without coordinates), fetch status (`trips.fetchJson`: ok/total/payload keys — empty when the server sends nothing, e.g. on shared accounts, see above), plus the adapter-side logbook below
-- `energy`: last session, running month totals, standby drain, day/week aggregates, charge session history (`sessionsList`), per-session price override inputs (`nextSessionPrice`/`nextSessionName`, auto-reset after settle), metered-energy input (`nextSessionKwh`), retroactive correction inputs (`editSessionKwh`/`editSessionPrice`/`editSessionTariff`), month cost split by tariff (`monthByTariff`)
+- `energy`: last session, running month totals, standby drain, day/week aggregates, charge session history (`sessionsList`), per-session price override inputs (`nextSessionPrice`/`nextSessionName`, auto-reset after settle), metered-energy input (`nextSessionKwh`), retroactive correction inputs (`editSessionKwh`/`editSessionPrice`/`editSessionCost`/`editSessionTariff`), month cost split by tariff (`monthByTariff`)
 - `smartCharge`: cheapest-window decision state
 - `zones`: current named geo zone (`currentZone`) and last change time; `isHome` reflects the configured home zone
 - `batteryLog`: monthly odometer/range/SoC snapshots
@@ -248,7 +248,7 @@ For one-off roaming prices, write `energy.nextSessionPrice` (€/kWh) and option
 
 Measured beats estimated: if you read the metered kWh off a public charger display (or the invoice later), write it to `energy.nextSessionKwh` — the settle uses it as charger energy instead of the reconstructed value (losses are recomputed from the stored battery gain when available). Without it the adapter integrates charge power over polls, or falls back to SoC gain ÷ efficiency.
 
-Corrections after the fact: public chargers often bill later via app invoice. Write the real values to `energy.editSessionKwh` / `energy.editSessionPrice` / `energy.editSessionTariff` — the adapter applies them to the last session and recalculates history, day and (current-)month totals, then resets the edit states. Sessions from closed months update history only.
+Corrections after the fact (the normal case on the road — ioBroker isn't available at the charger, and public chargers often bill later via app invoice): write the invoice values to `energy.editSessionKwh` / `energy.editSessionPrice` / `energy.editSessionCost` (invoice total wins and derives the unit price) / `energy.editSessionTariff` — the adapter applies them to the last session and recalculates history, day and (current-)month totals, then resets the edit states. Sessions from closed months update history only.
 
 `energy.monthByTariff` breaks the current month down per tariff/provider (`{"EnBW": {"kWh": …, "cost": …}}`) — the roaming overview without spreadsheet.
 

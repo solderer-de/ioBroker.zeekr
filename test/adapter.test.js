@@ -2988,3 +2988,57 @@ test('retroactive session correction updates history, day and month', async () =
     assert.ok(byTariff.Ionity && byTariff.Ionity.cost === after[0].cost, JSON.stringify(byTariff));
     assert.ok(!byTariff.default || byTariff.default.kwh === 0, JSON.stringify(byTariff));
 });
+
+test('retroactive correction accepts an invoice total', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-edittotal-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    adapter.setObjectNotExistsAsync = async () => {};
+    const states = {};
+    adapter.getStateAsync = async id => {
+        if (id.endsWith('energy.editSessionKwh')) {
+            return { val: states.editKwh || 0 };
+        }
+        if (id.endsWith('energy.editSessionPrice')) {
+            return { val: states.editPrice || 0 };
+        }
+        if (id.endsWith('energy.editSessionCost')) {
+            return { val: states.editCost || 0 };
+        }
+        if (id.endsWith('energy.editSessionTariff')) {
+            return { val: states.editTariff || '' };
+        }
+        return null;
+    };
+    const writes = {};
+    adapter.setStateChangedAsync = async (id, val) => {
+        writes[id] = val;
+    };
+    const t0 = Date.now() - 3600000;
+    const samples = [0, 1].map(i => ({ ts: t0 + i * 1800000, chargePowerKw: 11, batteryLevelPct: 50 + i * 5 }));
+    await adapter.settleChargeSession('vehicles.v1', 'V1', samples, {
+        energy: E,
+        tariffs: [],
+        defaultPrice: 0.3,
+        capacity: 100,
+        efficiency: 88,
+        lat: 0,
+        lon: 0,
+        pluggedIn: true,
+    });
+    // Invoice total only: 25.90 EUR for the session.
+    states.editCost = 25.9;
+    states.editTariff = 'Electra';
+    await adapter.applySessionEdits('vehicles.v1', 'V1', E);
+    const after = JSON.parse(writes['vehicles.v1.energy.sessionsList']);
+    assert.equal(after[0].cost, 25.9);
+    assert.equal(after[0].tariff, 'Electra');
+    assert.ok(Math.abs(after[0].pricePerKwh - 25.9 / after[0].kwh) < 0.001, JSON.stringify(after[0]));
+    assert.equal(writes['vehicles.v1.energy.editSessionCost'], 0);
+    assert.equal(writes['vehicles.v1.energy.sessionCost'], 25.9);
+});
