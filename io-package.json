@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.79",
+    "version": "0.1.80",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.80": {
+        "en": "Charge statistics hardened: session states survive polls (no resets to 0), unplugged SoC noise creates no phantom sessions, stale polls no longer split one charge, month rollover resets totals.",
+        "de": "Lade-Statistik gehärtet: Session-States überleben Polls (kein Reset auf 0), SoC-Rauschen ohne Stecker erzeugt keine Phantom-Sessions, veraltete Polls splitten keine Ladung mehr, Monatswechsel setzt Summen zurück.",
+        "ru": "Статистика зарядки упрочнена: состояния сессий переживают опросы, шум SoC без кабеля не создаёт фантомных сессий, устаревшие опросы не дробят зарядку, смена месяца обнуляет итоги.",
+        "pt": "Estatísticas de carga robustecidas: estados de sessão sobrevivem a sondagens, ruído SoC desligado não cria sessões fantasma, sondagens obsoletas não dividem cargas, mudança de mês repõe totais.",
+        "nl": "Laadstatistieken gehard: sessiestates overleven polls, SoC-ruis zonder stekker maakt geen fantoomsessies, verouderde polls splitsen ladingen niet meer, maandwissel reset totalen.",
+        "fr": "Statistiques de charge durcies : les états survivent aux sondages, le bruit SoC débranché ne crée plus de sessions fantômes, les sondages obsolètes ne fractionnent plus les charges, le changement de mois réinitialise les totaux.",
+        "it": "Statistiche di ricarica rese robuste: gli stati sopravvivono ai poll, il rumore SoC senza spina non crea sessioni fantasma, i poll obsoleti non dividono più le ricariche, il cambio mese azzera i totali.",
+        "es": "Estadísticas de carga reforzadas: los estados sobreviven a sondeos, el ruido SoC desenchufado no crea sesiones fantasma, los sondeos obsoletos ya no dividen cargas, el cambio de mes reinicia totales.",
+        "pl": "Statystyki ładowania utwardzone: stany sesji przetrwają odpytywania, szum SoC bez kabla nie tworzy sesji-widm, przestarzałe odpytywania nie dzielą ładowań, zmiana miesiąca zeruje sumy.",
+        "uk": "Статистика зарядки укріплена: стани переживають опитування, шум SoC без кабелю не створює фантомних сесій, застарілі опитування не дроблять зарядку, зміна місяця обнуляє підсумки.",
+        "zh-cn": "充电统计加固：会话状态在轮询后保留，未插枪SoC噪声不再产生幻影会话，过时轮询不再拆分充电，月份切换重置累计。"
+      },
       "0.1.79": {
         "en": "VIS data layer: today/week aggregates, session history list, trip costs, month efficiency; alerts for service, tyres, 12V and finished charging; battery SoH; named geo zones; logbook CSV export.",
         "de": "VIS-Datenebene: Heute/Woche-Aggregate, Session-Verlauf, Fahrtkosten, Monatseffizienz; Meldungen für Service, Reifen, 12V und fertige Ladung; Batterie-SoH; benannte Geo-Zonen; Fahrtenbuch-CSV-Export.",
@@ -151,19 +164,6 @@
         "pl": "Kontynuacja review: uzupełniono wszystkie tłumaczenia admina, pętla odpytywania używa łańcucha setTimeout (bez setInterval).",
         "uk": "Продовження рев'ю: завершено всі переклади адмінки, цикл опитування використовує ланцюжок setTimeout (без setInterval).",
         "zh-cn": "评审跟进：完成所有管理界面翻译，轮询循环使用 setTimeout 链（无 setInterval）。"
-      },
-      "0.1.73": {
-        "en": "No runtime code downloads: vendored get-pip.py and pinned extractor script.",
-        "de": "Keine Code-Downloads zur Laufzeit: get-pip.py und Extractor-Skript versioniert beigelegt.",
-        "ru": "Нет загрузки кода в рантайме: get-pip.py и экстрактор в репозитории.",
-        "pt": "Sem downloads de código em runtime: get-pip.py e extrator versionados.",
-        "nl": "Geen runtime-codedownloads: get-pip.py en extractor meegeleverd.",
-        "fr": "Pas de téléchargement de code à l'exécution : get-pip.py et extracteur versionnés.",
-        "it": "Nessun download di codice a runtime: get-pip.py ed estrattore versionati.",
-        "es": "Sin descargas de código en ejecución: get-pip.py y extractor versionados.",
-        "pl": "Brak pobierania kodu w runtime: get-pip.py i ekstraktor w repozytorium.",
-        "uk": "Жодних завантажень коду в рантаймі: get-pip.py та екстрактор версіоновані.",
-        "zh-cn": "运行时无代码下载：内置get-pip.py和提取器脚本。"
       }
     }
   },

@@ -246,6 +246,8 @@ Entries without location match everywhere; entries without `from`/`to` match any
 
 For one-off roaming prices, write `energy.nextSessionPrice` (€/kWh) and optionally `energy.nextSessionName` before/during the charge (VIS, script or Admin): the next settle uses the override instead of geo tariff/default and resets both states afterwards. The used price is stored per session in `lastSession`/`sessionsList`.
 
+Robustness rules: a session settles only after two consecutive idle polls (grace against single stale polls splitting one charge into fragments) and only while plugged in — SoC jumps without a cable never become sessions. Fragments less than 15 minutes apart merge back into one session record (totals stay exact). Month totals reset automatically when the calendar month flips.
+
 `isHome` reflects the configured home zone. With `smartChargeEnabled` and a departure time, the adapter starts/pauses charging via `RCS` so the car charges in the cheapest matching window before departure (`smartCharge.state` shows `charge`/`wait`/`idle`).
 
 ## ABRP upload
@@ -366,6 +368,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 - [wysie](https://github.com/wysie) for the [Zeekr key extractor](https://github.com/wysie/zeekr_key_extractor)
 
 ## Changelog
+
+### 0.1.80
+
+- Charge statistics hardened: session/month states are created once and never rewritten per poll (no more resets to 0, user price overrides survive); sessions settle only after two idle polls and only while plugged in (no phantom sessions from SoC noise); fragments under 15 min merge into one session; month totals reset on calendar rollover
 
 ### 0.1.79
 

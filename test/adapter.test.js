@@ -747,6 +747,7 @@ test('trackEnergy settles session with tariff cost and losses', async () => {
     await adapter.trackEnergy([{ ...base, isCharging: true, pluggedIn: true, batteryLevel: 50, chargePower: 11 }]);
     await adapter.trackEnergy([{ ...base, isCharging: true, pluggedIn: true, batteryLevel: 55, chargePower: 11 }]);
     await adapter.trackEnergy([{ ...base, isCharging: false, pluggedIn: true, batteryLevel: 55, chargePower: 0 }]);
+    await adapter.trackEnergy([{ ...base, isCharging: false, pluggedIn: true, batteryLevel: 55, chargePower: 0 }]);
     const idBase = 'vehicles.vin9';
     const kwh = await adapter.getStateAsync(`${idBase}.energy.sessionKwh`);
     assert.ok(kwh.val > 0, JSON.stringify(kwh));
@@ -2194,8 +2195,10 @@ test('missed short charges settle from the SoC jump', async () => {
         chargingLimit: 100,
     });
     await adapter.trackEnergy([car(50)]);
-    assert.equal(adapter._states.get('vehicles.vjump.energy.sessionKwh'), undefined);
-    // Charge fully missed between polls: +8 % SoC reconstructs a session.
+    // No session settled yet — state exists (created upfront) but is still 0.
+    assert.equal(adapter._states.get('vehicles.vjump.energy.sessionKwh').val, 0);
+    // Charge fully missed between polls: +8 % SoC reconstructs a session
+    // (second idle poll settles — grace against single stale polls).
     await adapter.trackEnergy([car(58)]);
     const kwh = adapter._states.get('vehicles.vjump.energy.sessionKwh').val;
     // 8 % of 100 kWh through 88 % efficiency.
@@ -2650,4 +2653,162 @@ test('sentry-on is blocked while positively unlocked (openzeekr #41)', async () 
     unknown.resolveVinForDevice = async () => 'VIN1';
     await unknown.handleControlWrite('zeekr.0.vehicles.car1.control.sentryOn', true);
     assert.equal(bridged, 2);
+});
+
+test('settle waits for a second idle poll (grace against stale polls)', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-grace-'));
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = { batteryCapacityKwh: 100 };
+    const car = (charging, level) => ({
+        vin: 'VGRACE',
+        name: 'Car',
+        batteryLevel: level,
+        isCharging: charging,
+        pluggedIn: true,
+        chargePower: charging ? 11 : 0,
+        currentSpeed: 0,
+        latitude: 0,
+        longitude: 0,
+    });
+    await adapter.trackEnergy([car(true, 50)]);
+    await adapter.trackEnergy([car(true, 55)]);
+    // First idle poll: flicker tolerated, nothing settled yet.
+    await adapter.trackEnergy([car(false, 55)]);
+    assert.equal(adapter._states.get('vehicles.vgrace.energy.sessionKwh').val, 0);
+    // Second idle poll settles.
+    await adapter.trackEnergy([car(false, 55)]);
+    assert.ok(adapter._states.get('vehicles.vgrace.energy.sessionKwh').val > 0);
+});
+
+test('unplugged SoC jumps never become sessions', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-unplug-'));
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = { batteryCapacityKwh: 100 };
+    const car = level => ({
+        vin: 'VUNPLUG',
+        name: 'Car',
+        batteryLevel: level,
+        isCharging: false,
+        pluggedIn: false,
+        chargePower: 0,
+        currentSpeed: 40,
+        latitude: 51.3,
+        longitude: 12.38,
+    });
+    await adapter.trackEnergy([car(50)]);
+    await adapter.trackEnergy([car(51)]);
+    await adapter.trackEnergy([car(51)]);
+    assert.equal(adapter._states.get('vehicles.vunplug.energy.sessionKwh').val, 0);
+    const history = await adapter.ensureEnergyHistory();
+    assert.deepEqual(history.sessions, []);
+});
+
+test('contiguous charge fragments merge into one session', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-merge-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    adapter.getStateAsync = async () => null;
+    adapter.setObjectNotExistsAsync = async () => {};
+    const writes = {};
+    adapter.setStateChangedAsync = async (id, val) => {
+        writes[id] = val;
+    };
+    const base = Date.now() - 3600000;
+    const mk = (t0, l0, l1) =>
+        [0, 1].map(i => ({ ts: t0 + i * 60000, chargePowerKw: 11, batteryLevelPct: l0 + i * (l1 - l0) }));
+    const args = {
+        energy: E,
+        tariffs: [],
+        defaultPrice: 0.3,
+        capacity: 100,
+        efficiency: 88,
+        lat: 0,
+        lon: 0,
+        pluggedIn: true,
+    };
+    await adapter.settleChargeSession('vehicles.v1', 'V1', mk(base, 50, 51), args);
+    // Second fragment starts where the first ended (5 min gap).
+    await adapter.settleChargeSession('vehicles.v1', 'V1', mk(base + 6 * 60000, 51, 52), args);
+    const sessions = JSON.parse(writes['vehicles.v1.energy.sessionsList']);
+    assert.equal(sessions.length, 1);
+    assert.ok(sessions[0].kwh > 2 && sessions[0].kwh < 2.4, String(sessions[0].kwh));
+    assert.equal(writes['vehicles.v1.energy.sessionKwh'], sessions[0].kwh);
+    // A session 30 min later stays separate.
+    await adapter.settleChargeSession('vehicles.v1', 'V1', mk(base + 40 * 60000, 60, 61), args);
+    assert.equal(JSON.parse(writes['vehicles.v1.energy.sessionsList']).length, 2);
+});
+
+test('settled session survives later polls (no per-poll clobber)', async () => {
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.config = { batteryCapacityKwh: 100, mockMode: true };
+    const base = {
+        name: 'Car',
+        vin: 'VCLOB',
+        isCharging: false,
+        pluggedIn: true,
+        batteryLevel: 55,
+        chargePower: 0,
+        currentSpeed: 0,
+        chargingLimit: 90,
+        latitude: null,
+        longitude: null,
+        doorOpen: {},
+    };
+    adapter.runBridge = async () => ({ vehicles: [{ ...base }] });
+    const charging = { ...base, isCharging: true, chargePower: 11, batteryLevel: 50 };
+    adapter.runBridge = async () => ({ vehicles: [charging] });
+    await adapter.pollVehicles();
+    adapter.runBridge = async () => ({ vehicles: [{ ...base }] });
+    await adapter.pollVehicles();
+    await adapter.pollVehicles();
+    const kwh = await adapter.getStateAsync('vehicles.vclob.energy.sessionKwh');
+    assert.ok(kwh && kwh.val > 0, JSON.stringify(kwh));
+    const month = await adapter.getStateAsync('vehicles.vclob.energy.monthKwh');
+    assert.equal(month.val, kwh.val);
+    // Two more idle polls must not wipe the settled values.
+    await adapter.pollVehicles();
+    await adapter.pollVehicles();
+    assert.equal((await adapter.getStateAsync('vehicles.vclob.energy.sessionKwh')).val, kwh.val);
+    assert.equal((await adapter.getStateAsync('vehicles.vclob.energy.monthKwh')).val, month.val);
+});
+
+test('month rollover resets totals only with a known marker', async () => {
+    const os = require('node:os');
+    const fs = require('node:fs');
+    const tmp = fs.mkdtempSync(require('node:path').join(os.tmpdir(), 'zeekr-roll-'));
+    const E = require('../lib/energy');
+    const { ZeekrAdapter } = require('../lib/adapter');
+    const adapter = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    adapter.getAdapterDataBaseDir = () => tmp;
+    adapter.config = {};
+    // Marker from last month: reset to zero.
+    await adapter.setObjectNotExistsAsync('vehicles.v1.energy.monthKwh', { type: 'state', common: {}, native: {} });
+    await adapter.setStateChangedAsync('vehicles.v1.energy.monthKwh', 42, true);
+    await adapter.setObjectNotExistsAsync('vehicles.v1.energy.month', { type: 'state', common: {}, native: {} });
+    await adapter.setStateChangedAsync('vehicles.v1.energy.month', '2000-01', true);
+    await adapter.rolloverEnergyMonth('vehicles.v1');
+    assert.equal((await adapter.getStateAsync('vehicles.v1.energy.monthKwh')).val, 0);
+    // Missing marker (update from older version): keep values, just stamp.
+    const fresh = new ZeekrAdapter({ log: { silly() {}, debug() {}, info() {}, warn() {}, error() {} } });
+    fresh.getAdapterDataBaseDir = () => tmp;
+    fresh.config = {};
+    await fresh.setObjectNotExistsAsync('vehicles.v1.energy.monthKwh', { type: 'state', common: {}, native: {} });
+    await fresh.setStateChangedAsync('vehicles.v1.energy.monthKwh', 7, true);
+    await fresh.rolloverEnergyMonth('vehicles.v1');
+    assert.equal((await fresh.getStateAsync('vehicles.v1.energy.monthKwh')).val, 7);
+    assert.equal((await fresh.getStateAsync('vehicles.v1.energy.month')).val, E.dayKeyLocal().slice(0, 7));
 });
