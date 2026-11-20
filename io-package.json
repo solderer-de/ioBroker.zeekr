@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "zeekr",
-    "version": "0.1.81",
+    "version": "0.1.82",
     "titleLang": {
       "en": "Zeekr",
       "de": "Zeekr",
@@ -74,6 +74,19 @@
       }
     ],
     "news": {
+      "0.1.82": {
+        "en": "Fix: charge sessions merge only with forward time gaps (no merging of out-of-order records).",
+        "de": "Fix: Ladesessions mergen nur bei vorwärts laufender Zeit (kein Zusammenführen unsortierter Datensätze).",
+        "ru": "Исправление: сессии зарядки объединяются только при прямом порядке времени.",
+        "pt": "Correção: sessões fundem-se apenas com intervalos de tempo em frente.",
+        "nl": "Fix: sessies mergen alleen bij vooruitlopende tijd (geen samenvoeging van ongesorteerde records).",
+        "fr": "Correctif : les sessions ne fusionnent qu'en ordre chronologique.",
+        "it": "Fix: le sessioni si uniscono solo in ordine cronologico.",
+        "es": "Corrección: las sesiones solo se fusionan en orden cronológico.",
+        "pl": "Poprawka: sesje łączone tylko przy rosnącym czasie.",
+        "uk": "Виправлення: сесії об'єднуються лише за прямого порядку часу.",
+        "zh-cn": "修复：充电会话仅按正向时间合并。"
+      },
       "0.1.81": {
         "en": "Month totals backfill from day history after updates; aggregate states refresh in the same poll.",
         "de": "Monatssummen werden nach Updates aus der Tageshistorie aufgefüllt; Aggregate im selben Poll aktuell.",
@@ -151,19 +164,6 @@
         "pl": "Sesje ładowania przetrwają restarty, pominięte krótkie ładowania odtwarzane ze skoków SoC, cena sesji dla roamingu, błędy dziennika widoczne.",
         "uk": "Сесії зарядки переживають перезапуски, пропущені короткі зарядки відновлюються зі стрибків SoC, ціна сесії для роумінгу, помилки журналу видимі.",
         "zh-cn": "充电会话在重启后保留，根据 SoC 跳变重建错过的短时充电，漫游按会话定价，行程日志错误可见。"
-      },
-      "0.1.75": {
-        "en": "Re-release: all admin translations completed, polling loop uses a clean setTimeout chain (no setInterval), APK upload page backup check fixed.",
-        "de": "Re-Release: alle Admin-Übersetzungen vervollständigt, Poll-Loop nutzt eine saubere setTimeout-Kette (kein setInterval), Backup-Prüfung der APK-Upload-Seite korrigiert.",
-        "ru": "Повторный релиз: завершены все переводы админки, цикл опроса использует цепочку setTimeout (без setInterval), исправлена проверка бэкапа на странице загрузки APK.",
-        "pt": "Reedição: todas as traduções da administração concluídas, ciclo de consulta usa cadeia setTimeout (sem setInterval), verificação de backup da página de upload de APK corrigida.",
-        "nl": "Heruitgave: alle admin-vertalingen afgerond, poll-lus gebruikt een schone setTimeout-keten (geen setInterval), backupcontrole op de APK-uploadpagina hersteld.",
-        "fr": "Réédition : toutes les traductions admin complétées, boucle d'interrogation en chaîne setTimeout (sans setInterval), contrôle de sauvegarde de la page d'upload APK corrigé.",
-        "it": "Nuova uscita: completate tutte le traduzioni admin, ciclo di polling con catena setTimeout (senza setInterval), controllo backup della pagina di upload APK corretto.",
-        "es": "Reedición: completadas todas las traducciones del admin, bucle de sondeo con cadena setTimeout (sin setInterval), comprobación de copia de seguridad de la página de subida de APK corregida.",
-        "pl": "Ponowne wydanie: ukończono wszystkie tłumaczenia admina, pętla odpytywania na łańcuchu setTimeout (bez setInterval), poprawiono sprawdzanie kopii zapasowej na stronie wysyłania APK.",
-        "uk": "Повторний реліз: завершено всі переклади адмінки, цикл опитування на ланцюжку setTimeout (без setInterval), виправлено перевірку резервної копії на сторінці завантаження APK.",
-        "zh-cn": "重新发布：完成所有管理界面翻译，轮询循环使用 setTimeout 链（无 setInterval），修复 APK 上传页面的备份检查。"
       }
     }
   },

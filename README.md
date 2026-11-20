@@ -369,6 +369,10 @@ Unofficial community project. Not affiliated with Zeekr or Geely.
 
 ## Changelog
 
+### 0.1.82
+
+- Fix: charge sessions merge only with forward time gaps (no merging of out-of-order records)
+
 ### 0.1.81
 
 - Month totals backfill from day history on updates (consistent month/session/day figures); aggregate states refresh in the same poll instead of the next one

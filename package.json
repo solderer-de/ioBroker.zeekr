@@ -1,6 +1,6 @@
 {
   "name": "iobroker.zeekr",
-  "version": "0.1.81",
+  "version": "0.1.82",
   "description": "ioBroker adapter for Zeekr electric vehicles",
   "author": "solderer-de <hagen_sc@web.de>",
   "license": "MIT",
