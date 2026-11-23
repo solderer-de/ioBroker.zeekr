@@ -1,9 +1,9 @@
 {
   "repo": "borconi/openzeekr",
   "branch": "master",
-  "sha": "1b268260560c639f361c32af5a473af9001f671d",
-  "path": "core/src/main/java/com/openzeekr/app/remote/Command.kt",
-  "message": "release: 0.2.4",
-  "updated_at": "2026-11-10T13:23:28Z",
-  "checked_at": "2026-11-22T14:46:16.583874+00:00"
+  "sha": "4c027772ebb56af6d026d8febe17d4d5f37eed7b",
+  "path": "core/src/main/java/com/openzeekr/app/remote/Repositories.kt",
+  "message": "Release 0.2.9: animated hero car (7GT, 7X) + configurable camera feeds",
+  "updated_at": "2026-11-23T16:22:08Z",
+  "checked_at": "2026-11-23T18:33:21.709119+00:00"
 }
